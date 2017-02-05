@@ -7,7 +7,7 @@
 #  and a little more by Ryan C. Gordon.
 #  and a little more by Rafael Barrero
 #  and a little more by the ioq3 cr3w
-#  and a little more by woekele for Quake3-UrT  :)
+#  and a little more by woekele for titanmod  :)
 #
 # GNU Make required
 #
@@ -27,7 +27,7 @@ ifeq ($(COMPILE_PLATFORM),mingw32)
   endif
 endif
 
-BUILD_CLIENT     =1
+BUILD_CLIENT     =0
 BUILD_CLIENT_SMP =0
 BUILD_SERVER     =1
 BUILD_GAME_SO    =0
@@ -219,7 +219,7 @@ ifeq ($(PLATFORM),linux)
   endif
   endif
 
-  BASE_CFLAGS = -Wall -fno-strict-aliasing -Wimplicit -Wstrict-prototypes -pipe
+  BASE_CFLAGS = -Wno-unused-result -Wall -fno-strict-aliasing -Wimplicit -Wstrict-prototypes -pipe
 
   ifeq ($(USE_OPENAL),1)
     BASE_CFLAGS += -DUSE_OPENAL=1
@@ -854,13 +854,13 @@ endif #SunOS
 TARGETS =
 
 ifneq ($(BUILD_SERVER),0)
-  TARGETS += $(B)/Quake3-UrT-Ded.$(ARCH)$(BINEXT)
+  TARGETS += $(B)/titanmod-Ded.$(ARCH)$(BINEXT)
 endif
 
 ifneq ($(BUILD_CLIENT),0)
-  TARGETS += $(B)/Quake3-UrT.$(ARCH)$(BINEXT)
+  TARGETS += $(B)/titanmod.$(ARCH)$(BINEXT)
   ifneq ($(BUILD_CLIENT_SMP),0)
-    TARGETS += $(B)/Quake3-UrT-smp.$(ARCH)$(BINEXT)
+    TARGETS += $(B)/titanmod-smp.$(ARCH)$(BINEXT)
   endif
 endif
 
@@ -917,17 +917,17 @@ ifeq ($(USE_SVN),1)
 endif
 
 define DO_CC       
-$(echo_cmd) "CC $<"
+$(echo_cmd) "[\033[34mCLIENT\033[0m] $<"
 $(Q)$(CC) $(NOTSHLIBCFLAGS) $(CFLAGS) -o $@ -c $<
 endef
 
 define DO_SMP_CC
-$(echo_cmd) "SMP_CC $<"
+$(echo_cmd) "[\033[34mSMP\033[0m] $<"
 $(Q)$(CC) $(NOTSHLIBCFLAGS) $(CFLAGS) -DSMP -o $@ -c $<
 endef
 
 define DO_BOT_CC
-$(echo_cmd) "BOT_CC $<"
+$(echo_cmd) "[\033[35mBOT\033[0m] $<"
 $(Q)$(CC) $(NOTSHLIBCFLAGS) $(CFLAGS) $(BOTCFLAGS) -DBOTLIB -o $@ -c $<
 endef
 
@@ -936,24 +936,24 @@ ifeq ($(GENERATE_DEPENDENCIES),1)
 endif
 
 define DO_SHLIB_CC
-$(echo_cmd) "SHLIB_CC $<"
+$(echo_cmd) "[\033[34mSHLIB\033[0m] $<"
 $(Q)$(CC) $(CFLAGS) $(SHLIBCFLAGS) -o $@ -c $<
 $(Q)$(DO_QVM_DEP)
 endef
 
 define DO_SHLIB_CC_MISSIONPACK
-$(echo_cmd) "SHLIB_CC_MISSIONPACK $<"
+$(echo_cmd) "[\033[34mMISSIONPACK\033[0m] $<"
 $(Q)$(CC) -DMISSIONPACK $(CFLAGS) $(SHLIBCFLAGS) -o $@ -c $<
 $(Q)$(DO_QVM_DEP)
 endef
 
 define DO_AS
-$(echo_cmd) "AS $<"
+$(echo_cmd) "[\033[34mAS\033[0m] $<"
 $(Q)$(CC) $(CFLAGS) -DELF -x assembler-with-cpp -o $@ -c $<
 endef
 
 define DO_DED_CC
-$(echo_cmd) "DED_CC $<"
+$(echo_cmd) "[\033[34mSERVER\033[0m] $<"
 $(Q)$(CC) $(NOTSHLIBCFLAGS) -DDEDICATED $(CFLAGS) -o $@ -c $<
 endef
 
@@ -984,7 +984,7 @@ endif
 # an informational message, then start building
 targets: makedirs tools
 	@echo ""
-	@echo "Building Quake3-UrT in $(B):"
+	@echo "Building TitanMod in $(B):"
 	@echo "  PLATFORM: $(PLATFORM)"
 	@echo "  ARCH: $(ARCH)"
 	@echo "  COMPILE_PLATFORM: $(COMPILE_PLATFORM)"
@@ -1296,12 +1296,12 @@ else
     $(B)/clientsmp/sdl_glimp.o
 endif
 
-$(B)/Quake3-UrT.$(ARCH)$(BINEXT): $(Q3OBJ) $(Q3POBJ) $(LIBSDLMAIN)
+$(B)/titanmod.$(ARCH)$(BINEXT): $(Q3OBJ) $(Q3POBJ) $(LIBSDLMAIN)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CC) -o $@ $(Q3OBJ) $(Q3POBJ) $(CLIENT_LDFLAGS) \
 		$(LDFLAGS) $(LIBSDLMAIN)
 
-$(B)/Quake3-UrT-smp.$(ARCH)$(BINEXT): $(Q3OBJ) $(Q3POBJ_SMP) $(LIBSDLMAIN)
+$(B)/titanmod-smp.$(ARCH)$(BINEXT): $(Q3OBJ) $(Q3POBJ_SMP) $(LIBSDLMAIN)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CC) -o $@ $(Q3OBJ) $(Q3POBJ_SMP) $(CLIENT_LDFLAGS) \
 		$(THREAD_LDFLAGS) $(LDFLAGS) $(LIBSDLMAIN)
@@ -1437,7 +1437,7 @@ ifeq ($(HAVE_VM_COMPILED),true)
   endif
 endif
 
-$(B)/Quake3-UrT-Ded.$(ARCH)$(BINEXT): $(Q3DOBJ)
+$(B)/titanmod-Ded.$(ARCH)$(BINEXT): $(Q3DOBJ)
 	$(echo_cmd) "LD $@"
 	$(Q)$(CC) -o $@ $(Q3DOBJ) $(LDFLAGS)
 
@@ -1856,17 +1856,17 @@ copyfiles: release
 	-$(MKDIR) -p -m 0755 $(COPYDIR)/missionpack
 
 ifneq ($(BUILD_CLIENT),0)
-	$(INSTALL) -s -m 0755 $(BR)/Quake3-UrT.$(ARCH)$(BINEXT) $(COPYDIR)/Quake3-UrT.$(ARCH)$(BINEXT)
+	$(INSTALL) -s -m 0755 $(BR)/titanmod.$(ARCH)$(BINEXT) $(COPYDIR)/titanmod.$(ARCH)$(BINEXT)
 endif
 
 # Don't copy the SMP until it's working together with SDL.
 #ifneq ($(BUILD_CLIENT_SMP),0)
-#	$(INSTALL) -s -m 0755 $(BR)/Quake3-UrT-smp.$(ARCH)$(BINEXT) $(COPYDIR)/Quake3-UrT-smp.$(ARCH)$(BINEXT)
+#	$(INSTALL) -s -m 0755 $(BR)/titanmod-smp.$(ARCH)$(BINEXT) $(COPYDIR)/titanmod-smp.$(ARCH)$(BINEXT)
 #endif
 
 ifneq ($(BUILD_SERVER),0)
-	@if [ -f $(BR)/Quake3-UrT-Ded.$(ARCH)$(BINEXT) ]; then \
-		$(INSTALL) -s -m 0755 $(BR)/Quake3-UrT-Ded.$(ARCH)$(BINEXT) $(COPYDIR)/Quake3-UrT-Ded.$(ARCH)$(BINEXT); \
+	@if [ -f $(BR)/titanmod-Ded.$(ARCH)$(BINEXT) ]; then \
+		$(INSTALL) -s -m 0755 $(BR)/titanmod-Ded.$(ARCH)$(BINEXT) $(COPYDIR)/titanmod-Ded.$(ARCH)$(BINEXT); \
 	fi
 endif
 
