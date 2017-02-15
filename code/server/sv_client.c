@@ -25,6 +25,42 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static void SV_CloseDownload( client_t *cl );
 
+
+
+
+char *SV_CleanName(char *name) {
+    char  *d;
+    char  *s;
+    int   c;
+
+    s = name;
+    d = name;
+
+    while ((c = *s) != 0) {
+        if (c >= 33 && c <= 126) {
+            *d++ = c;
+            s++;
+        } else {
+            s++;
+        }
+    }
+    *d = 0;
+
+    if(!Q_stricmp(name, "all"))
+    {
+    	sprintf(name, "%s","UnnamedPlayer");
+    }
+
+    if(!Q_stricmp(name, ""))
+    {
+    	sprintf(name, "%s","UnnamedPlayer");
+    }
+
+    return name;
+}
+
+
+
 /*
 =================
 SV_GetChallenge
@@ -408,6 +444,8 @@ gotnewcl:
 
     // save the userinfo
     Q_strncpyz(newcl->userinfo, userinfo, sizeof(newcl->userinfo));
+    Com_sprintf(cl->colourName, MAX_NAME_LENGTH, "%s^7", SV_CleanName(Info_ValueForKey(newcl->userinfo, "name")));
+
 
     // get the game a chance to reject this connection or modify the userinfo
     denied = VM_Call(gvm, GAME_CLIENT_CONNECT, clientNum, qtrue, qfalse); // firstTime = qtrue
@@ -1259,6 +1297,7 @@ void SV_UserinfoChanged( client_t *cl ) {
 
 	// name for C code
 	Q_strncpyz( cl->name, Info_ValueForKey (cl->userinfo, "name"), sizeof(cl->name) );
+	Com_sprintf(cl->colourName, MAX_NAME_LENGTH, "%s^7", SV_CleanName(cl->name));
 
 	// rate command
 
@@ -1330,11 +1369,13 @@ SV_UpdateUserinfo_f
 ==================
 */
 void SV_UpdateUserinfo_f( client_t *cl ) {
+        gclient_t *gl;
 	if ( (sv_floodProtect->integer) && (cl->state >= CS_ACTIVE) && (svs.time < cl->nextReliableUserTime) ) {
 		Q_strncpyz( cl->userinfobuffer, Cmd_Argv(1), sizeof(cl->userinfobuffer) );
 		SV_SendServerCommand(cl, "print \"^7Command ^1delayed^7 due to sv_floodprotect.\"");
 		return;
 	}
+        gl = (gclient_t *)SV_GameClientNum(cl - svs.clients);
 	cl->userinfobuffer[0]=0;
 	cl->nextReliableUserTime = svs.time + 5000;
 
@@ -1343,6 +1384,8 @@ void SV_UpdateUserinfo_f( client_t *cl ) {
 	SV_UserinfoChanged( cl );
 	// call prog code to allow overrides
 	VM_Call( gvm, GAME_CLIENT_USERINFO_CHANGED, cl - svs.clients );
+        if (mod_colourNames->integer) 
+            Q_strncpyz(gl->pers.netname, cl->colourName, MAX_NETNAME);
 }
 
 typedef struct {

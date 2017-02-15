@@ -176,16 +176,23 @@ SV_SetUserinfo
 ===============
 */
 void SV_SetUserinfo( int index, const char *val ) {
-	if ( index < 0 || index >= sv_maxclients->integer ) {
+        gclient_t *gl;
+    
+        if ( index < 0 || index >= sv_maxclients->integer ) {
 		Com_Error (ERR_DROP, "SV_SetUserinfo: bad index %i\n", index);
 	}
 
 	if ( !val ) {
 		val = "";
 	}
-
+        
+        gl = SV_GameClientNum(index);
 	Q_strncpyz( svs.clients[index].userinfo, val, sizeof( svs.clients[ index ].userinfo ) );
 	Q_strncpyz( svs.clients[index].name, Info_ValueForKey( val, "name" ), sizeof(svs.clients[index].name) );
+        if (mod_colourNames->integer) {
+	    if(svs.clients[index].colourName[0])
+		    Q_strncpyz(gl->pers.netname, svs.clients[index].colourName, MAX_NETNAME);
+        }
 }
 
 
@@ -934,7 +941,13 @@ void SV_Init (void) {
 	sv_sayprefix = Cvar_Get ("sv_sayprefix", "console: ", CVAR_ARCHIVE );	
 	sv_tellprefix = Cvar_Get ("sv_tellprefix", "console_tell: ", CVAR_ARCHIVE );
 	sv_demofolder = Cvar_Get ("sv_demofolder", "serverdemos", CVAR_ARCHIVE );
+
+	mod_infiniteStamina = Cvar_Get ("mod_infiniteStamina", "1", CVAR_ARCHIVE);
+	mod_infiniteWallJumps = Cvar_Get ("mod_infiniteWallJumps", "1", CVAR_ARCHIVE);
+	mod_nofallDamage = Cvar_Get("mod_nofallDamage", "1", CVAR_ARCHIVE);
 	
+	mod_colourNames = Cvar_Get ("mod_colournames", "1", CVAR_ARCHIVE);
+        
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);
 	sv_auth_engine = Cvar_Get("sv_auth_engine", "1", CVAR_ROM);
