@@ -1573,6 +1573,165 @@ static void SV_CompleteMapName( char *args, int argNum ) {
 }*/
 
 /*
+ * TitanMod Commands
+ */
+
+
+static void SV_SetScore_f(void) {
+
+	client_t      *cl;
+	playerState_t *ps;
+	int           value, i;
+
+	if (!com_sv_running->integer) {
+		Com_Printf("Server is not running\n");
+		return;
+	}
+
+	if(Cmd_Argc() < 3) {
+        Com_Printf("Usage: setscore <player> <value>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(cl == NULL)
+		return;
+
+	if (sscanf(Cmd_Argv(2), "%d", &value) == 0) {
+		Com_Printf("Invalid value.\n");
+		return;
+	}
+
+	ps = SV_GameClientNum(cl - svs.clients);
+	ps->persistant[PERS_SCORE] = value;
+	for(i = 0, cl = svs.clients; i < sv_maxclients->integer; i++, cl++)	{
+		if(cl->state == CS_ACTIVE)
+			SV_ExecuteClientCommand(cl, "score", qtrue);
+	}
+}
+
+
+static void SV_SetDeaths_f(void) {
+
+	client_t      *cl;
+	playerState_t *ps;
+	int           value, i;
+
+	if (!com_sv_running->integer) {
+		Com_Printf("Server is not running\n");
+		return;
+	}
+
+	if(Cmd_Argc() < 3) {
+		 Com_Printf("Usage: setdeaths <player> <value>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(cl == NULL)
+		return;
+
+	if (sscanf(Cmd_Argv(2), "%d", &value) == 0) {
+		Com_Printf("Invalid value.\n");
+		return;
+	}
+
+	ps = SV_GameClientNum(cl - svs.clients);
+	ps->persistant[PERS_KILLED] = value;
+	for(i = 0, cl = svs.clients; i < sv_maxclients->integer; i++, cl++)	{
+		if(cl->state == CS_ACTIVE)
+			SV_ExecuteClientCommand(cl, "score", qtrue);
+	}
+}
+
+static void SV_Invisible_f(void) {
+
+	client_t       *cl;
+	sharedEntity_t *e;
+
+	if (!com_sv_running->integer) {
+		Com_Printf("Server is not running\n");
+		return;
+	}
+
+	if (Cmd_Argc() < 2) {
+		Com_Printf("Usage: invisible <player>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if (!cl) {
+		return;
+	}
+
+	e = SV_GentityNum(cl - svs.clients);
+	e->r.svFlags ^= SVF_NOCLIENT;
+
+	if (e->r.svFlags & SVF_NOCLIENT) {
+		Com_Printf("Player %s Invisible.\n", cl->name);
+        SV_SendServerCommand(cl, "cchat \"\" \"%s^7Your Invisibility Mode turned [^2ON^7]\"", sv_tellprefix->string);
+	} else {
+		Com_Printf("Player %s Visible.\n", cl->name);
+        SV_SendServerCommand(cl, "cchat \"\" \"%s^7Your Invisibility Mode turned [^1OFF^7]\"", sv_tellprefix->string);
+	}
+}
+
+static void SV_PlaySoundFile_f (void)
+{
+	client_t *cl;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+
+	if(Cmd_Argc() != 3)
+	{
+		Com_Printf("Usage: playsoundfile <player> <file>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+	{
+		return;
+	}
+
+	SV_PlaySoundFile (cl, Cmd_Argv(2));
+}
+static void SV_PlaySound_f (void)
+{
+	client_t *cl;
+	int index;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+
+	if(Cmd_Argc() != 3)
+	{
+		Com_Printf("Usage: playsound <player> <indexsound>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+	{
+		return;
+	}
+	if(!sscanf(Cmd_Argv(2), "%d", &index) && (index > 0 && index <256))
+	{
+		Com_Printf("Incorrect value!\n");
+	}
+
+	SV_SetExternalEvent(cl, EV_GLOBAL_SOUND, index);
+}
+
+
+/*
 ==================
 SV_AddOperatorCommands
 ==================
@@ -1603,6 +1762,16 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("devmap", SV_Map_f);
     Cmd_AddCommand ("spmap", SV_Map_f);
     Cmd_AddCommand ("spdevmap", SV_Map_f);
+
+    //TitanMod
+    Cmd_AddCommand ("setscore", SV_SetScore_f);
+    Cmd_AddCommand ("setdeaths", SV_SetDeaths_f);
+
+    Cmd_AddCommand ("invisible", SV_Invisible_f);
+
+    Cmd_AddCommand ("playsoundfile", SV_PlaySoundFile_f);
+    Cmd_AddCommand ("playsound", SV_PlaySound_f);
+
 #endif
     Cmd_AddCommand ("killserver", SV_KillServer_f);
     if( com_dedicated->integer ) {

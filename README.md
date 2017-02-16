@@ -13,6 +13,14 @@ mod_infiniteWallJumps | On / Off | Allow infinite jums cross walls
 mod_noFallDamage | On / Off | Dont get damage when fall from high distance
 mod_colourNames | On / Off | Enable colour names on the scoreboard
 
+### Commands
+Commands | Syntax | Description
+--- | --- | ---
+setscore |  &#60;player&#62;  &#60;score&#62; | Will set &#60;score&#62; to the scoreboard of the game
+setdeaths |  &#60;player&#62;  &#60;deaths&#62; | Will set &#60;deaths&#62; to the scoreboard of the game
+invisible | &#60;player&#62; | Switch between invisible or not to &#60;player&#62; 
+playsound | &#60;player&#62; &#60;index&#62; | Will play a sound that is on the &#60;index&#62; of her configstring .
+playsoundfile | &#60;player&#62; &#60;file&#62; | Will play a sound that is on the pk3 files of her computer on the path &#60;file&#62;
 
 ## Build
 First of all download dependences: For **Ubuntu**

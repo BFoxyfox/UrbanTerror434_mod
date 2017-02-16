@@ -342,7 +342,7 @@ typedef enum {
 #define	EV_EVENT_BITS		(EV_EVENT_BIT1|EV_EVENT_BIT2)
 
 #define	EVENT_VALID_MSEC	300
-
+/*
 typedef enum {
 	EV_NONE,
 
@@ -449,7 +449,51 @@ typedef enum {
 	EV_TAUNT_PATROL
 
 } entity_event_t;
+*/
 
+//@pedrxd: As r00t say, this list is randomize, so we need to get the new list manually
+typedef enum{
+	//1 Do the weapon bigger?
+	EV_UT_RELOAD = 3,
+	//4 Do the weapon little?
+	EV_UT_LADDER = 5,
+	EV_FOOTSPLASH,
+	EV_SWIM,
+	EV_WATER_BREATH,
+	EV_UT_REDWINSROUND_SOUND,
+	EV_UT_BLUEWINSROUND_SOUND,
+	EV_UT_DRAWNROUND_SOUND,
+
+	EV_FALL_SOUND = 16, //Whichout dead
+	EV_FALL_DEATH_SOUND, //Which death, 18 to 27
+
+	EV_NOAMMO = 29,
+	EV_CHANGE_WEAPON,
+	EV_FIRE_WEAPON,
+
+	//Not sure
+	EV_WATER_TOUCH =33,
+	EV_WATER_TOUCH_FAST,
+
+	EV_STEP = 39,
+
+	EV_COUNTDOWN = 42, //A count down appear on the screen.
+	EV_STOPCOUNTDOWN, //Stop count
+
+	EV_FALL_SHORT = 48,
+	EV_FALL_MEDIUM,
+	EV_FALL_FAR,
+
+	EV_EXPLOSION_SHORT = 55, //JUST visual
+	EV_EXPLOSION_MEDIUM,
+
+	EV_GLOBAL_SOUND = 59,
+
+	EV_BULLET_HIT_WALL = 62,
+	EV_BULLET_HIT_WALL2,
+
+	EV_SCOREPLUM= 68,
+}entity_event_t;
 
 typedef enum {
 	GTS_RED_CAPTURE,

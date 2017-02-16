@@ -25,6 +25,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static void SV_CloseDownload( client_t *cl );
 
+void SV_PlaySoundFile (client_t *cl, char*file)
+{
+	//Set config string
+	SV_SendCustomConfigString(cl, file, 543);
+	//Make a delay to reproduce
+	cl->cm.delayedSound = sv.snapshotCounter+2;
+}
+
+void SV_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg)
+{
+	playerState_t *ps;
+	int bits;
+
+	ps = SV_GameClientNum(cl - svs.clients);
+	bits = ps->externalEvent & EV_EVENT_BITS;
+	bits = (bits + EV_EVENT_BIT1) & EV_EVENT_BITS;
+	ps->externalEvent =  event | bits; // 59 Is the event num for reproduce sounds
+	ps->externalEventParm = eventarg;
+	ps->externalEventTime = svs.time;
+}
 
 
 

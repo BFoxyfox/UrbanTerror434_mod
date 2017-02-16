@@ -128,6 +128,11 @@ typedef struct gclient_s
 	clientPersistant_t pers;
 }gclient_t;
 
+typedef struct clientMod_s
+{
+	int delayedSound;  //Snapshot where sound event should be sended
+}clientMod_t;
+
 typedef struct client_s {
 	clientState_t	state;
 	char			userinfo[MAX_INFO_STRING];		// name, etc
@@ -195,6 +200,9 @@ typedef struct client_s {
 	int             numcmds;    // number of client commands so far (in this time period), for sv_floodprotect
         
     char            colourName[MAX_NAME_LENGTH];
+
+    //Variables of titanmod
+    clientMod_t cm;
 } client_t;
 
 //=============================================================================
@@ -355,6 +363,7 @@ void SV_MasterShutdown (void);
 //
 // sv_init.c
 //
+void SV_SendCustomConfigString(client_t *client, char *cs, int index);
 void SV_SetConfigstring( int index, const char *val );
 void SV_GetConfigstring( int index, char *buffer, int bufferSize );
 void SV_UpdateConfigstrings( client_t *client );
@@ -370,6 +379,10 @@ void SV_SpawnServer( char *server, qboolean killBots );
 //
 // sv_client.c
 //
+
+void SV_PlaySoundFile (client_t *cl, char*file);
+void SV_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg);
+
 void SV_GetChallenge( netadr_t from );
 
 void SV_DirectConnect( netadr_t from );
