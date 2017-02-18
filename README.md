@@ -12,6 +12,9 @@ mod_infiniteStamina | On / Off | Disable stamina on the server
 mod_infiniteWallJumps | On / Off | Allow infinite jums cross walls
 mod_noFallDamage | On / Off | Dont get damage when fall from high distance
 mod_colourNames | On / Off | Enable colour names on the scoreboard
+mod_playerCount | &#60;value&#62; | If the int is positive, will be added to the real count of player, if is negative a random number beetween value to 1 will be added
+mod_mapName | &#60;string&#62; | The specified name will be set to the mapname for UrT searcher, if nothing set will be the real one.
+mod_hidecmds | &#60;value&#62; | Used for mute commands on chat starting with !, /, @, &. Where value 0 = off, 1 = pm player, 2 = full mute.
 
 ### Commands
 Commands | Syntax | Description

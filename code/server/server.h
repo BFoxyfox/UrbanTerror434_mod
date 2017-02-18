@@ -336,6 +336,11 @@ extern  cvar_t  *mod_infiniteWallJumps;
 extern  cvar_t  *mod_nofallDamage;
 
 extern  cvar_t  *mod_colourNames;
+
+extern  cvar_t  *mod_playerCount;
+extern  cvar_t  *mod_mapName;
+
+extern  cvar_t  *mod_hideCmds;
 #ifdef USE_AUTH
 extern	cvar_t	*sv_authServerIP;
 extern  cvar_t  *sv_auth_engine;
@@ -346,6 +351,9 @@ extern  cvar_t  *sv_auth_engine;
 //
 // sv_main.c
 //
+
+void QDECL SV_LogPrintf(const char *fmt, ...);
+
 void SV_FinalMessage (char *message);
 void QDECL SV_SendServerCommand( client_t *cl, const char *fmt, ...);
 

@@ -1766,9 +1766,7 @@ void SV_AddOperatorCommands( void ) {
     //TitanMod
     Cmd_AddCommand ("setscore", SV_SetScore_f);
     Cmd_AddCommand ("setdeaths", SV_SetDeaths_f);
-
     Cmd_AddCommand ("invisible", SV_Invisible_f);
-
     Cmd_AddCommand ("playsoundfile", SV_PlaySoundFile_f);
     Cmd_AddCommand ("playsound", SV_PlaySound_f);
 

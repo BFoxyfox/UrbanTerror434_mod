@@ -68,6 +68,11 @@ cvar_t  *mod_infiniteWallJumps;
 cvar_t  *mod_nofallDamage;
 
 cvar_t  *mod_colourNames;
+
+cvar_t  *mod_playerCount;
+cvar_t  *mod_mapName;
+
+cvar_t  *mod_hideCmds;
 //@Barbatos
 #ifdef USE_AUTH
 cvar_t	*sv_authServerIP;
@@ -81,6 +86,53 @@ EVENT MESSAGES
 
 =============================================================================
 */
+
+void QDECL SV_LogPrintf(const char *fmt, ...) {
+
+	va_list       argptr;
+    fileHandle_t  file;
+    fsMode_t      mode;
+    char          *logfile;
+    char          buffer[MAX_STRING_CHARS];
+    int           min, tens, sec;
+    int           logsync;
+
+	// retrieve the logfile name
+	logfile = Cvar_VariableString("g_log");
+	if (!logfile[0]) {
+		return;
+	}
+
+	// retrieve the writing mode
+	logsync = Cvar_VariableIntegerValue("g_logSync");
+	mode = logsync ? FS_APPEND_SYNC : FS_APPEND;
+
+	// opening the log file
+	FS_FOpenFileByMode(logfile, &file, mode);
+	if (!file) {
+		return;
+	}
+
+	// get current level time
+	sec = sv.time / 1000;
+	min = sec / 60;
+	sec -= min * 60;
+	tens = sec / 10;
+	sec -= tens * 10;
+
+	// prepend current level time
+	Com_sprintf(buffer, sizeof(buffer), "%3i:%i%i ", min, tens, sec);
+
+	// get the arguments
+	va_start(argptr, fmt);
+	vsprintf(buffer + 7, fmt, argptr);
+	va_end(argptr);
+
+	// write in the log file
+	FS_Write(buffer, strlen(buffer), file);
+	FS_FCloseFile(file);
+}
+
 
 /*
 ===============
@@ -431,7 +483,24 @@ void SVC_Info( netadr_t from ) {
 
 	Info_SetValueForKey( infostring, "protocol", va("%i", PROTOCOL_VERSION) );
 	Info_SetValueForKey( infostring, "hostname", sv_hostname->string );
-	Info_SetValueForKey( infostring, "mapname", sv_mapname->string );
+
+	if(!strcmp(mod_mapName->string, ""))
+		Info_SetValueForKey( infostring, "mapname", sv_mapname->string );
+	else
+		Info_SetValueForKey( infostring, "mapname", mod_mapName->string);
+
+	//If playercount is positive, the number will be added to the real player count
+	//if is negative a random number beetween playercount and 1 will be added
+	if(0<mod_playerCount->integer)
+		count+=mod_playerCount->integer;
+	else if(0>mod_playerCount->integer)
+	{
+		int rand, seed;
+		seed = Com_Milliseconds();
+		rand = Q_rand(&seed) % mod_playerCount->integer +1 ;
+		count+=rand;
+	}
+
 	Info_SetValueForKey( infostring, "clients", va("%i", count) );
 	Info_SetValueForKey( infostring, "bots", va("%i", bots) );
 	Info_SetValueForKey( infostring, "sv_maxclients",

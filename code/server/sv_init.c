@@ -990,6 +990,10 @@ void SV_Init (void) {
 	
 	mod_colourNames = Cvar_Get ("mod_colournames", "1", CVAR_ARCHIVE);
         
+	mod_playerCount = Cvar_Get ("mod_playercount", "0", CVAR_ARCHIVE);
+	mod_mapName = Cvar_Get("mod_mapname", "", CVAR_ARCHIVE);
+
+	mod_hideCmds = Cvar_Get ("mod_hidecmds", "1", CVAR_ARCHIVE);
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);
 	sv_auth_engine = Cvar_Get("sv_auth_engine", "1", CVAR_ROM);

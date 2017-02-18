@@ -1440,9 +1440,10 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 	int			charCount;
 	int			dollarCount;
 	int			i;
-	char		*arg;
+	char		*arg, *p;
 	qboolean 	bProcessed = qfalse;
 	qboolean 	exploitDetected = qfalse;
+	playerState_t *ps;
 	
 	Cmd_TokenizeString( s );
 
@@ -1456,14 +1457,30 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 	}
 
 	if (clientOK) {
-
+		ps = SV_GameClientNum(cl - svs.clients);
 		// pass unknown strings to the game
 		if ((!u->name) && (sv.state == SS_GAME) && (cl->state == CS_ACTIVE)) {
 			Cmd_Args_Sanitize();
 
 			argsFromOneMaxlen = -1;
 			if (Q_stricmp("say", Cmd_Argv(0)) == 0 || Q_stricmp("say_team", Cmd_Argv(0)) == 0) {
+
 				argsFromOneMaxlen = MAX_SAY_STRLEN;
+                if (strncmp("!pm", Cmd_Argv(1), 3) == 0)
+                {
+                    SV_SendServerCommand(cl, "chat \"^9[pm] ^7%s: ^3%s\"", cl->colourName, Cmd_Args());
+    				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
+    				return;
+                }
+                p = Cmd_Argv(1);
+                while (*p == ' ') p++;
+                if (((*p == '!') || (*p == '@') || (*p == '&') || (*p == '/')) && mod_hideCmds->integer)
+                {
+    				if(mod_hideCmds->integer == 1)
+                        SV_SendServerCommand(cl, "chat \"^9[pm] ^7%s: ^3%s\"", cl->colourName, Cmd_Args());
+    				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
+    				return;
+                }
 			}
 			else if (Q_stricmp("tell", Cmd_Argv(0)) == 0) {
 				// A command will look like "tell 12 hi" or "tell foo hi".  The "12"
