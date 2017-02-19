@@ -130,6 +130,11 @@ typedef struct gclient_s
 
 typedef struct clientMod_s
 {
+	//For infiniteAmmo
+	int powerups[MAX_POWERUPS];
+	int lastEventSequence;
+	//----------------
+
 	int delayedSound;  //Snapshot where sound event should be sended
 }clientMod_t;
 
@@ -339,8 +344,17 @@ extern  cvar_t  *mod_colourNames;
 
 extern  cvar_t  *mod_playerCount;
 extern  cvar_t  *mod_mapName;
-
+extern  cvar_t  *mod_infiniteAmmo;
 extern  cvar_t  *mod_hideCmds;
+
+extern  cvar_t  *mod_allowTell;
+extern  cvar_t  *mod_allowItemDrop;
+extern  cvar_t  *mod_allowWeapDrop;
+extern  cvar_t  *mod_allowFlagDrop;
+extern  cvar_t  *mod_allowSuicide;
+extern  cvar_t  *mod_allowRadio;
+extern  cvar_t  *mod_allowVote;
+
 #ifdef USE_AUTH
 extern	cvar_t	*sv_authServerIP;
 extern  cvar_t  *sv_auth_engine;

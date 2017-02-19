@@ -992,8 +992,18 @@ void SV_Init (void) {
         
 	mod_playerCount = Cvar_Get ("mod_playercount", "0", CVAR_ARCHIVE);
 	mod_mapName = Cvar_Get("mod_mapname", "", CVAR_ARCHIVE);
-
 	mod_hideCmds = Cvar_Get ("mod_hidecmds", "1", CVAR_ARCHIVE);
+	mod_infiniteAmmo = Cvar_Get("mod_infiniteAmmo", "0", CVAR_ARCHIVE);
+
+	mod_allowTell = Cvar_Get("mod_allowtell", "1", CVAR_ARCHIVE);
+	mod_allowWeapDrop = Cvar_Get("mod_allowweapdrop", "1", CVAR_ARCHIVE);
+	mod_allowItemDrop = Cvar_Get("mod_allowitemdrop", "1", CVAR_ARCHIVE);
+	mod_allowFlagDrop = Cvar_Get("mod_allowflagdrop", "1", CVAR_ARCHIVE);
+	mod_allowSuicide = Cvar_Get("mod_allowsuicide", "1", CVAR_ARCHIVE);
+	mod_allowRadio = Cvar_Get("mod_allowradio", "1", CVAR_ARCHIVE);
+	mod_allowVote = Cvar_Get("mod_allowvote", "1", CVAR_ARCHIVE);
+
+
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);
 	sv_auth_engine = Cvar_Get("sv_auth_engine", "1", CVAR_ROM);

@@ -71,8 +71,16 @@ cvar_t  *mod_colourNames;
 
 cvar_t  *mod_playerCount;
 cvar_t  *mod_mapName;
-
 cvar_t  *mod_hideCmds;
+cvar_t  *mod_infiniteAmmo;
+
+cvar_t  *mod_allowTell;
+cvar_t  *mod_allowItemDrop;
+cvar_t  *mod_allowWeapDrop;
+cvar_t  *mod_allowFlagDrop;
+cvar_t  *mod_allowSuicide;
+cvar_t  *mod_allowRadio;
+cvar_t  *mod_allowVote;
 //@Barbatos
 #ifdef USE_AUTH
 cvar_t	*sv_authServerIP;

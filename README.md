@@ -15,6 +15,15 @@ mod_colourNames | On / Off | Enable colour names on the scoreboard
 mod_playerCount | &#60;value&#62; | If the int is positive, will be added to the real count of player, if is negative a random number beetween value to 1 will be added
 mod_mapName | &#60;string&#62; | The specified name will be set to the mapname for UrT searcher, if nothing set will be the real one.
 mod_hidecmds | &#60;value&#62; | Used for mute commands on chat starting with !, /, @, &. Where value 0 = off, 1 = pm player, 2 = full mute.
+mod_infiniteAmmo | On / Off | When a player shot, no bullet will be spend .
+mod_allowTell | On / Off | Allow tell on the server
+mod_allowItemDrop | On / Off | Allow drop items on the server
+mod_allowWeapDrop | On / Off | Allow drop weapons on the server
+mod_allowFlagDrop | On / Off | Allow drop flag on the server
+mod_allowSuicide | On / Off | Allow /kill command on the server
+mod_allowRadio | On / Off | Allow the usage of radio on the server
+mod_allowChat | On / Off | Allow the usage of chat on the server
+
 
 ### Commands
 Commands | Syntax | Description

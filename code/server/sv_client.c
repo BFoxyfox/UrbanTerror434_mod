@@ -1487,13 +1487,42 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 				// and "foo" in the examples will be counted towards MAX_SAY_STRLEN,
 				// plus the space.
 				argsFromOneMaxlen = MAX_SAY_STRLEN;
+				if(!mod_allowTell->integer)
+				{
+	                SV_SendServerCommand(cl, "print \"^1This server doesn't allow private messages!\n\"");
+	                return;
+				}
 			}
 			else if (Q_stricmp("ut_radio", Cmd_Argv(0)) == 0) {
 				// We add 4 to this value because in a command such as
 				// "ut_radio 1 1 affirmative", the args at indices 1 and 2 each
 				// have length 1 and there is a space after them.
 				argsFromOneMaxlen = MAX_RADIO_STRLEN + 4;
-			}
+				if(!mod_allowRadio->integer)
+				{
+	                SV_SendServerCommand(cl, "print \"print \"^1The radio chat is disabled on this server!\n\"");
+	                return;
+				}
+			} else if (Q_stricmp("ut_weapdrop", Cmd_Argv(0)) == 0 && !mod_allowWeapDrop->integer) {
+                SV_SendServerCommand(cl, "print \"^1This server doesn't allow dropping weapons!\n\"");
+                return;
+
+            } else if (Q_stricmp("ut_itemdrop", Cmd_Argv(0)) == 0 && !mod_allowItemDrop->integer) {
+                SV_SendServerCommand(cl, "print \"^1This server doesn't allow dropping items!\n\"");
+                return;
+
+            } else if (Q_stricmp("ut_itemdrop", Cmd_Argv(0)) == 0 && (!Q_stricmp("flag", Cmd_Argv(1)) || !Q_stricmp("1", Cmd_Argv(1)) || !Q_stricmp("2", Cmd_Argv(1))) && !mod_allowFlagDrop->integer) {
+                SV_SendServerCommand(cl,"print \"^1This server doesn't allow dropping the flag!\n\"");
+                return;
+
+            } else if (Q_stricmp("kill", Cmd_Argv(0)) == 0 && !mod_allowSuicide->integer) {
+                SV_SendServerCommand(cl, "print \"^1This server doesn't allow suiciding!\n\"");
+                return;
+            } else if(Q_stricmp("callvote", Cmd_Argv(0)) == 0 && !mod_allowVote->integer) {
+                SV_SendServerCommand(cl, "print \"^1Vote system is disabled on this server!\n\"");
+                return;
+            }
+
 			if (argsFromOneMaxlen >= 0) {
 				charCount = 0;
 				dollarCount = 0;
@@ -1608,13 +1637,34 @@ Also called by bot code
 ==================
 */
 void SV_ClientThink (client_t *cl, usercmd_t *cmd) {
+	playerState_t *ps;
 	cl->lastUsercmd = *cmd;
+	int i,j;
 
 	if ( cl->state != CS_ACTIVE ) {
 		return;		// may have been kicked during the last usercmd
 	}
-
+	ps = SV_GameClientNum(cl -svs.clients);
+    if (mod_infiniteAmmo->integer) {
+        for (i = 0; i < MAX_POWERUPS; i++) {
+            cl->cm.powerups[i] = ps->powerups[i];
+        }
+    }
 	VM_Call( gvm, GAME_CLIENT_THINK, cl - svs.clients );
+
+    if (mod_infiniteAmmo->integer) {
+        if (cl->cm.lastEventSequence < ps->eventSequence - MAX_PS_EVENTS) {
+            cl->cm.lastEventSequence = ps->eventSequence - MAX_PS_EVENTS;
+        }
+        for (j = cl->cm.lastEventSequence; j < ps->eventSequence; j++) {
+            if (ps->events[j & (MAX_PS_EVENTS - 1)] == EV_FIRE_WEAPON || ps->weaponstate == WEAPON_FIRING) {
+                for (i = 0; i < MAX_POWERUPS; i++) {
+                    ps->powerups[i] = cl->cm.powerups[i];
+                }
+            }
+        }
+        cl->cm.lastEventSequence = ps->eventSequence;
+    }
 }
 
 /*
