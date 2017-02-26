@@ -1,0 +1,7 @@
+build-64bits:
+  script:
+    - apt-get update -qq && apt-get install -y -qq gcc make
+    - make
+  artifacts:
+    paths:
+      - build/release-linux-x86_64/titanMod.x86_64
