@@ -71,8 +71,13 @@ cvar_t  *mod_colourNames;
 
 cvar_t  *mod_playerCount;
 cvar_t  *mod_mapName;
+cvar_t  *mod_mapColour;
 cvar_t  *mod_hideCmds;
 cvar_t  *mod_infiniteAmmo;
+cvar_t  *mod_forceGear;
+cvar_t  *mod_checkClientGuid;
+cvar_t  *mod_disconnectMsg;
+cvar_t  *mod_badRconMessage;
 
 cvar_t  *mod_allowTell;
 cvar_t  *mod_allowRadio;
@@ -144,7 +149,6 @@ void QDECL SV_LogPrintf(const char *fmt, ...) {
 	FS_Write(buffer, strlen(buffer), file);
 	FS_FCloseFile(file);
 }
-
 
 /*
 ===============
@@ -497,9 +501,9 @@ void SVC_Info( netadr_t from ) {
 	Info_SetValueForKey( infostring, "hostname", sv_hostname->string );
 
 	if(!strcmp(mod_mapName->string, ""))
-		Info_SetValueForKey( infostring, "mapname", sv_mapname->string );
+		Info_SetValueForKey( infostring, "mapname", va("^%i%s", mod_mapColour->integer, sv_mapname->string) );
 	else
-		Info_SetValueForKey( infostring, "mapname", mod_mapName->string);
+		Info_SetValueForKey( infostring, "mapname", va("^%i%s", mod_mapColour->integer, mod_mapName->string) );
 
 	// If playerCount is positive, the number will be added to the real player count
 	// If playerCount is negative a random number between playerCount and 1 will be added
@@ -521,8 +525,7 @@ void SVC_Info( netadr_t from ) {
 
 	Info_SetValueForKey( infostring, "clients", va("%i", count) );
 	Info_SetValueForKey( infostring, "bots", va("%i", bots) );
-	Info_SetValueForKey( infostring, "sv_maxclients",
-		va("%i", sv_maxclients->integer - sv_privateClients->integer ) );
+	Info_SetValueForKey( infostring, "sv_maxclients", va("%i", sv_maxclients->integer - sv_privateClients->integer ) );
 	Info_SetValueForKey( infostring, "gametype", va("%i", sv_gametype->integer ) );
 	Info_SetValueForKey( infostring, "pure", va("%i", sv_pure->integer ) );
 	
@@ -676,7 +679,7 @@ void SVC_RemoteCommand( netadr_t from, msg_t *msg ) {
 	if ( !strlen( sv_rconPassword->string ) ) {
 		Com_Printf ("No rconpassword set on the server.\n");
 	} else if ( !valid ) {
-		Com_Printf ("Bad rconpassword.\n");
+		Com_Printf ("%s\n", mod_badRconMessage->string);
 	} else {
 		remaining[0] = 0;
 		

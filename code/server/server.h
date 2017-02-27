@@ -335,8 +335,13 @@ extern  cvar_t  *mod_colourNames;
 
 extern  cvar_t  *mod_playerCount;
 extern  cvar_t  *mod_mapName;
+extern  cvar_t  *mod_mapColour;
 extern  cvar_t  *mod_hideCmds;
 extern  cvar_t  *mod_infiniteAmmo;
+extern  cvar_t  *mod_forceGear;
+extern  cvar_t  *mod_checkClientGuid;
+extern  cvar_t  *mod_disconnectMsg;
+extern  cvar_t  *mod_badRconMessage;
 
 extern  cvar_t  *mod_allowTell;
 extern  cvar_t  *mod_allowRadio;

@@ -89,6 +89,34 @@ char *SV_CleanName(char *name) {
     return name;
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_ApproveGuid
+// --------------
+// A cl_guid string must have length 32 and consist of characters '0'
+// through '9' and 'A' through 'F'.
+/////////////////////////////////////////////////////////////////////
+qboolean SV_ApproveGuid(const char *guid) {
+
+    int    i;
+    int    length;
+    char   c;
+    
+    if (mod_checkClientGuid->integer > 0) {
+
+        length = strlen(guid); 
+        if (length != 32) { 
+            return qfalse; 
+        }
+
+        for (i = 31; i >= 0;) {
+            c = guid[i--];
+            if (!(('0' <= c && c <= '9') || ('A' <= c && c <= 'F'))) {
+                return qfalse;
+            }
+        }
+    }
+    return qtrue;
+}
 
 /*
 =================
@@ -344,19 +372,26 @@ void SV_DirectConnect(netadr_t from) {
             }
 
             if (sv_clientsPerIp->integer && numIpClients >= sv_clientsPerIp->integer) {
-                NET_OutOfBandPrint(NS_SERVER, from, "print\nToo many connections from the same IP\n");
+                NET_OutOfBandPrint(NS_SERVER, from, "print\nToo many connections from the same IP.\n");
                 Com_DPrintf ("Client %i rejected due to too many connections from the same IP\n", i);
                 return;
             }
 
+            // Check for valid guid
+            if (!SV_ApproveGuid(Info_ValueForKey(userinfo, "cl_guid"))) {
+                NET_OutOfBandPrint(NS_SERVER, from, "print\nInvalid GUID detected.\n");
+                Com_DPrintf("Invalid cl_guid: rejected connection from %s\n", NET_AdrToString(from));
+                return;
+            }
+
             if (sv_minPing->value && ping < sv_minPing->value) {
-                NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is for high pings only\n");
+                NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is for high pings only.\n");
                 Com_DPrintf ("Client %i rejected on a too low ping\n", i);
                 return;
             }
 
             if (sv_maxPing->value && ping > sv_maxPing->value) {
-                NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is for low pings only\n");
+                NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is for low pings only.\n");
                 Com_DPrintf ("Client %i rejected on a too high ping\n", i);
                 return;
             }
@@ -436,7 +471,7 @@ void SV_DirectConnect(netadr_t from) {
             }
         }
         else {
-            NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is full\n");
+            NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is full, sorry.\n");
             Com_DPrintf("Rejected a connection.\n");
             return;
         }
@@ -1134,7 +1169,7 @@ The client is going to disconnect, so remove the connection immediately  FIXME: 
 =================
 */
 static void SV_Disconnect_f( client_t *cl ) {
-	SV_DropClient( cl, "disconnected" );
+    SV_DropClient(cl, mod_disconnectMsg->string);
 }
 
 /*
@@ -1411,7 +1446,12 @@ void SV_UpdateUserinfo_f( client_t *cl ) {
 
 	Q_strncpyz( cl->userinfo, Cmd_Argv(1), sizeof(cl->userinfo) );
 
+    if (mod_forceGear && Q_stricmp(mod_forceGear->string, "")) {
+        Info_SetValueForKey(cl->userinfo, "gear", mod_forceGear->string);
+    }
+
 	SV_UserinfoChanged( cl );
+    
 	// call prog code to allow overrides
 	VM_Call( gvm, GAME_CLIENT_USERINFO_CHANGED, cl - svs.clients );
         if (mod_colourNames->integer) 

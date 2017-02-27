@@ -993,8 +993,13 @@ void SV_Init (void) {
         
 	mod_playerCount = Cvar_Get ("mod_playerCount", "0", CVAR_ARCHIVE);
 	mod_mapName = Cvar_Get("mod_mapName", "", CVAR_ARCHIVE);
+	mod_mapColour = Cvar_Get("mod_mapColour", "7", CVAR_ARCHIVE);
 	mod_hideCmds = Cvar_Get ("mod_hideCmds", "1", CVAR_ARCHIVE);
 	mod_infiniteAmmo = Cvar_Get("mod_infiniteAmmo", "0", CVAR_ARCHIVE);
+	mod_forceGear = Cvar_Get ("mod_forceGear", "", CVAR_ARCHIVE);
+	mod_checkClientGuid = Cvar_Get ("mod_checkClientGuid", "1", CVAR_ARCHIVE);
+	mod_disconnectMsg = Cvar_Get ("mod_disconnectMsg", "disconnected", CVAR_ARCHIVE);
+	mod_badRconMessage = Cvar_Get ("mod_badRconMessage", "Bad rconpassword.", CVAR_ARCHIVE);
 
 	mod_allowTell = Cvar_Get("mod_allowTell", "1", CVAR_ARCHIVE);
 	mod_allowRadio = Cvar_Get("mod_allowRadio", "1", CVAR_ARCHIVE);

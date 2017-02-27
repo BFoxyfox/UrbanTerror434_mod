@@ -534,7 +534,7 @@ static void SV_MapRestart_f( void ) {
 
 	// make sure server is running
 	if ( !com_sv_running->integer ) {
-		Com_Printf( "Server is not running.\n" );
+		Com_Printf( "Server is not running\n" );
 		return;
 	}
 
@@ -969,7 +969,7 @@ static void SV_ConSay_f(void) {
 
     // make sure server is running
     if (!com_sv_running->integer) {
-        Com_Printf("Server is not running.\n");
+        Com_Printf("Server is not running\n");
         return;
     }
 
@@ -986,10 +986,8 @@ static void SV_ConSay_f(void) {
     }
 
     strcat(text, p);
-    SV_SendServerCommand(NULL, "chat \"%s\n\"", text);
-
+    SV_SendServerCommand(NULL, "chat \"%s\"", text);
 }
-
 
 /*
 ==================
@@ -1028,8 +1026,7 @@ static void SV_ConTell_f(void) {
     }
 
     strcat(text, p);
-    SV_SendServerCommand(cl, "chat \"%s\n\"", text);
-
+    SV_SendServerCommand(cl, "chat \"%s\"", text);
 }
 
 
