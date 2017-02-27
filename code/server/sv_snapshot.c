@@ -505,7 +505,7 @@ static void SV_BuildClientSnapshot( client_t *client ) {
 		}
 	}
 
-	//InfiniteStamina MinMod
+	// TitanMod: stamina, walljumps
 	if(mod_infiniteStamina->integer)
 	{
 		ps->stats[9] = ps->stats[0] * 300;

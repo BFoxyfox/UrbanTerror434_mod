@@ -81,10 +81,6 @@ typedef struct {
 	int				time;
 } server_t;
 
-
-
-
-
 typedef struct {
 	int				areabytes;
 	byte			areabits[MAX_MAP_AREA_BYTES];		// portalarea visibility bits
@@ -114,29 +110,25 @@ typedef struct netchan_buffer_s {
 } netchan_buffer_t;
 
 #define MAX_NETNAME 36
-typedef struct
-{
+typedef struct {
 	int	connected;
 	usercmd_t	cmd;
 	qboolean unknow1;
 	qboolean unknow2;
 	char		netname[MAX_NETNAME];
-}clientPersistant_t;
-typedef struct gclient_s
-{
+} clientPersistant_t;
+
+typedef struct gclient_s {
 	playerState_t ps;
 	clientPersistant_t pers;
-}gclient_t;
+} gclient_t;
 
-typedef struct clientMod_s
-{
-	//For infiniteAmmo
-	int powerups[MAX_POWERUPS];
-	int lastEventSequence;
-	//----------------
+typedef struct clientMod_s {
+	int powerups[MAX_POWERUPS];       // For infinite ammo
+	int lastEventSequence;            // For infinite ammo
 
-	int delayedSound;  //Snapshot where sound event should be sended
-}clientMod_t;
+	int delayedSound;                 // Snapshot where sound event should be sended
+} clientMod_t;
 
 typedef struct client_s {
 	clientState_t	state;
@@ -201,12 +193,12 @@ typedef struct client_s {
 	int		demo_deltas;	// how many delta frames did we let through so far?
 	
 	int				oldServerTime;
-	qboolean			csUpdated[MAX_CONFIGSTRINGS+1];	
+	qboolean		csUpdated[MAX_CONFIGSTRINGS+1];	
 	int             numcmds;    // number of client commands so far (in this time period), for sv_floodprotect
         
     char            colourName[MAX_NAME_LENGTH];
 
-    //Variables of titanmod
+    // Variables of TitanMod
     clientMod_t cm;
 } client_t;
 
@@ -331,7 +323,6 @@ extern	cvar_t	*sv_strictAuth;
 extern	cvar_t	*sv_clientsPerIp;
 
 extern	cvar_t	*sv_demonotice;
-
 extern  cvar_t  *sv_sayprefix;
 extern  cvar_t  *sv_tellprefix;
 extern  cvar_t  *sv_demofolder;
@@ -344,15 +335,15 @@ extern  cvar_t  *mod_colourNames;
 
 extern  cvar_t  *mod_playerCount;
 extern  cvar_t  *mod_mapName;
-extern  cvar_t  *mod_infiniteAmmo;
 extern  cvar_t  *mod_hideCmds;
+extern  cvar_t  *mod_infiniteAmmo;
 
 extern  cvar_t  *mod_allowTell;
-extern  cvar_t  *mod_allowItemDrop;
+extern  cvar_t  *mod_allowRadio;
 extern  cvar_t  *mod_allowWeapDrop;
+extern  cvar_t  *mod_allowItemDrop;
 extern  cvar_t  *mod_allowFlagDrop;
 extern  cvar_t  *mod_allowSuicide;
-extern  cvar_t  *mod_allowRadio;
 extern  cvar_t  *mod_allowVote;
 
 #ifdef USE_AUTH
@@ -371,20 +362,18 @@ void QDECL SV_LogPrintf(const char *fmt, ...);
 void SV_FinalMessage (char *message);
 void QDECL SV_SendServerCommand( client_t *cl, const char *fmt, ...);
 
-
 void SV_AddOperatorCommands (void);
 void SV_RemoveOperatorCommands (void);
-
 
 void SV_MasterHeartbeat (void);
 void SV_MasterShutdown (void);
 
 
 
-
 //
 // sv_init.c
 //
+
 void SV_SendCustomConfigString(client_t *client, char *cs, int index);
 void SV_SetConfigstring( int index, const char *val );
 void SV_GetConfigstring( int index, char *buffer, int bufferSize );
@@ -426,11 +415,15 @@ void SV_ClientThink (client_t *cl, usercmd_t *cmd);
 
 void SV_WriteDownloadToClient( client_t *cl , msg_t *msg );
 
+
+
 //
 // sv_ccmds.c
 //
 void SV_Heartbeat_f( void );
 void SVD_WriteDemoFile(const client_t*, const msg_t*);
+
+
 
 //
 // sv_snapshot.c
@@ -444,6 +437,8 @@ void SV_SendClientSnapshot( client_t *client );
 void SV_CheckClientUserinfoTimer( void );
 void SV_UpdateUserinfo_f( client_t *cl );
 
+
+
 //
 // sv_game.c
 //
@@ -456,6 +451,8 @@ void		SV_InitGameProgs ( void );
 void		SV_ShutdownGameProgs ( void );
 void		SV_RestartGameProgs( void );
 qboolean	SV_inPVS (const vec3_t p1, const vec3_t p2);
+
+
 
 //
 // sv_bot.c
@@ -473,7 +470,8 @@ int			SV_BotGetConsoleMessage( int client, char *buf, int size );
 int BotImport_DebugPolygonCreate(int color, int numPoints, vec3_t *points);
 void BotImport_DebugPolygonDelete(int id);
 
-//============================================================
+
+
 //
 // high level object sorting to reduce interaction tests
 //
@@ -492,12 +490,9 @@ void SV_LinkEntity( sharedEntity_t *ent );
 // sets ent->leafnums[] for pvs determination even if the entity
 // is not solid
 
-
 clipHandle_t SV_ClipHandleForEntity( const sharedEntity_t *ent );
 
-
 void SV_SectorList_f( void );
-
 
 int SV_AreaEntities( const vec3_t mins, const vec3_t maxs, int *entityList, int maxcount );
 // fills in a table of entity numbers with entities that have bounding boxes
@@ -507,10 +502,8 @@ int SV_AreaEntities( const vec3_t mins, const vec3_t maxs, int *entityList, int 
 // returns the number of pointers filled in
 // The world entity is never returned in this list.
 
-
 int SV_PointContents( const vec3_t p, int passEntityNum );
 // returns the CONTENTS_* value from the world and all entities at the given point.
-
 
 void SV_Trace( trace_t *results, const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, int passEntityNum, int contentmask, int capsule );
 // mins and maxs are relative
@@ -523,9 +516,10 @@ void SV_Trace( trace_t *results, const vec3_t start, vec3_t mins, vec3_t maxs, c
 
 // passEntityNum is explicitly excluded from clipping checks (normally ENTITYNUM_NONE)
 
-
 void SV_ClipToEntity( trace_t *trace, const vec3_t start, const vec3_t mins, const vec3_t maxs, const vec3_t end, int entityNum, int contentmask, int capsule );
 // clip to a specific entity
+
+
 
 //
 // sv_net_chan.c

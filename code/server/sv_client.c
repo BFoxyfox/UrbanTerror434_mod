@@ -25,14 +25,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static void SV_CloseDownload( client_t *cl );
 
+
+/////////////////////////////////////////////////////////////////////
+// SV_PlaySoundFile
+/////////////////////////////////////////////////////////////////////
 void SV_PlaySoundFile (client_t *cl, char*file)
 {
-	//Set config string
+	// Set config string
 	SV_SendCustomConfigString(cl, file, 543);
-	//Make a delay to reproduce
+	// Make a delay to reproduce
 	cl->cm.delayedSound = sv.snapshotCounter+2;
 }
 
+
+/////////////////////////////////////////////////////////////////////
+// SV_SetExternalEvent
+/////////////////////////////////////////////////////////////////////
 void SV_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg)
 {
 	playerState_t *ps;
@@ -47,7 +55,9 @@ void SV_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg)
 }
 
 
-
+/////////////////////////////////////////////////////////////////////
+// SV_CleanName
+/////////////////////////////////////////////////////////////////////
 char *SV_CleanName(char *name) {
     char  *d;
     char  *s;
@@ -78,7 +88,6 @@ char *SV_CleanName(char *name) {
 
     return name;
 }
-
 
 
 /*
@@ -1389,13 +1398,14 @@ SV_UpdateUserinfo_f
 ==================
 */
 void SV_UpdateUserinfo_f( client_t *cl ) {
-        gclient_t *gl;
+    gclient_t *gl;
+
 	if ( (sv_floodProtect->integer) && (cl->state >= CS_ACTIVE) && (svs.time < cl->nextReliableUserTime) ) {
 		Q_strncpyz( cl->userinfobuffer, Cmd_Argv(1), sizeof(cl->userinfobuffer) );
 		SV_SendServerCommand(cl, "print \"^7Command ^1delayed^7 due to sv_floodprotect.\"");
 		return;
 	}
-        gl = (gclient_t *)SV_GameClientNum(cl - svs.clients);
+    gl = (gclient_t *)SV_GameClientNum(cl - svs.clients);
 	cl->userinfobuffer[0]=0;
 	cl->nextReliableUserTime = svs.time + 5000;
 
@@ -1422,7 +1432,6 @@ static ucmd_t ucmds[] = {
 	{"nextdl", SV_NextDownload_f},
 	{"stopdl", SV_StopDownload_f},
 	{"donedl", SV_DoneDownload_f},
-
 	{NULL, NULL}
 };
 
@@ -1449,7 +1458,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 
 	// see if it is a server level command
 	for (u=ucmds ; u->name ; u++) {
-		if (!strcmp (Cmd_Argv(0), u->name) ) {
+		if (!Q_stricmp (Cmd_Argv(0), u->name) ) {
 			u->func( cl );
 			bProcessed = qtrue;
 			break;
@@ -1466,9 +1475,9 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 			if (Q_stricmp("say", Cmd_Argv(0)) == 0 || Q_stricmp("say_team", Cmd_Argv(0)) == 0) {
 
 				argsFromOneMaxlen = MAX_SAY_STRLEN;
-                if (strncmp("!pm", Cmd_Argv(1), 3) == 0)
+                if (Q_stricmp("!pm", Cmd_Argv(1)) == 0 && mod_hideCmds->integer < 2)
                 {
-                    SV_SendServerCommand(cl, "chat \"^9[pm] ^7%s: ^3%s\"", cl->colourName, Cmd_Args());
+                    SV_SendServerCommand(cl, "chat \"%s^7%s: ^3%s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
     				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
     				return;
                 }
@@ -1477,7 +1486,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
                 if (((*p == '!') || (*p == '@') || (*p == '&') || (*p == '/')) && mod_hideCmds->integer)
                 {
     				if(mod_hideCmds->integer == 1)
-                        SV_SendServerCommand(cl, "chat \"^9[pm] ^7%s: ^3%s\"", cl->colourName, Cmd_Args());
+                    SV_SendServerCommand(cl, "chat \"%s^7%s: ^3%s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
     				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
     				return;
                 }
@@ -1500,7 +1509,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 				argsFromOneMaxlen = MAX_RADIO_STRLEN + 4;
 				if(!mod_allowRadio->integer)
 				{
-	                SV_SendServerCommand(cl, "print \"print \"^1The radio chat is disabled on this server!\n\"");
+	                SV_SendServerCommand(cl, "print \"^1The radio chat is disabled on this server!\n\"");
 	                return;
 				}
 			} else if (Q_stricmp("ut_weapdrop", Cmd_Argv(0)) == 0 && !mod_allowWeapDrop->integer) {

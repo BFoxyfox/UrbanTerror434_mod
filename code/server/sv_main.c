@@ -75,12 +75,13 @@ cvar_t  *mod_hideCmds;
 cvar_t  *mod_infiniteAmmo;
 
 cvar_t  *mod_allowTell;
-cvar_t  *mod_allowItemDrop;
+cvar_t  *mod_allowRadio;
 cvar_t  *mod_allowWeapDrop;
+cvar_t  *mod_allowItemDrop;
 cvar_t  *mod_allowFlagDrop;
 cvar_t  *mod_allowSuicide;
-cvar_t  *mod_allowRadio;
 cvar_t  *mod_allowVote;
+
 //@Barbatos
 #ifdef USE_AUTH
 cvar_t	*sv_authServerIP;
@@ -95,6 +96,9 @@ EVENT MESSAGES
 =============================================================================
 */
 
+/////////////////////////////////////////////////////////////////////
+// SV_LogPrintf
+/////////////////////////////////////////////////////////////////////
 void QDECL SV_LogPrintf(const char *fmt, ...) {
 
 	va_list       argptr;
@@ -497,16 +501,22 @@ void SVC_Info( netadr_t from ) {
 	else
 		Info_SetValueForKey( infostring, "mapname", mod_mapName->string);
 
-	//If playercount is positive, the number will be added to the real player count
-	//if is negative a random number beetween playercount and 1 will be added
+	// If playerCount is positive, the number will be added to the real player count
+	// If playerCount is negative a random number between playerCount and 1 will be added
 	if(0<mod_playerCount->integer)
 		count+=mod_playerCount->integer;
 	else if(0>mod_playerCount->integer)
 	{
 		int rand, seed;
+		rand = 0;
 		seed = Com_Milliseconds();
-		rand = Q_rand(&seed) % mod_playerCount->integer +1 ;
+		while (1 > rand) {
+		    rand = Q_rand(&seed) % mod_playerCount->integer +1;
+	    }
 		count+=rand;
+	}
+	if (count > sv_maxclients->integer) {
+		count = sv_maxclients->integer;
 	}
 
 	Info_SetValueForKey( infostring, "clients", va("%i", count) );
