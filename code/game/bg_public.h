@@ -93,6 +93,100 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #error overflow: (CS_MAX) > MAX_CONFIGSTRINGS
 #endif
 
+
+
+#define UT_WPFLAG_NOFLASH          (1 << 0)
+#define UT_WPFLAG_NOCROSSHAIR      (1 << 1)
+#define UT_WPFLAG_PENETRATE_KEVLAR (1 << 2)
+#define UT_WPFLAG_PENETRATE_HELMET (1 << 3)
+#define UT_WPFLAG_SINGLEBULLETCLIP (1 << 4)
+#define UT_WPFLAG_REMOVEONEMPTY    (1 << 5)
+
+#define UT_WPMODEFLAG_NOHOLD       (1 << 0)
+#define UT_WPMODEFLAG_ALTANIMS     (1 << 1)
+#define UT_WPMODEFLAG_NOAMMO       (1 << 2)
+#define UT_WPMODEFLAG_HOLDTOREADY  (1 << 3)
+#define UT_WPMODEFLAG_NORECOIL     (1 << 4)
+
+
+#define UT_WEAPON_GETID(x)          (((x)^ut_weapon_xor) & 0x000000FF)
+#define UT_WEAPON_GETBULLETS(x)    ((((x)^ut_weapon_xor) & 0x0000FF00) >> 8)
+#define UT_WEAPON_GETMODE(x)       ((((x)^ut_weapon_xor) & 0x00FF0000) >> 16)
+#define UT_WEAPON_GETCLIPS(x)      ((((x)^ut_weapon_xor) & 0xFF000000) >> 24)
+
+#define UT_WEAPON_SETID(x, y)      ((x) = (((x) & 0xFFFFFF00) | (0x000000FF &  ((y)       ^ut_weapon_xor)) ))
+#define UT_WEAPON_SETBULLETS(x, y) ((x) = (((x) & 0xFFFF00FF) | (0x0000FF00 & (((y) << 8 )^ut_weapon_xor)) ))
+#define UT_WEAPON_SETMODE(x, y)    ((x) = (((x) & 0xFF00FFFF) | (0x00FF0000 & (((y) << 16)^ut_weapon_xor)) ))
+#define UT_WEAPON_SETCLIPS(x, y)   ((x) = (((x) & 0x00FFFFFF) | (0xFF000000 & (((y) << 24)^ut_weapon_xor)) ))
+
+
+typedef enum {
+	HL_UNKNOWN,
+	HL_HEAD,
+	HL_HELMET,
+	HL_TORSO,
+	HL_VEST,
+	HL_ARML,
+	HL_ARMR,
+	HL_GROIN,
+	HL_BUTT,
+	HL_LEGUL,
+	HL_LEGUR,
+	HL_LEGLL,
+	HL_LEGLR,
+	HL_FOOTL,
+	HL_FOOTR,
+	HL_MAX
+} ariesHitLocation_t;
+
+
+typedef enum {
+	UT_WP_NONE = 0,
+	UT_WP_KNIFE,
+	UT_WP_BERETTA,
+	UT_WP_DEAGLE,
+	UT_WP_SPAS12,
+	UT_WP_MP5K,
+	UT_WP_UMP45,
+	UT_WP_HK69,
+	UT_WP_LR,
+	UT_WP_G36,
+	UT_WP_PSG1,
+	UT_WP_GRENADE_HE,
+	UT_WP_GRENADE_FLASH,
+	UT_WP_GRENADE_SMOKE,
+	UT_WP_SR8,
+	UT_WP_AK103,
+	UT_WP_BOMB,
+	UT_WP_NEGEV,
+	UT_WP_GRENADE_FRAG,
+	UT_WP_M4,
+	UT_WP_GLOCK,
+	UT_WP_COLT1911,
+	UT_WP_MAC11,
+	UT_WP_FRF1,
+	UT_WP_BENELLI,
+	UT_WP_P90,
+	UT_WP_MAGNUM,
+	UT_WP_FSTOD,
+
+	UT_WP_NUM_WEAPONS,
+	UT_WP_KICK,
+	UT_WP_KNIFE_THROWN,
+} weapon_t;
+
+typedef enum {
+	UT_WPTYPE_MELEE,
+	UT_WPTYPE_THROW,
+	UT_WPTYPE_SMALL_GUN,
+	UT_WPTYPE_SMALL_GUN_DUAL,
+	UT_WPTYPE_MEDIUM_GUN,
+	UT_WPTYPE_MEDIUM_GUN_DUAL,
+	UT_WPTYPE_LARGE_GUN,
+	UT_WPTYPE_PLANT
+} weaponType_t;
+
+
 typedef enum {
 	GT_FFA,				// free for all
 	GT_TOURNAMENT,		// one on one tournament
@@ -299,7 +393,7 @@ typedef enum {
 	HI_NUM_HOLDABLE
 } holdable_t;
 
-
+/* Old enum, no more needed
 typedef enum {
 	WP_NONE,
 
@@ -321,7 +415,7 @@ typedef enum {
 
 	WP_NUM_WEAPONS
 } weapon_t;
-
+*/
 
 // reward sounds (stored in ps->persistant[PERS_PLAYEREVENTS])
 #define	PLAYEREVENT_DENIEDREWARD		0x0001

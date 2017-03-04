@@ -25,6 +25,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static void SV_CloseDownload( client_t *cl );
 
+void EV_PlayerSpawn(int cnum)
+{
+	SV_WeaponMod(cnum);
+}
+void EV_ClientUserInfoChanged(int cnum)
+{
+	SV_WeaponMod(cnum);
+}
+
 void SV_PlaySoundFile (client_t *cl, char*file)
 {
 	//Set config string

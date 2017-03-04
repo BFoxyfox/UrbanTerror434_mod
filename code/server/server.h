@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "../qcommon/qcommon.h"
 #include "../game/g_public.h"
 #include "../game/bg_public.h"
+#include "qvmStructs.h"
 
 //=============================================================================
 
@@ -82,9 +83,6 @@ typedef struct {
 } server_t;
 
 
-
-
-
 typedef struct {
 	int				areabytes;
 	byte			areabits[MAX_MAP_AREA_BYTES];		// portalarea visibility bits
@@ -113,20 +111,6 @@ typedef struct netchan_buffer_s {
 	struct netchan_buffer_s *next;
 } netchan_buffer_t;
 
-#define MAX_NETNAME 36
-typedef struct
-{
-	int	connected;
-	usercmd_t	cmd;
-	qboolean unknow1;
-	qboolean unknow2;
-	char		netname[MAX_NETNAME];
-}clientPersistant_t;
-typedef struct gclient_s
-{
-	playerState_t ps;
-	clientPersistant_t pers;
-}gclient_t;
 
 typedef struct clientMod_s
 {
@@ -362,6 +346,23 @@ extern  cvar_t  *sv_auth_engine;
 
 //===========================================================
 
+
+//
+// qvm_weapons.c
+//
+void *QVM_baseWeapon(weapon_t weapon);
+void *QVM_bullets(weapon_t weapon);
+void *QVM_clips(weapon_t weapon);
+void *QVM_damages(weapon_t weapon , ariesHitLocation_t location);
+void *QVM_bleed(weapon_t weapon,  ariesHitLocation_t location);
+void *QVM_knockback(weapon_t weapon);
+void *QVM_reloadSpeed(weapon_t weapon);
+void *QVM_fireTime(weapon_t weapon, int mode);
+void *QVM_noRecoil(weapon_t weapon, int mode);
+void *QVM_WPflags(weapon_t weapon);
+int overrideQVMData(void);
+
+
 //
 // sv_main.c
 //
@@ -394,13 +395,16 @@ void SV_SetUserinfo( int index, const char *val );
 void SV_GetUserinfo( int index, char *buffer, int bufferSize );
 
 void SV_ChangeMaxClients( void );
-void SV_SpawnServer( char *server, qboolean killBots );
+void SV_SpawnServer(char* server, qboolean killBots);
 
 
 
 //
 // sv_client.c
 //
+
+void EV_PlayerSpawn (int cnum);
+void EV_ClientUserInfoChanged(int cnum);
 
 void SV_PlaySoundFile (client_t *cl, char*file);
 void SV_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg);
@@ -447,6 +451,7 @@ void SV_UpdateUserinfo_f( client_t *cl );
 //
 // sv_game.c
 //
+urtVersion getVersion(void);
 int	SV_NumForGentity( sharedEntity_t *ent );
 sharedEntity_t *SV_GentityNum( int num );
 playerState_t *SV_GameClientNum( int num );

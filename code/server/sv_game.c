@@ -27,6 +27,73 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 botlib_export_t	*botlib_export;
 
+char (*weaponString)[15];
+
+char weaponstring42[(UT_WP_NUM_WEAPONS+3)][15] =
+{
+	"none",
+	"knife",
+	"beretta",
+	"deagle",
+	"spas12",
+	"mp5k",
+	"ump45",
+	"hk69",
+	"lr",
+	"g36",
+	"psg1",
+	"he",
+	"flash",
+	"smoke",
+	"sr8",
+	"ak103",
+	"bomb",
+	"negev",
+	"frag",
+	"m4",
+	"glock",
+	"colt",
+	"mac11",
+	"nothing",
+	"boot",
+	"knifefly"
+};
+char weaponstring43[(UT_WP_NUM_WEAPONS+3)][15] =
+{
+	"none",
+	"knife",
+	"beretta",
+	"deagle",
+	"spas12",
+	"mp5k",
+	"ump45",
+	"hk69",
+	"lr",
+	"g36",
+	"psg1",
+	"he",
+	"flash",
+	"smoke",
+	"sr8",
+	"ak103",
+	"bomb",
+	"negev",
+	"frag",
+	"m4",
+	"glock",
+	"colt",
+	"mac11",
+	"frf1",
+	"benelli",
+	"p90",
+	"magnum",
+	"fstod",
+	"nothing",
+	"boot",
+	"knifefly"
+};
+
+
 void SV_GameError( const char *string ) {
 	Com_Error( ERR_DROP, "%s", string );
 }
@@ -281,6 +348,7 @@ void SV_LocateGameData( sharedEntity_t *gEnts, int numGEntities, int sizeofGEnti
 
 	sv.gameClients = clients;
 	sv.gameClientSize = sizeofGameClient;
+
 }
 
 
@@ -1008,6 +1076,32 @@ void SV_InitGameProgs( void ) {
 	}
 
 	SV_InitGameVM( qfalse );
+
+	urtVersion vurt = getVersion();
+	Com_Printf("Loading WeaponStrings... %s ", versionString[vurt]);
+	switch(vurt){
+	case vunk:
+		Com_Printf("[FAIL]\n **The actual version (%s) is not supported**\n", Cvar_VariableString("g_modversion"));
+		break;
+	case v42023:
+		weaponString = weaponstring42;
+		Com_Printf("[OK]\n");
+		break;
+	case v43:
+	case v431:
+	case v432:
+		weaponString = weaponstring43;
+		Com_Printf("[OK]\n");
+		break;
+	}
+
+	if(!overrideQVMData())
+	{
+		Com_Printf("********************************\n");
+		Com_Printf("Unable to override weapon data\n");
+		Com_Printf("********************************\n");
+	}
+
 }
 
 
@@ -1025,4 +1119,13 @@ qboolean SV_GameCommand( void ) {
 
 	return VM_Call( gvm, GAME_CONSOLE_COMMAND );
 }
-
+urtVersion getVersion(void)
+{
+	int i;
+	for(i = 0; i < vMAX; i++)
+	{
+		if(!strcmp(Cvar_VariableString("g_modversion"), versionString[i]))
+			return i;
+	}
+	return vunk;
+}

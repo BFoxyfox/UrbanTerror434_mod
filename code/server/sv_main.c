@@ -87,6 +87,41 @@ cvar_t	*sv_authServerIP;
 cvar_t  *sv_auth_engine;
 #endif
 
+int ut_weapon_xor;
+const char versionString[vMAX][10] = {
+		"unknow",
+		"4.2.023",
+		"4.3",
+		"4.3.1",
+		"4.3.2"
+};
+
+char teamstring[4][5] =
+{
+		"free",
+		"red",
+		"blue",
+		"spec"
+};
+
+char hitlocationstring[HL_MAX][15] =
+{
+    "unknown",
+    "head",
+    "helmet",
+    "torso",
+    "vest",
+    "arml",
+    "armr",
+    "groin",
+    "butt",
+    "legul",
+    "legur",
+    "legll",
+    "leglr",
+    "footl",
+    "footr"
+};
 /*
 =============================================================================
 

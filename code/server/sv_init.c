@@ -752,6 +752,7 @@ void SV_SpawnServer( char *server, qboolean killBots ) {
 	// load and spawn all other entities
 	SV_InitGameProgs();
 
+
 	// don't allow a map_restart if game is modified
 	sv_gametype->modified = qfalse;
 
