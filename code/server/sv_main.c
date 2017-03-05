@@ -104,6 +104,19 @@ char teamstring[4][5] =
 		"spec"
 };
 
+char itemString[UT_ITEM_MAX][10] =
+{
+	[UT_ITEM_REDFLAG] = {"redflag"},
+	[UT_ITEM_BLUEFLAG] = {"blueflag"},
+	[UT_ITEM_VEST] = {"vest"},
+	[UT_ITEM_NVG]  = {"nvg"},
+	[UT_ITEM_SILENCER]  = {"silencer"},
+	[UT_ITEM_LASER]  = {"laser"},
+	[UT_ITEM_MEDKIT] = {"medkit"},
+	[UT_ITEM_HELMET]  = {"helmet"},
+	[UT_ITEM_AMMO]  = {"ammo"},
+	[UT_ITEM_APR]  = {"apr"},
+};
 char hitlocationstring[HL_MAX][15] =
 {
     "unknown",

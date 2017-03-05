@@ -25,6 +25,16 @@ int SV_LastWeaponNum(playerState_t * ps)
 	if(last < 0) last = 1;
 	return last-1;
 }
+utItemID_t SV_Char2Item(char *item)
+{
+	int i;
+	for ( i = 0; i < (UT_ITEM_MAX); i++ ) {
+		if ( Q_stricmp( itemString[i], item ) == 0) {
+			return i;
+		}
+	}
+	return 0;
+}
 weapon_t SV_Char2Weapon(char weapon[36])
 {
 	int i;
@@ -69,6 +79,100 @@ void SV_SetClipsAW(playerState_t *ps, int clipsCount)
 	updateXOR(ps);
 	UT_WEAPON_SETCLIPS(ps->powerups[ps->weapon], clipsCount);
 }
+
+void utPSGiveItem ( playerState_t *ps, utItemID_t itemid )
+{
+	int  i,itemSlot = -1;
+	//Search for a empty itemslot
+	for(i=0;i<MAX_WEAPONS;i++)
+	{
+		if(UT_ITEM_GETID(ps->ammo[i]) == UT_ITEM_NONE)
+		{
+			itemSlot = i;
+		}
+	}
+	if(itemSlot == -1)
+		return;
+	switch (itemid)
+	{
+		case UT_ITEM_AMMO:
+			{
+				for (i = 0; i < MAX_POWERUPS; i++) //UT_MAX_WEAPONS
+				{
+					int  weaponID = UT_WEAPON_GETID( ps->powerups[i] );
+					int  ammo;
+
+					if (weaponID == UT_WP_KNIFE, weaponID == UT_WP_NONE)
+					{
+						continue;
+					}
+
+					if ((weaponID == UT_WP_GRENADE_HE) || (weaponID == UT_WP_GRENADE_FLASH) || (weaponID == UT_WP_GRENADE_SMOKE))
+					{
+						continue;
+					}
+
+					ammo  = UT_WEAPON_GETCLIPS(ps->powerups[i]);
+					ammo += *(int*)QVM_clips(weaponID);
+
+					UT_WEAPON_SETCLIPS(ps->powerups[i], ammo );
+				}
+				break;
+			}
+
+		default:
+			UT_ITEM_SETID( ps->ammo[itemSlot], itemid );
+			UT_ITEM_SETFLAGS(ps->ammo[itemSlot], UT_ITEMFLAG_ON);
+			break;
+	}
+}
+void utPSRemoveItem ( playerState_t *ps, utItemID_t itemid )
+{
+	int i;
+	for(i = 0; i < MAX_WEAPONS; i++)
+	{
+		if(UT_ITEM_GETID(ps->ammo[i]) == itemid)
+		{
+			UT_ITEM_SETID(ps->ammo[i],0);
+		}
+	}
+}
+
+void SV_AutoItemGive(playerState_t *ps)
+{
+	int i;
+	team_t team = *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
+
+	if(team == TEAM_SPECTATOR)
+		return;
+
+	if(strlen(Cvar_VariableString(va("%s_giveitem", teamstring[team]))))
+	{
+		Cmd_TokenizeString(Cvar_VariableString(va("%s_giveitem", teamstring[team])));
+		for(i = 0; i < Cmd_Argc(); i++)
+		{
+			utPSGiveItem(ps, SV_Char2Item(Cmd_Argv(i)));
+		}
+	}
+}
+void SV_AutoItemTake(playerState_t *ps)
+{
+	int i;
+	team_t team = *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
+
+	if(team == TEAM_SPECTATOR)
+		return;
+
+	if(strlen(Cvar_VariableString(va("%s_takeitem", teamstring[team]))))
+	{
+		Cmd_TokenizeString(Cvar_VariableString(va("%s_takeitem", teamstring[team])));
+		for(i = 0; i < Cmd_Argc(); i++)
+		{
+			utPSRemoveItem(ps, SV_Char2Item(Cmd_Argv(i)));
+		}
+	}
+}
+
 void SV_GiveWeapon(playerState_t *ps, weapon_t wp)
 {
 	int i;
@@ -151,6 +255,8 @@ void SV_WeaponMod(int cnum)
     }
     SV_AutoRemove(ps);
     SV_AutoGive(ps);
+    SV_AutoItemTake(ps);
+    SV_AutoItemGive(ps);
     ps->weapon = SV_LastWeaponNum(ps);
 }
 

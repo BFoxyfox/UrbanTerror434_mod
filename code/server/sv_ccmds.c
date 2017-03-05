@@ -1768,6 +1768,44 @@ static void SV_GiveWeapon_f (void) {
 	SV_GiveWeapon(ps, wp);
 }
 
+static void SV_GiveItem_f (void) {
+
+	client_t      *cl;
+	utItemID_t      item = 0;
+	playerState_t *ps;
+	int           i;
+	if(!com_sv_running->integer) {
+		Com_Printf("Server is not running\n");
+		return;
+	}
+
+	if(Cmd_Argc() < 3) {
+		Com_Printf("Usage: giveitem <player> <item>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if (!cl) {
+        return;
+    }
+
+	for(i = 0; i < UT_ITEM_MAX; i++) {
+		if(Q_stricmp( Cmd_Argv(2), itemString[i] ) == 0) {
+			item = i;
+			break;
+		}
+	}
+
+	if(item == 0) {
+		Com_Printf("Item not found\n");
+		return;
+	}
+
+	ps = SV_GameClientNum(cl - svs.clients);
+
+	utPSGiveItem(ps, item);
+}
+
 static void SV_RemoveWeapon_f (void) {
 
 	client_t      *cl;
@@ -1806,6 +1844,45 @@ static void SV_RemoveWeapon_f (void) {
 
 	SV_RemoveWeapon(ps, wp);
 }
+
+static void SV_RemoveItem_f (void) {
+
+	client_t      *cl;
+	utItemID_t      item = 0;
+	playerState_t *ps;
+	int           i;
+	if(!com_sv_running->integer) {
+		Com_Printf("Server is not running\n");
+		return;
+	}
+
+	if(Cmd_Argc() < 3) {
+		Com_Printf("Usage: removeitem <player> <item>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if (!cl) {
+        return;
+    }
+
+	for(i = 0; i < UT_ITEM_MAX; i++) {
+		if(Q_stricmp( Cmd_Argv(2), itemString[i] ) == 0) {
+			item = i;
+			break;
+		}
+	}
+
+	if(item == 0) {
+		Com_Printf("Item not found\n");
+		return;
+	}
+
+	ps = SV_GameClientNum(cl - svs.clients);
+
+	utPSRemoveItem(ps, item);
+}
+
 static void SV_QVMReload_f (void)
 {
 	if(!com_sv_running->integer) {
@@ -1862,6 +1939,10 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("playsound", SV_PlaySound_f);
     Cmd_AddCommand ("giveweapon", SV_GiveWeapon_f);
     Cmd_AddCommand ("removeweapon", SV_RemoveWeapon_f);
+    Cmd_AddCommand ("giveitem", SV_GiveItem_f);
+    Cmd_AddCommand ("removeitem", SV_RemoveItem_f);
+    Cmd_AddCommand ("gi", SV_GiveItem_f);
+    Cmd_AddCommand ("ri", SV_RemoveItem_f);
     Cmd_AddCommand ("gw", SV_GiveWeapon_f);
     Cmd_AddCommand ("rw", SV_RemoveWeapon_f);
     Cmd_AddCommand ("qvmreload", SV_QVMReload_f);

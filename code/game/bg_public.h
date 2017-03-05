@@ -119,6 +119,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define UT_WEAPON_SETMODE(x, y)    ((x) = (((x) & 0xFF00FFFF) | (0x00FF0000 & (((y) << 16)^ut_weapon_xor)) ))
 #define UT_WEAPON_SETCLIPS(x, y)   ((x) = (((x) & 0x00FFFFFF) | (0xFF000000 & (((y) << 24)^ut_weapon_xor)) ))
 
+#define UT_ITEM_GETID(x)		   (x & 0x00FF)
+#define UT_ITEM_GETFLAGS(x) 	   ((x & 0xFF00) >> 8)
+
+#define UT_ITEM_SETID(x, y) 	   (x = ((x & 0xFF00) + (0x00FF & (y))))
+#define UT_ITEM_SETFLAGS(x, y)	   (x = ((x & 0x00FF) + ((0x00FF & (y)) << 8)))
+
+#define UT_ITEMFLAG_ON	  (1 << 0)
+
 
 typedef enum {
 	HL_UNKNOWN,

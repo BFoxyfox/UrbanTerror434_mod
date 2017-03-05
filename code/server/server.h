@@ -374,6 +374,9 @@ void SV_SetClipsAW(playerState_t *ps, int clipsCount);
 void SV_GiveWeapon(playerState_t *ps, weapon_t wp);
 void SV_RemoveWeapon(playerState_t *ps, weapon_t wp);
 void SV_WeaponMod(int cnum);
+void utPSRemoveItem ( playerState_t *ps, utItemID_t itemid );
+void utPSGiveItem ( playerState_t *ps, utItemID_t itemid );
+
 
 
 
