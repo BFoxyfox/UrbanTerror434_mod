@@ -27,10 +27,14 @@ static void SV_CloseDownload( client_t *cl );
 
 void EV_PlayerSpawn(int cnum)
 {
+	if(cnum < 0 || cnum > sv_maxclients->integer)
+		return;
 	SV_WeaponMod(cnum);
 }
 void EV_ClientUserInfoChanged(int cnum)
 {
+	if(cnum < 0 || cnum > sv_maxclients->integer)
+		return;
 	SV_WeaponMod(cnum);
 }
 

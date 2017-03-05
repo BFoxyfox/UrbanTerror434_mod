@@ -102,7 +102,7 @@ void utPSGiveItem ( playerState_t *ps, utItemID_t itemid )
 					int  weaponID = UT_WEAPON_GETID( ps->powerups[i] );
 					int  ammo;
 
-					if (weaponID == UT_WP_KNIFE, weaponID == UT_WP_NONE)
+					if (weaponID == UT_WP_KNIFE || weaponID == UT_WP_NONE)
 					{
 						continue;
 					}
@@ -249,6 +249,7 @@ void SV_WeaponMod(int cnum)
 {
     playerState_t *ps;
     ps = SV_GameClientNum(cnum);
+
     if(*(int *)(((byte*)ps)+gclientOffsets[getVersion()][OFFSET_NOGEARCHANGE]))
     {
         return;
@@ -267,6 +268,7 @@ int overrideQVMData(void)
 
 	if(getVersion()==vunk)
 		return 0;
+	Com_Printf("Dumping weapon modifications to qvm memory... ");
 	for(weapon = UT_WP_KNIFE; weapon < (UT_WP_NUM_WEAPONS + 3); weapon++)
 	{
 		//Check one by one all cvar that can contains some data for changes weapons
@@ -322,5 +324,6 @@ int overrideQVMData(void)
 			}
 		}
 	}
+	Com_Printf("[OK]\n");
 	return 1;
 }
