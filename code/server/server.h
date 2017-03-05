@@ -360,7 +360,21 @@ void *QVM_reloadSpeed(weapon_t weapon);
 void *QVM_fireTime(weapon_t weapon, int mode);
 void *QVM_noRecoil(weapon_t weapon, int mode);
 void *QVM_WPflags(weapon_t weapon);
+
+
+//
+// sv_weapon.c
+//
 int overrideQVMData(void);
+void SV_GiveBulletsAW(playerState_t *ps, int bulletsCount);
+void SV_GiveBulletsAW(playerState_t *ps, int bulletsCount);
+void SV_GiveClipsAW(playerState_t *ps, int clipsCount);
+void SV_SetBulletsAW(playerState_t *ps, int bulletsCount);
+void SV_SetClipsAW(playerState_t *ps, int clipsCount);
+void SV_GiveWeapon(playerState_t *ps, weapon_t wp);
+void SV_RemoveWeapon(playerState_t *ps, weapon_t wp);
+void SV_WeaponMod(int cnum);
+
 
 
 //

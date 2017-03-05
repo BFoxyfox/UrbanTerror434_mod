@@ -38,13 +38,13 @@ weapon_t SV_Char2Weapon(char weapon[36])
 int  generateWeapon(playerState_t *ps, int clips, int mode, int bullet, int weapon)
 {
 	updateXOR(ps);
-	int powerup;
-	UT_WEAPON_SETBULLETS(powerup, bullet);
-	UT_WEAPON_SETCLIPS(powerup, clips);
-	UT_WEAPON_SETMODE(powerup, mode);
-	UT_WEAPON_SETID(powerup, weapon);
+	int pweapon;
+	UT_WEAPON_SETBULLETS(pweapon, bullet);
+	UT_WEAPON_SETCLIPS(pweapon, clips);
+	UT_WEAPON_SETMODE(pweapon, mode);
+	UT_WEAPON_SETID(pweapon, weapon);
 
-	return powerup;
+	return pweapon;
 }
 void SV_GiveBulletsAW(playerState_t *ps, int bulletsCount)
 {
@@ -152,4 +152,69 @@ void SV_WeaponMod(int cnum)
     SV_AutoRemove(ps);
     SV_AutoGive(ps);
     ps->weapon = SV_LastWeaponNum(ps);
+}
+
+int overrideQVMData(void)
+{
+	weapon_t weapon;
+	int i;
+
+	if(getVersion()==vunk)
+		return 0;
+	for(weapon = UT_WP_KNIFE; weapon < (UT_WP_NUM_WEAPONS + 3); weapon++)
+	{
+		//Check one by one all cvar that can contains some data for changes weapons
+		if(Q_stricmp(Cvar_VariableString(va("%s_clips", weaponString[weapon])), ""))
+		{
+			*(int*)QVM_clips(weapon) = Cvar_VariableIntegerValue(va("%s_clips", weaponString[weapon]));
+		}
+		if(Q_stricmp(Cvar_VariableString(va("%s_bullets", weaponString[weapon])), ""))
+		{
+			*(int*)QVM_bullets(weapon) = Cvar_VariableIntegerValue(va("%s_bullets", weaponString[weapon]));
+		}
+		if(Q_stricmp(Cvar_VariableString(va("%s_knockback", weaponString[weapon])), ""))
+		{
+			*(float*)QVM_knockback(weapon) = Cvar_VariableValue(va("%s_knockback", weaponString[weapon]));
+		}
+		if(Q_stricmp(Cvar_VariableString(va("%s_reloadspeed", weaponString[weapon])), ""))
+		{
+			*(float*)QVM_reloadSpeed(weapon) = Cvar_VariableValue(va("%s_reloadspeed", weaponString[weapon]));
+		}
+		if(Q_stricmp(Cvar_VariableString(va("%s_damagesfactor", weaponString[weapon])), ""))
+		{
+			for(i=0;i<HL_MAX;i++)
+			{
+				*(float*)QVM_damages(weapon,i)*=Cvar_VariableValue(va("%s_damagesfactor", weaponString[weapon]));
+			}
+		}
+
+		//Now check strings that have more values than only the name
+		for(i=0; i<HL_MAX; i++)
+		{
+			if(Q_stricmp(Cvar_VariableString(va("%s_damages_%s", weaponString[weapon], hitlocationstring[i])), ""))
+			{
+				*(float*)QVM_damages(weapon,i) = Cvar_VariableValue(va("%s_damages_%s", weaponString[weapon], hitlocationstring[i]));
+			}
+			if(Q_stricmp(Cvar_VariableString(va("%s_bleed_%s", weaponString[weapon], hitlocationstring[i])), ""))
+			{
+				if(Cvar_VariableIntegerValue(va("%s_bleed_%s", weaponString[weapon], hitlocationstring[i])))
+					*(float*)QVM_bleed(weapon,i) = 1;
+				else
+					*(float*)QVM_bleed(weapon,i) = 0;
+			}
+
+		}
+		for(i=0; i<3; i++)
+		{
+			if(Q_stricmp(Cvar_VariableString(va("%s_%i_firetime", weaponString[weapon], i)), ""))
+			{
+				*(int*)QVM_fireTime(weapon,i) = Cvar_VariableIntegerValue(va("%s_%i_firetime", weaponString[weapon], i));
+			}
+			if(Q_stricmp(Cvar_VariableString(va("%s_%i_norecoil", weaponString[weapon], i)), ""))
+			{
+				*(int*)QVM_noRecoil(weapon,i) |= UT_WPMODEFLAG_NORECOIL;
+			}
+		}
+	}
+	return 1;
 }
