@@ -22,7 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "server.h"
 
-
+/////////////////////////////////////////////////////////////////////
+// SV_SendCustomConfigString
+/////////////////////////////////////////////////////////////////////
 void SV_SendCustomConfigString(client_t *client, char *cs, int index)
 {
 	int maxChunkSize = MAX_STRING_CHARS - 24;
@@ -218,9 +220,9 @@ SV_SetUserinfo
 ===============
 */
 void SV_SetUserinfo( int index, const char *val ) {
-        gclient_t *gl;
+    gclient_t *gl;
     
-        if ( index < 0 || index >= sv_maxclients->integer ) {
+    if ( index < 0 || index >= sv_maxclients->integer ) {
 		Com_Error (ERR_DROP, "SV_SetUserinfo: bad index %i\n", index);
 	}
 
@@ -228,16 +230,15 @@ void SV_SetUserinfo( int index, const char *val ) {
 		val = "";
 	}
         
-        gl = SV_GameClientNum(index);
+    gl = (gclient_t *)SV_GameClientNum(index);
 	Q_strncpyz( svs.clients[index].userinfo, val, sizeof( svs.clients[ index ].userinfo ) );
 	Q_strncpyz( svs.clients[index].name, Info_ValueForKey( val, "name" ), sizeof(svs.clients[index].name) );
-        if (mod_colourNames->integer) {
+
+    if (mod_colourNames->integer) {
 	    if(svs.clients[index].colourName[0])
 		    Q_strncpyz(gl->pers.netname, svs.clients[index].colourName, MAX_NETNAME);
-        }
+    }
 }
-
-
 
 /*
 ===============
@@ -980,30 +981,34 @@ void SV_Init (void) {
 	sv_strictAuth = Cvar_Get ("sv_strictAuth", "1", CVAR_ARCHIVE );
 
 	sv_demonotice = Cvar_Get ("sv_demonotice", "Smile! You're on camera!", CVAR_ARCHIVE);
-	
 	sv_sayprefix = Cvar_Get ("sv_sayprefix", "console: ", CVAR_ARCHIVE );	
 	sv_tellprefix = Cvar_Get ("sv_tellprefix", "console_tell: ", CVAR_ARCHIVE );
 	sv_demofolder = Cvar_Get ("sv_demofolder", "serverdemos", CVAR_ARCHIVE );
 
-	mod_infiniteStamina = Cvar_Get ("mod_infiniteStamina", "1", CVAR_ARCHIVE);
-	mod_infiniteWallJumps = Cvar_Get ("mod_infiniteWallJumps", "1", CVAR_ARCHIVE);
+	// TitanMod cvars
+	mod_infiniteStamina = Cvar_Get ("mod_infiniteStamina", "0", CVAR_ARCHIVE);
+	mod_infiniteWallJumps = Cvar_Get ("mod_infiniteWallJumps", "0", CVAR_ARCHIVE);
 	mod_nofallDamage = Cvar_Get("mod_nofallDamage", "1", CVAR_ARCHIVE);
 	
-	mod_colourNames = Cvar_Get ("mod_colournames", "1", CVAR_ARCHIVE);
+	mod_colourNames = Cvar_Get ("mod_colourNames", "1", CVAR_ARCHIVE);
         
-	mod_playerCount = Cvar_Get ("mod_playercount", "0", CVAR_ARCHIVE);
-	mod_mapName = Cvar_Get("mod_mapname", "", CVAR_ARCHIVE);
-	mod_hideCmds = Cvar_Get ("mod_hidecmds", "1", CVAR_ARCHIVE);
+	mod_playerCount = Cvar_Get ("mod_playerCount", "0", CVAR_ARCHIVE);
+	mod_mapName = Cvar_Get("mod_mapName", "", CVAR_ARCHIVE);
+	mod_mapColour = Cvar_Get("mod_mapColour", "7", CVAR_ARCHIVE);
+	mod_hideCmds = Cvar_Get ("mod_hideCmds", "1", CVAR_ARCHIVE);
 	mod_infiniteAmmo = Cvar_Get("mod_infiniteAmmo", "0", CVAR_ARCHIVE);
+	mod_forceGear = Cvar_Get ("mod_forceGear", "", CVAR_ARCHIVE);
+	mod_checkClientGuid = Cvar_Get ("mod_checkClientGuid", "1", CVAR_ARCHIVE);
+	mod_disconnectMsg = Cvar_Get ("mod_disconnectMsg", "disconnected", CVAR_ARCHIVE);
+	mod_badRconMessage = Cvar_Get ("mod_badRconMessage", "Bad rconpassword.", CVAR_ARCHIVE);
 
-	mod_allowTell = Cvar_Get("mod_allowtell", "1", CVAR_ARCHIVE);
-	mod_allowWeapDrop = Cvar_Get("mod_allowweapdrop", "1", CVAR_ARCHIVE);
-	mod_allowItemDrop = Cvar_Get("mod_allowitemdrop", "1", CVAR_ARCHIVE);
-	mod_allowFlagDrop = Cvar_Get("mod_allowflagdrop", "1", CVAR_ARCHIVE);
-	mod_allowSuicide = Cvar_Get("mod_allowsuicide", "1", CVAR_ARCHIVE);
-	mod_allowRadio = Cvar_Get("mod_allowradio", "1", CVAR_ARCHIVE);
-	mod_allowVote = Cvar_Get("mod_allowvote", "1", CVAR_ARCHIVE);
-
+	mod_allowTell = Cvar_Get("mod_allowTell", "1", CVAR_ARCHIVE);
+	mod_allowRadio = Cvar_Get("mod_allowRadio", "1", CVAR_ARCHIVE);
+	mod_allowWeapDrop = Cvar_Get("mod_allowWeapDrop", "1", CVAR_ARCHIVE);
+	mod_allowItemDrop = Cvar_Get("mod_allowItemDrop", "1", CVAR_ARCHIVE);
+	mod_allowFlagDrop = Cvar_Get("mod_allowFlagDrop", "1", CVAR_ARCHIVE);
+	mod_allowSuicide = Cvar_Get("mod_allowSuicide", "1", CVAR_ARCHIVE);
+	mod_allowVote = Cvar_Get("mod_allowVote", "1", CVAR_ARCHIVE);
 
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);

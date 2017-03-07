@@ -203,7 +203,9 @@ void QDECL Com_Printf( const char *fmt, ... ) {
 			
 			if(logfile)
 			{
-				Com_Printf( "logfile opened on %s\n", asctime( newtime ) );
+				Com_Printf( "-----------------------------------------------------------\n");
+				Com_Printf( "[OK] Logfile opened on: %s", asctime( newtime ) );
+				Com_Printf( "-----------------------------------------------------------\n\n");
 			
 				if ( com_logfile->integer > 1 )
 				{
@@ -2526,7 +2528,7 @@ void Com_Init( char *commandLine ) {
 	Cmd_AddCommand ("changeVectors", MSG_ReportChangeVectors_f );
 	Cmd_AddCommand ("writeconfig", Com_WriteConfig_f );
 
-	s = va("%s %s", Q3_VERSION, __DATE__ );
+	s = va("%s", Q3_VERSION);
 	com_version = Cvar_Get ("version", s, CVAR_ROM | CVAR_SERVERINFO );
 
 	Sys_Init();

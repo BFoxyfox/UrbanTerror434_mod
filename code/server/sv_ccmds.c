@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 /*
 ===============================================================================
-
 OPERATOR CONSOLE ONLY COMMANDS
 
 These commands can only be entered from stdin or by a remote operator datagram
@@ -535,7 +534,7 @@ static void SV_MapRestart_f( void ) {
 
 	// make sure server is running
 	if ( !com_sv_running->integer ) {
-		Com_Printf( "Server is not running.\n" );
+		Com_Printf( "Server is not running\n" );
 		return;
 	}
 
@@ -970,7 +969,7 @@ static void SV_ConSay_f(void) {
 
     // make sure server is running
     if (!com_sv_running->integer) {
-        Com_Printf("Server is not running.\n");
+        Com_Printf("Server is not running\n");
         return;
     }
 
@@ -987,10 +986,8 @@ static void SV_ConSay_f(void) {
     }
 
     strcat(text, p);
-    SV_SendServerCommand(NULL, "chat \"%s\n\"", text);
-
+    SV_SendServerCommand(NULL, "chat \"%s\"", text);
 }
-
 
 /*
 ==================
@@ -1029,8 +1026,7 @@ static void SV_ConTell_f(void) {
     }
 
     strcat(text, p);
-    SV_SendServerCommand(cl, "chat \"%s\n\"", text);
-
+    SV_SendServerCommand(cl, "chat \"%s\"", text);
 }
 
 
@@ -1572,11 +1568,17 @@ static void SV_CompleteMapName( char *args, int argNum ) {
 	}
 }*/
 
+
+
 /*
- * TitanMod Commands
- */
+===============================================================================
+                            TitanMod Commands
+===============================================================================
+*/
 
-
+/////////////////////////////////////////////////////////////////////
+// SV_SetScore_f
+/////////////////////////////////////////////////////////////////////
 static void SV_SetScore_f(void) {
 
 	client_t      *cl;
@@ -1610,7 +1612,9 @@ static void SV_SetScore_f(void) {
 	}
 }
 
-
+/////////////////////////////////////////////////////////////////////
+// SV_SetDeaths_f
+/////////////////////////////////////////////////////////////////////
 static void SV_SetDeaths_f(void) {
 
 	client_t      *cl;
@@ -1644,6 +1648,9 @@ static void SV_SetDeaths_f(void) {
 	}
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_Invisible_f
+/////////////////////////////////////////////////////////////////////
 static void SV_Invisible_f(void) {
 
 	client_t       *cl;
@@ -1676,6 +1683,9 @@ static void SV_Invisible_f(void) {
 	}
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_PlaySoundFile_f
+/////////////////////////////////////////////////////////////////////
 static void SV_PlaySoundFile_f (void)
 {
 	client_t *cl;
@@ -1700,6 +1710,10 @@ static void SV_PlaySoundFile_f (void)
 
 	SV_PlaySoundFile (cl, Cmd_Argv(2));
 }
+
+/////////////////////////////////////////////////////////////////////
+// SV_PlaySound_f
+/////////////////////////////////////////////////////////////////////
 static void SV_PlaySound_f (void)
 {
 	client_t *cl;
@@ -1926,12 +1940,15 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("map_restart", SV_MapRestart_f);
     Cmd_AddCommand ("sectorlist", SV_SectorList_f);
     Cmd_AddCommand ("map", SV_Map_f);
+    Cmd_AddCommand ("killserver", SV_KillServer_f);
+
 #ifndef PRE_RELEASE_DEMO
     Cmd_AddCommand ("devmap", SV_Map_f);
     Cmd_AddCommand ("spmap", SV_Map_f);
     Cmd_AddCommand ("spdevmap", SV_Map_f);
+#endif
 
-    //TitanMod
+    // TitanMod Cmds
     Cmd_AddCommand ("setscore", SV_SetScore_f);
     Cmd_AddCommand ("setdeaths", SV_SetDeaths_f);
     Cmd_AddCommand ("invisible", SV_Invisible_f);
@@ -1947,8 +1964,6 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("rw", SV_RemoveWeapon_f);
     Cmd_AddCommand ("qvmreload", SV_QVMReload_f);
 
-#endif
-    Cmd_AddCommand ("killserver", SV_KillServer_f);
     if( com_dedicated->integer ) {
         Cmd_AddCommand ("say", SV_ConSay_f);
         Cmd_AddCommand ("tell", SV_ConTell_f);

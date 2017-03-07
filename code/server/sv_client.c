@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static void SV_CloseDownload( client_t *cl );
 
+
 void EV_PlayerSpawn(int cnum)
 {
 	if(cnum < 0 || cnum > sv_maxclients->integer)
@@ -38,14 +39,22 @@ void EV_ClientUserInfoChanged(int cnum)
 	SV_WeaponMod(cnum);
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_PlaySoundFile
+/////////////////////////////////////////////////////////////////////
+
 void SV_PlaySoundFile (client_t *cl, char*file)
 {
-	//Set config string
+	// Set config string
 	SV_SendCustomConfigString(cl, file, 543);
-	//Make a delay to reproduce
+	// Make a delay to reproduce
 	cl->cm.delayedSound = sv.snapshotCounter+2;
 }
 
+
+/////////////////////////////////////////////////////////////////////
+// SV_SetExternalEvent
+/////////////////////////////////////////////////////////////////////
 void SV_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg)
 {
 	playerState_t *ps;
@@ -60,7 +69,9 @@ void SV_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg)
 }
 
 
-
+/////////////////////////////////////////////////////////////////////
+// SV_CleanName
+/////////////////////////////////////////////////////////////////////
 char *SV_CleanName(char *name) {
     char  *d;
     char  *s;
@@ -92,7 +103,34 @@ char *SV_CleanName(char *name) {
     return name;
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_ApproveGuid
+// --------------
+// A cl_guid string must have length 32 and consist of characters '0'
+// through '9' and 'A' through 'F'.
+/////////////////////////////////////////////////////////////////////
+qboolean SV_ApproveGuid(const char *guid) {
 
+    int    i;
+    int    length;
+    char   c;
+    
+    if (mod_checkClientGuid->integer > 0) {
+
+        length = strlen(guid); 
+        if (length != 32) { 
+            return qfalse; 
+        }
+
+        for (i = 31; i >= 0;) {
+            c = guid[i--];
+            if (!(('0' <= c && c <= '9') || ('A' <= c && c <= 'F'))) {
+                return qfalse;
+            }
+        }
+    }
+    return qtrue;
+}
 
 /*
 =================
@@ -348,19 +386,26 @@ void SV_DirectConnect(netadr_t from) {
             }
 
             if (sv_clientsPerIp->integer && numIpClients >= sv_clientsPerIp->integer) {
-                NET_OutOfBandPrint(NS_SERVER, from, "print\nToo many connections from the same IP\n");
+                NET_OutOfBandPrint(NS_SERVER, from, "print\nToo many connections from the same IP.\n");
                 Com_DPrintf ("Client %i rejected due to too many connections from the same IP\n", i);
                 return;
             }
 
+            // Check for valid guid
+            if (!SV_ApproveGuid(Info_ValueForKey(userinfo, "cl_guid"))) {
+                NET_OutOfBandPrint(NS_SERVER, from, "print\nInvalid GUID detected.\n");
+                Com_DPrintf("Invalid cl_guid: rejected connection from %s\n", NET_AdrToString(from));
+                return;
+            }
+
             if (sv_minPing->value && ping < sv_minPing->value) {
-                NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is for high pings only\n");
+                NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is for high pings only.\n");
                 Com_DPrintf ("Client %i rejected on a too low ping\n", i);
                 return;
             }
 
             if (sv_maxPing->value && ping > sv_maxPing->value) {
-                NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is for low pings only\n");
+                NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is for low pings only.\n");
                 Com_DPrintf ("Client %i rejected on a too high ping\n", i);
                 return;
             }
@@ -440,7 +485,7 @@ void SV_DirectConnect(netadr_t from) {
             }
         }
         else {
-            NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is full\n");
+            NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is full, sorry.\n");
             Com_DPrintf("Rejected a connection.\n");
             return;
         }
@@ -1138,7 +1183,7 @@ The client is going to disconnect, so remove the connection immediately  FIXME: 
 =================
 */
 static void SV_Disconnect_f( client_t *cl ) {
-	SV_DropClient( cl, "disconnected" );
+    SV_DropClient(cl, mod_disconnectMsg->string);
 }
 
 /*
@@ -1402,19 +1447,25 @@ SV_UpdateUserinfo_f
 ==================
 */
 void SV_UpdateUserinfo_f( client_t *cl ) {
-        gclient_t *gl;
+    gclient_t *gl;
+
 	if ( (sv_floodProtect->integer) && (cl->state >= CS_ACTIVE) && (svs.time < cl->nextReliableUserTime) ) {
 		Q_strncpyz( cl->userinfobuffer, Cmd_Argv(1), sizeof(cl->userinfobuffer) );
 		SV_SendServerCommand(cl, "print \"^7Command ^1delayed^7 due to sv_floodprotect.\"");
 		return;
 	}
-        gl = (gclient_t *)SV_GameClientNum(cl - svs.clients);
+    gl = (gclient_t *)SV_GameClientNum(cl - svs.clients);
 	cl->userinfobuffer[0]=0;
 	cl->nextReliableUserTime = svs.time + 5000;
 
 	Q_strncpyz( cl->userinfo, Cmd_Argv(1), sizeof(cl->userinfo) );
 
+    if (mod_forceGear && Q_stricmp(mod_forceGear->string, "")) {
+        Info_SetValueForKey(cl->userinfo, "gear", mod_forceGear->string);
+    }
+
 	SV_UserinfoChanged( cl );
+    
 	// call prog code to allow overrides
 	VM_Call( gvm, GAME_CLIENT_USERINFO_CHANGED, cl - svs.clients );
         if (mod_colourNames->integer) 
@@ -1435,7 +1486,6 @@ static ucmd_t ucmds[] = {
 	{"nextdl", SV_NextDownload_f},
 	{"stopdl", SV_StopDownload_f},
 	{"donedl", SV_DoneDownload_f},
-
 	{NULL, NULL}
 };
 
@@ -1462,7 +1512,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 
 	// see if it is a server level command
 	for (u=ucmds ; u->name ; u++) {
-		if (!strcmp (Cmd_Argv(0), u->name) ) {
+		if (!Q_stricmp (Cmd_Argv(0), u->name) ) {
 			u->func( cl );
 			bProcessed = qtrue;
 			break;
@@ -1479,9 +1529,9 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 			if (Q_stricmp("say", Cmd_Argv(0)) == 0 || Q_stricmp("say_team", Cmd_Argv(0)) == 0) {
 
 				argsFromOneMaxlen = MAX_SAY_STRLEN;
-                if (strncmp("!pm", Cmd_Argv(1), 3) == 0)
+                if (Q_stricmp("!pm", Cmd_Argv(1)) == 0 && mod_hideCmds->integer < 2)
                 {
-                    SV_SendServerCommand(cl, "chat \"^9[pm] ^7%s: ^3%s\"", cl->colourName, Cmd_Args());
+                    SV_SendServerCommand(cl, "chat \"%s^7%s: ^3%s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
     				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
     				return;
                 }
@@ -1490,7 +1540,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
                 if (((*p == '!') || (*p == '@') || (*p == '&') || (*p == '/')) && mod_hideCmds->integer)
                 {
     				if(mod_hideCmds->integer == 1)
-                        SV_SendServerCommand(cl, "chat \"^9[pm] ^7%s: ^3%s\"", cl->colourName, Cmd_Args());
+                    SV_SendServerCommand(cl, "chat \"%s^7%s: ^3%s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
     				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
     				return;
                 }
@@ -1513,7 +1563,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 				argsFromOneMaxlen = MAX_RADIO_STRLEN + 4;
 				if(!mod_allowRadio->integer)
 				{
-	                SV_SendServerCommand(cl, "print \"print \"^1The radio chat is disabled on this server!\n\"");
+	                SV_SendServerCommand(cl, "print \"^1The radio chat is disabled on this server!\n\"");
 	                return;
 				}
 			} else if (Q_stricmp("ut_weapdrop", Cmd_Argv(0)) == 0 && !mod_allowWeapDrop->integer) {

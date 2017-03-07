@@ -197,16 +197,21 @@ typedef enum {
 
 typedef enum {
 	GT_FFA,				// free for all
-	GT_TOURNAMENT,		// one on one tournament
+	GT_LMS, 		    // last man standing
 	GT_SINGLE_PLAYER,	// single player ffa
 
 	//-- team games go after this --
 
 	GT_TEAM,			// team deathmatch
-	GT_CTF,				// capture the flag
-	GT_1FCTF,
-	GT_OBELISK,
-	GT_HARVESTER,
+	GT_SURVIVOR, 	    // team survivor
+	GT_FTL,		        // follow the leader
+	GT_CAH,			    // capture and hold
+	GT_CTF, 			// capture the flag
+	GT_BOMB, 		    // bomb mode
+	GT_JUMP,			// jump
+	GT_FREEZE,          // freeze tag
+	GT_GUN,             // gun game
+
 	GT_MAX_GAME_TYPE
 } gametype_t;
 

@@ -26,9 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // q_shared.h -- included first by ALL program modules.
 // A user mod should never modify this file
 
-#define Q3_VERSION            "^6Titan^1MOD"
+#define Q3_VERSION            "^5Titan^7[^6MOD^7]/^2v3"
 #ifndef SVN_VERSION
-  #define SVN_VERSION Q3_VERSION
+#define SVN_VERSION Q3_VERSION
 #endif
 #define CLIENT_WINDOW_TITLE   "Quake3-UrT"
 #define CLIENT_WINDOW_ICON    "iourbanterror"
