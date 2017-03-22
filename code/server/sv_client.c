@@ -1595,6 +1595,20 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
             		if(!(Q_stricmp("s", Cmd_Argv(1)) == 0) && !(Q_stricmp("free", Cmd_Argv(1)) == 0))
             			return;
             		break;
+            	case 3:
+            	{
+            		team_t team = *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
+            		if((Q_stricmp("free", Cmd_Argv(1)) == 0))
+					{
+            			if(team == TEAM_SPECTATOR)
+            				break;
+            			else
+            				return;
+					}
+            		if(!(Q_stricmp("s", Cmd_Argv(1)) == 0))
+            			return;
+            		break;
+            	}
             	}
 			}
 

@@ -33,7 +33,7 @@ mod_allowItemDrop | On / Off | Allow dropping items on the server
 mod_allowFlagDrop | On / Off | Allow dropping the flag on the server
 mod_allowSuicide | On / Off | Allow /kill command on the server
 mod_allowVote | On / Off | Allow /callvote command on the server
-mod_allowTeamSelection | Mode | 1: Allow normal team selection; 2:Only work spec and autojoin; 3:Nothing work
+mod_allowTeamSelection | Mode | 1: Allow normal team selection; 2:Only work spec and autojoin; 3:Like 2 + only specs can do autojoin 0:Nothing work;
 &#60;team&#62;&#95;giveweapon | &#60;"string of weapons"&#62; | When a player spawn, the weapons specified will be gived to the player
 &#60;team&#62;&#95;takeweapon | &#60;"string of weapons"&#62; | When a player spawn, the weapons specified will be removed to the player
 &#60;weapon&#62;&#95;clips | number | Modificate the number of clips that a weapon should have
