@@ -339,6 +339,7 @@ extern  cvar_t  *mod_allowItemDrop;
 extern  cvar_t  *mod_allowFlagDrop;
 extern  cvar_t  *mod_allowSuicide;
 extern  cvar_t  *mod_allowVote;
+extern  cvar_t  *mod_allowTeamSelection;
 
 #ifdef USE_AUTH
 extern	cvar_t	*sv_authServerIP;

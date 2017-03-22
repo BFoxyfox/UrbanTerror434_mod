@@ -1584,7 +1584,19 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
             } else if(Q_stricmp("callvote", Cmd_Argv(0)) == 0 && !mod_allowVote->integer) {
                 SV_SendServerCommand(cl, "print \"^1Vote system is disabled on this server!\n\"");
                 return;
-            }
+            } else if(Q_stricmp("team", Cmd_Argv(0)) == 0)
+			{
+            	switch(mod_allowTeamSelection->integer)
+            	{
+            	case 0:
+            		return;
+            		break;
+            	case 2:
+            		if(!(Q_stricmp("s", Cmd_Argv(1)) == 0) && !(Q_stricmp("free", Cmd_Argv(1)) == 0))
+            			return;
+            		break;
+            	}
+			}
 
 			if (argsFromOneMaxlen >= 0) {
 				charCount = 0;

@@ -1009,6 +1009,7 @@ void SV_Init (void) {
 	mod_allowFlagDrop = Cvar_Get("mod_allowFlagDrop", "1", CVAR_ARCHIVE);
 	mod_allowSuicide = Cvar_Get("mod_allowSuicide", "1", CVAR_ARCHIVE);
 	mod_allowVote = Cvar_Get("mod_allowVote", "1", CVAR_ARCHIVE);
+	mod_allowTeamSelection = Cvar_Get("mod_allowteamselection", "1", CVAR_ARCHIVE);
 
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);

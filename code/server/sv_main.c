@@ -86,6 +86,7 @@ cvar_t  *mod_allowItemDrop;
 cvar_t  *mod_allowFlagDrop;
 cvar_t  *mod_allowSuicide;
 cvar_t  *mod_allowVote;
+cvar_t  *mod_allowTeamSelection;
 
 //@Barbatos
 #ifdef USE_AUTH
