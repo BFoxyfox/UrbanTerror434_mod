@@ -58,6 +58,7 @@ int  generateWeapon(playerState_t *ps, int clips, int mode, int bullet, int weap
 }
 void SV_GiveBulletsAW(playerState_t *ps, int bulletsCount)
 {
+	updateXOR(ps);
 	int bullets = UT_WEAPON_GETBULLETS(ps->powerups[ps->weapon]);
 	bullets += bulletsCount;
 	UT_WEAPON_SETBULLETS(ps->powerups[ps->weapon], bullets);
