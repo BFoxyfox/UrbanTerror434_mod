@@ -71,6 +71,10 @@ playsound | &#60;player&#62; &#60;index&#62; | Play a sound that is on the index
 playsoundfile | &#60;player&#62; &#60;file&#62; | Play a sound that is on the pk3 files of client's game folder. Must specify the path to the file (sound(s)/... file.wav)
 giveweapon / gw | &#60;player&#62; &#60;weapon&#62; | Give a weapon to a player
 removeweapon / rw | &#60;player&#62; &#60;weapon&#62; | Remove a weapon to a player
+giveclips | &#60;player&#62; &#60;clips&#62; | Add clips to the current weapon of player
+givebullets | &#60;player&#62; &#60;bullets&#62; | Add bullets to the current weapon of player
+setclips | &#60;player&#62; &#60;clips&#62; | Set clips to the current weapon of player
+setbullets | &#60;player&#62; &#60;bullets&#62; | Set bullets to the current weapon of player
 qvmreload | nothing | This command will apply the modifications on the weapons using the cvar, a map change or restart will do the same action.
 
 ## INFO

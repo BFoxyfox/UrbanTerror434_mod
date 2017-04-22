@@ -1896,6 +1896,137 @@ static void SV_RemoveItem_f (void) {
 
 	utPSRemoveItem(ps, item);
 }
+/////////////////////////////////////////////////////////////////////
+// SV_GiveClips_f
+/////////////////////////////////////////////////////////////////////
+static void SV_GiveClips_f (void)
+{
+	client_t *cl;
+	playerState_t *ps;
+	int value;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() < 3)
+	{
+		Com_Printf("Usage: giveclips <player> <value>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+		return;
+	if (sscanf(Cmd_Argv(2), "%d", &value) == 0) {
+		Com_Printf("Invalid value.\n");
+		return;
+	}
+
+	ps = SV_GameClientNum(cl - svs.clients);
+
+	SV_GiveClipsAW(ps, value);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_GiveBullets_f
+/////////////////////////////////////////////////////////////////////
+static void SV_GiveBullets_f (void)
+{
+	client_t *cl;
+	playerState_t *ps;
+	int value;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() < 3)
+	{
+		Com_Printf("Usage: givebullets <player> <value>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+		return;
+	if (sscanf(Cmd_Argv(2), "%d", &value) == 0) {
+		Com_Printf("Invalid value.\n");
+		return;
+	}
+
+	ps = SV_GameClientNum(cl - svs.clients);
+
+	SV_GiveBulletsAW(ps, value);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_SetClips_f
+/////////////////////////////////////////////////////////////////////
+static void SV_SetClips_f (void)
+{
+	client_t *cl;
+	playerState_t *ps;
+	int value;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() < 3)
+	{
+		Com_Printf("Usage: setclips <player> <value>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+		return;
+	if (sscanf(Cmd_Argv(2), "%d", &value) == 0) {
+		Com_Printf("Invalid value.\n");
+		return;
+	}
+
+	ps = SV_GameClientNum(cl - svs.clients);
+
+	SV_SetClipsAW(ps, value);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_SetBullets_f
+/////////////////////////////////////////////////////////////////////
+static void SV_SetBullets_f (void)
+{
+	client_t *cl;
+	playerState_t *ps;
+	int value;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() < 3)
+	{
+		Com_Printf("Usage: setbullets <player> <value>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+		return;
+	if (sscanf(Cmd_Argv(2), "%d", &value) == 0) {
+		Com_Printf("Invalid value.\n");
+		return;
+	}
+
+	ps = SV_GameClientNum(cl - svs.clients);
+
+	SV_SetBulletsAW(ps, value);
+}
 
 static void SV_QVMReload_f (void)
 {
@@ -1962,6 +2093,11 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("ri", SV_RemoveItem_f);
     Cmd_AddCommand ("gw", SV_GiveWeapon_f);
     Cmd_AddCommand ("rw", SV_RemoveWeapon_f);
+	Cmd_AddCommand("giveclips", SV_GiveClips_f);
+	Cmd_AddCommand("givebullets", SV_GiveBullets_f);
+	Cmd_AddCommand("setclips", SV_SetClips_f);
+	Cmd_AddCommand("setbullets", SV_SetBullets_f);
+
     Cmd_AddCommand ("qvmreload", SV_QVMReload_f);
 
     if( com_dedicated->integer ) {
