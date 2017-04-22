@@ -113,6 +113,12 @@ typedef struct
 	char		netname[MAX_NETNAME];
 }clientPersistant_t;
 
+typedef struct gentity_s
+{
+	int unknow[171];
+	int health;
+}gentity_t;
+
 typedef struct gclient_s
 {
 	playerState_t ps;

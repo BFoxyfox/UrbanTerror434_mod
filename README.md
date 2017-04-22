@@ -34,6 +34,13 @@ mod_allowFlagDrop | On / Off | Allow dropping the flag on the server
 mod_allowSuicide | On / Off | Allow /kill command on the server
 mod_allowVote | On / Off | Allow /callvote command on the server
 mod_allowTeamSelection | Mode | 1: Allow normal team selection; 2:Only work spec and autojoin; 3:Like 2 + only specs can do autojoin 0:Nothing work;
+mod_minkillhealth | value | Set the minimun of health necesary for execute kill command
+mod_minteamchangehealth | value | Set the minimun of health necesary for execute team command
+mod_enableHealth | On / Off | Enable the auto health features
+mod_timeoutHealth | delay | Set on miliseconds every time that a user should be med
+mod_limitHealth | health | It set the max value that autohealth should work for
+mod_addAmountOfHealth | health | How many percent should be added every time autohealth work
+mod_whenMoveHealth | On / Off | Should autohealth work when a player is moving?
 &#60;team&#62;&#95;giveweapon | &#60;"string of weapons"&#62; | When a player spawn, the weapons specified will be gived to the player
 &#60;team&#62;&#95;takeweapon | &#60;"string of weapons"&#62; | When a player spawn, the weapons specified will be removed to the player
 &#60;weapon&#62;&#95;clips | number | Modificate the number of clips that a weapon should have
@@ -76,6 +83,8 @@ givebullets | &#60;player&#62; &#60;bullets&#62; | Add bullets to the current we
 setclips | &#60;player&#62; &#60;clips&#62; | Set clips to the current weapon of player
 setbullets | &#60;player&#62; &#60;bullets&#62; | Set bullets to the current weapon of player
 teleport | &#60;player&#62; &#60;playerto&#62; *OR* &#60;x&#62; &#60;y&#62; &#60;z&#62; | This command allow two type of teleport, to a player or to a coordinates.
+addhealth | &#60;player&#62; &#60;health&#62; | Add health to a player
+sethealth | &#60;player&#62; &#60;health&#62; | Set health to a player
 qvmreload | nothing | This command will apply the modifications on the weapons using the cvar, a map change or restart will do the same action.
 
 ## INFO

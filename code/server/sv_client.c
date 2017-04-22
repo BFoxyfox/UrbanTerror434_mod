@@ -68,7 +68,72 @@ void SV_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg)
 	ps->externalEventTime = svs.time;
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_AddHealth
+/////////////////////////////////////////////////////////////////////
 
+void SV_AddHealth(client_t *cl, int value) {
+
+	gentity_t     *ent;
+	playerState_t *ps;
+
+	ps = SV_GameClientNum(cl -svs.clients);
+	ent = (gentity_t *)SV_GentityNum(cl - svs.clients);
+	if(ent->health <= 0 || ps->persistant[PERS_TEAM] == TEAM_SPECTATOR || *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]) == TEAM_SPECTATOR)
+		return;
+
+	if(value + ent->health > 100) {
+		ent->health = 100;
+		return;
+	}
+    if(value + ent->health <= 0) {
+		ent->health = 1;
+		return;
+	}
+
+	ent->health += value;
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_SetHealth
+/////////////////////////////////////////////////////////////////////
+void SV_SetHealth(client_t *cl, int value) {
+
+	gentity_t     *ent;
+	playerState_t *ps;
+
+	ps = SV_GameClientNum(cl - svs.clients);
+	ent = (gentity_t *)SV_GentityNum(cl - svs.clients);
+
+	if(ent->health <= 0 || ps->persistant[PERS_TEAM] == TEAM_SPECTATOR || *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]) == TEAM_SPECTATOR)
+		return;
+
+	if(value > 100) {
+		ent->health = 100;
+		return;
+	}
+
+    if(value <= 0) {
+		ent->health = 1;
+		return;
+	}
+
+	ent->health = value;
+}
+/////////////////////////////////////////////////////////////////////
+// SV_ClientIsMoving
+/////////////////////////////////////////////////////////////////////
+int SV_ClientIsMoving(client_t *cl) {
+
+	playerState_t *ps;
+	ps = SV_GameClientNum(cl - svs.clients);
+
+	if(ps->velocity[0] == 0 && ps->velocity[1] == 0 && ps->velocity[2] == 0) {
+		return 0;
+	}
+
+	return 1;
+}
 /////////////////////////////////////////////////////////////////////
 // SV_CleanName
 /////////////////////////////////////////////////////////////////////
@@ -1581,6 +1646,12 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
             } else if (Q_stricmp("kill", Cmd_Argv(0)) == 0 && !mod_allowSuicide->integer) {
                 SV_SendServerCommand(cl, "print \"^1This server doesn't allow suiciding!\n\"");
                 return;
+            } else if (Q_stricmp("kill", Cmd_Argv(0)) == 0 && ps->stats[STAT_HEALTH] < mod_minKillHealth->integer) {
+                SV_SendServerCommand(cl, "print \"^1You need a minimum of ^2%i percent ^1of health to kill yourself!\n\"", mod_minKillHealth->integer);
+                return;
+            } else if (Q_stricmp("team", Cmd_Argv(0)) == 0 && ps->stats[STAT_HEALTH] < mod_minTeamChangeHealth->integer) {
+                SV_SendServerCommand(cl, "print \"^1You need a minimum of ^2%i percent ^1of health to change of team!\n\"", mod_minTeamChangeHealth->integer);
+                return;
             } else if(Q_stricmp("callvote", Cmd_Argv(0)) == 0 && !mod_allowVote->integer) {
                 SV_SendServerCommand(cl, "print \"^1Vote system is disabled on this server!\n\"");
                 return;
@@ -1717,6 +1788,28 @@ static qboolean SV_ClientCommand( client_t *cl, msg_t *msg ) {
 
 //==================================================================================
 
+void MOD_AutoHealth(client_t *cl)
+{
+	gentity_t *ent;
+
+	if(!mod_enableHealth->integer)
+		return;
+
+	if(cl->cm.lastAutoHealth < svs.time) {
+		cl->cm.lastAutoHealth = svs.time + mod_timeoutHealth->integer;
+
+		if(cl->state != CS_ACTIVE)
+			return;
+
+		ent = SV_GentityNum(cl - svs.clients);
+		if(ent->health < mod_limitHealth->integer) {
+			if(!mod_whenMoveHealth->integer && SV_ClientIsMoving(cl))
+				return;
+			SV_AddHealth(cl, mod_addAmountOfHealth->integer);
+		}
+	}
+
+}
 
 /*
 ==================
@@ -1739,6 +1832,7 @@ void SV_ClientThink (client_t *cl, usercmd_t *cmd) {
             cl->cm.powerups[i] = ps->powerups[i];
         }
     }
+    MOD_AutoHealth(cl);
 	VM_Call( gvm, GAME_CLIENT_THINK, cl - svs.clients );
 
     if (mod_infiniteAmmo->integer) {

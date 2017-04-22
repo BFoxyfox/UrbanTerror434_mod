@@ -117,6 +117,7 @@ typedef struct clientMod_s {
 	int lastEventSequence;            // For infinite ammo
 
 	int delayedSound;                 // Snapshot where sound event should be sended
+	int lastAutoHealth;				  // Last time autohealth med this player
 } clientMod_t;
 
 typedef struct client_s {
@@ -242,6 +243,7 @@ typedef struct {
 	netadr_t	redirectAddress;			// for rcon return messages
 
 	netadr_t	authorizeAddress;			// for rcon return messages
+
 } serverStatic_t;
 
 
@@ -341,6 +343,15 @@ extern  cvar_t  *mod_allowSuicide;
 extern  cvar_t  *mod_allowVote;
 extern  cvar_t  *mod_allowTeamSelection;
 
+extern 	cvar_t  *mod_minKillHealth;
+extern 	cvar_t  *mod_minTeamChangeHealth;
+
+extern 	cvar_t  *mod_limitHealth;
+extern	cvar_t  *mod_timeoutHealth;
+extern	cvar_t  *mod_enableHealth;
+extern 	cvar_t  *mod_addAmountOfHealth;
+extern 	cvar_t  *mod_whenMoveHealth;
+
 #ifdef USE_AUTH
 extern	cvar_t	*sv_authServerIP;
 extern  cvar_t  *sv_auth_engine;
@@ -423,8 +434,13 @@ void SV_SpawnServer(char* server, qboolean killBots);
 void EV_PlayerSpawn (int cnum);
 void EV_ClientUserInfoChanged(int cnum);
 
+int  SV_ClientIsMoving(client_t *cl);
+
 void SV_PlaySoundFile (client_t *cl, char*file);
 void SV_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg);
+
+void SV_AddHealth(client_t *cl, int value);
+void SV_SetHealth(client_t *cl, int value);
 
 void SV_GetChallenge( netadr_t from );
 

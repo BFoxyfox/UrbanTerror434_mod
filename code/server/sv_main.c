@@ -88,6 +88,15 @@ cvar_t  *mod_allowSuicide;
 cvar_t  *mod_allowVote;
 cvar_t  *mod_allowTeamSelection;
 
+cvar_t  *mod_minKillHealth;
+cvar_t  *mod_minTeamChangeHealth;
+
+cvar_t  *mod_limitHealth;
+cvar_t  *mod_timeoutHealth;
+cvar_t  *mod_enableHealth;
+cvar_t  *mod_addAmountOfHealth;
+cvar_t  *mod_whenMoveHealth;
+
 //@Barbatos
 #ifdef USE_AUTH
 cvar_t	*sv_authServerIP;

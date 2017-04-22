@@ -1011,6 +1011,15 @@ void SV_Init (void) {
 	mod_allowVote = Cvar_Get("mod_allowVote", "1", CVAR_ARCHIVE);
 	mod_allowTeamSelection = Cvar_Get("mod_allowteamselection", "1", CVAR_ARCHIVE);
 
+	mod_minKillHealth = Cvar_Get("mod_minKillHealth", "0", CVAR_ARCHIVE);
+	mod_minTeamChangeHealth = Cvar_Get("mod_minTeamChangeHealth", "0", CVAR_ARCHIVE);
+
+	mod_limitHealth = Cvar_Get("mod_limitHealth", "50", CVAR_ARCHIVE);
+	mod_timeoutHealth = Cvar_Get("mod_timeouthealth", "1000", CVAR_ARCHIVE);
+	mod_enableHealth = Cvar_Get("mod_enableHealth", "0", CVAR_ARCHIVE);
+	mod_addAmountOfHealth = Cvar_Get("mod_addAmountOfHealth", "1", CVAR_ARCHIVE);
+	mod_whenMoveHealth = Cvar_Get("mod_whenmovehealth", "1", CVAR_ARCHIVE);
+
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);
 	sv_auth_engine = Cvar_Get("sv_auth_engine", "1", CVAR_ROM);

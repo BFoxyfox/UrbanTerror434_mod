@@ -2088,6 +2088,62 @@ static void SV_Teleport_f(void) {
     }
     VectorClear(ps->velocity);
 }
+/////////////////////////////////////////////////////////////////////
+// SV_SetHealth_f
+/////////////////////////////////////////////////////////////////////
+static void SV_SetHealth_f(void) {
+
+	client_t      *cl;
+    int           value;
+
+	if(!com_sv_running->integer) {
+		Com_Printf("Server is not running\n");
+	}
+
+	if(Cmd_Argc() < 3) {
+        Com_Printf("Usage: sethealth <player> <value>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(cl == NULL)
+		return;
+
+	if (sscanf(Cmd_Argv(2), "%d", &value) == 0) {
+		Com_Printf("Invalid value.\n");
+		return;
+	}
+	SV_SetHealth(cl, value);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_AddHealth_f
+/////////////////////////////////////////////////////////////////////
+static void SV_AddHealth_f(void) {
+
+	client_t      *cl;
+    int           value;
+
+	if(!com_sv_running->integer) {
+		Com_Printf("Server is not running\n");
+	}
+
+	if(Cmd_Argc() < 3) {
+		Com_Printf("Usage: addhealth <player> <value>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(cl == NULL)
+		return;
+
+	if (sscanf(Cmd_Argv(2), "%d", &value) == 0) {
+		Com_Printf("Invalid value.\n");
+		return;
+	}
+	SV_AddHealth(cl, value);
+}
+
 static void SV_QVMReload_f (void)
 {
 	if(!com_sv_running->integer) {
@@ -2157,10 +2213,12 @@ void SV_AddOperatorCommands( void ) {
 	Cmd_AddCommand("givebullets", SV_GiveBullets_f);
 	Cmd_AddCommand("setclips", SV_SetClips_f);
 	Cmd_AddCommand("setbullets", SV_SetBullets_f);
-
-    Cmd_AddCommand ("qvmreload", SV_QVMReload_f);
+	Cmd_AddCommand ("addhealth", SV_AddHealth_f);
+	Cmd_AddCommand ("sethealth", SV_SetHealth_f);
 	Cmd_AddCommand ("teleport", SV_Teleport_f);
     Cmd_AddCommand ("tp", SV_Teleport_f);
+
+    Cmd_AddCommand ("qvmreload", SV_QVMReload_f);
 
     if( com_dedicated->integer ) {
         Cmd_AddCommand ("say", SV_ConSay_f);
