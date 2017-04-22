@@ -2027,7 +2027,67 @@ static void SV_SetBullets_f (void)
 
 	SV_SetBulletsAW(ps, value);
 }
+/////////////////////////////////////////////////////////////////////
+// SV_Teleport_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Teleport_f(void) {
 
+    client_t      *cl;
+    playerState_t *ps;
+
+    // make sure server is running
+    if (!com_sv_running->integer) {
+        Com_Printf("Server is not running.\n");
+        return;
+    }
+
+    // check for correct number of arguments
+    if (Cmd_Argc() != 2 && Cmd_Argc() != 3 && Cmd_Argc() != 5) {
+        Com_Printf("Usage: teleport <client> <target>\n"
+                   "       teleport <client> <x> <y> <z>\n");
+        return;
+    }
+
+    if (!(cl = SV_GetPlayerByHandle())) {
+        return;
+    }
+
+    ps = SV_GameClientNum(cl - svs.clients);
+
+    // print a player's position
+    if (Cmd_Argc() == 2) {
+        Com_Printf("Position: (%f %f %f)\n", ps->origin[0], ps->origin[1], ps->origin[2]);
+        return;
+    }
+
+    // teleport a player to another player's location
+    else if (Cmd_Argc() == 3) {
+        client_t      *cl_src;
+        playerState_t *ps_src;
+
+        Cmd_TokenizeString(Cmd_Args());
+
+        // return if no client 2 or both players are the same
+        if (!(cl_src = SV_GetPlayerByHandle()) || cl_src == cl) {
+            return;
+        }
+
+        ps_src = SV_GameClientNum(cl_src - svs.clients);
+        VectorCopy(ps_src->origin, ps->origin);
+
+        SV_SendServerCommand(cl, "cchat \"\" \"%s^7You have been ^2teleported ^7to %s\"", sv_tellprefix->string, cl_src->colourName);
+        SV_SendServerCommand(cl_src, "cchat \"\" \"%s^7Player %s ^7has been ^2teleported ^7to you!\"", sv_tellprefix->string, cl->colourName);
+
+    // teleport a player to the specified x, y, z coordinates
+    } else {
+        int i;
+        for (i = 0; i < 3; ++i) {
+            ps->origin[i] = atof(Cmd_Argv(i + 2));
+        }
+        SV_SendServerCommand(cl, "print \"You have been ^2teleported ^7to x: %f y: %f z: %f^7\n\"", ps->origin[0], ps->origin[1], ps->origin[2]);
+    }
+    VectorClear(ps->velocity);
+}
 static void SV_QVMReload_f (void)
 {
 	if(!com_sv_running->integer) {
@@ -2099,6 +2159,8 @@ void SV_AddOperatorCommands( void ) {
 	Cmd_AddCommand("setbullets", SV_SetBullets_f);
 
     Cmd_AddCommand ("qvmreload", SV_QVMReload_f);
+	Cmd_AddCommand ("teleport", SV_Teleport_f);
+    Cmd_AddCommand ("tp", SV_Teleport_f);
 
     if( com_dedicated->integer ) {
         Cmd_AddCommand ("say", SV_ConSay_f);

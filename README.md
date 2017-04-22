@@ -75,6 +75,7 @@ giveclips | &#60;player&#62; &#60;clips&#62; | Add clips to the current weapon o
 givebullets | &#60;player&#62; &#60;bullets&#62; | Add bullets to the current weapon of player
 setclips | &#60;player&#62; &#60;clips&#62; | Set clips to the current weapon of player
 setbullets | &#60;player&#62; &#60;bullets&#62; | Set bullets to the current weapon of player
+teleport | &#60;player&#62; &#60;playerto&#62; *OR* &#60;x&#62; &#60;y&#62; &#60;z&#62; | This command allow two type of teleport, to a player or to a coordinates.
 qvmreload | nothing | This command will apply the modifications on the weapons using the cvar, a map change or restart will do the same action.
 
 ## INFO
