@@ -654,6 +654,7 @@ const char *FS_LoadedPakPureChecksums( void );
 int FS_LoadedPakChecksumsBlob( unsigned char *dst, int dstlen );
 
 const char *FS_ReferencedPakNames( void );
+const int FS_GetCheckSumPakByName( char *name );
 const char *FS_ReferencedPakChecksums( void );
 const char *FS_ReferencedPakPureChecksums( void );
 // Returns a space separated string containing the checksums of all loaded

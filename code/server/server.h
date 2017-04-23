@@ -431,6 +431,8 @@ void SV_SpawnServer(char* server, qboolean killBots);
 // sv_client.c
 //
 
+void SV_ForcePk3DownloadByClientGameState( client_t *client , char *todownload);
+
 void EV_PlayerSpawn (int cnum);
 void EV_ClientUserInfoChanged(int cnum);
 

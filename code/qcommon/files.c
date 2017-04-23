@@ -3040,7 +3040,21 @@ const char *FS_LoadedPakPureChecksums( void ) {
 
 	return info;
 }
+const int FS_GetCheckSumPakByName( char *name )
+{
+	searchpath_t *search;
 
+	for ( search = fs_searchpaths ; search ; search = search->next ) {
+		// is the element a pak file?
+		if ( search->pack ) {
+			if (strcmp(search->pack->pakBasename, name) == 0) {
+				return search->pack->checksum;
+			}
+		}
+	}
+
+	return 0;
+}
 /*
 =====================
 FS_ReferencedPakChecksums

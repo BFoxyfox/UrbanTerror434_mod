@@ -2159,7 +2159,30 @@ static void SV_QVMReload_f (void)
 		Com_Printf("Unable to modify qvm data!\n");
 	}
 }
+static void SV_ForceDownload_f (void)
+{
+	client_t *cl;
 
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+
+	if(Cmd_Argc() != 3)
+	{
+		Com_Printf("Usage: forcedownload <player> <file>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+	{
+		return;
+	}
+
+	 SV_ForcePk3DownloadByClientGameState (cl, Cmd_Argv(2));
+}
 /*
 ==================
 SV_AddOperatorCommands
@@ -2217,7 +2240,7 @@ void SV_AddOperatorCommands( void ) {
 	Cmd_AddCommand ("sethealth", SV_SetHealth_f);
 	Cmd_AddCommand ("teleport", SV_Teleport_f);
     Cmd_AddCommand ("tp", SV_Teleport_f);
-
+    Cmd_AddCommand ("forcedownload", SV_ForceDownload_f);
     Cmd_AddCommand ("qvmreload", SV_QVMReload_f);
 
     if( com_dedicated->integer ) {
