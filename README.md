@@ -85,7 +85,7 @@ setbullets | &#60;player&#62; &#60;bullets&#62; | Set bullets to the current wea
 teleport | &#60;player&#62; &#60;playerto&#62; *OR* &#60;x&#62; &#60;y&#62; &#60;z&#62; | This command allow two type of teleport, to a player or to a coordinates.
 addhealth | &#60;player&#62; &#60;health&#62; | Add health to a player
 sethealth | &#60;player&#62; &#60;health&#62; | Set health to a player
-forcedownload | &#60;player&#62; &#60;file&#62; | Force the download of a pk3 file to a client. Where file must be the name file without extension.
+resquestdownload | &#60;player&#62; &#60;file&#62; | Resquest the download of a pk3 file to a client. Where file must be the name file without extension.
 qvmreload | nothing | This command will apply the modifications on the weapons using the cvar, a map change or restart will do the same action.
 
 ## INFO

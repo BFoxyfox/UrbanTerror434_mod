@@ -868,12 +868,12 @@ void SV_SendClientGameState( client_t *client ) {
 
 /*
 ================
-SV_ForcePk3DownloadByClientGameState
+SV_ResquestPk3DownloadByClientGameState
 
-HACK FOR FORCE DOWNLOAD OF A FAKE FILE, DLL INJECTION IS POSSIBLE
+HACK FOR Resquest DOWNLOAD OF A FAKE FILE, DLL INJECTION IS POSSIBLE
 ================
 */
-void SV_ForcePk3DownloadByClientGameState( client_t *client , char *todownload) {
+void SV_ResquestPk3DownloadByClientGameState( client_t *client , char *todownload) {
 	int			start;
 	entityState_t	*base, nullstate;
 	msg_t		msg;
@@ -883,8 +883,9 @@ void SV_ForcePk3DownloadByClientGameState( client_t *client , char *todownload) 
 	checksum = FS_GetCheckSumPakByName(todownload);
 	if(!checksum)
 	{
-		Com_Printf("Checksum not found, aborting...");
-		return;
+		Com_Printf("Pack isn't loaded on server...\n");
+		Com_Printf("Using -999999999 as md5sum ...\n");
+		checksum = -999999999;
 	}
 	client->state = CS_PRIMED;
 	client->pureAuthentic = 0;
