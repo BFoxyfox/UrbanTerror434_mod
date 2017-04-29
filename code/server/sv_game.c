@@ -1011,6 +1011,32 @@ static void SV_InitGameVM( qboolean restart ) {
 	// use the current msec count for a random seed
 	// init for this gamestate
 	VM_Call (gvm, GAME_INIT, sv.time, Com_Milliseconds(), restart);
+
+	urtVersion vurt = getVersion();
+	Com_Printf("Loading WeaponStrings... %s ", versionString[vurt]);
+	switch(vurt){
+	case vunk:
+		Com_Printf("[FAIL]\n **The actual version (%s) is not supported**\n", Cvar_VariableString("g_modversion"));
+		break;
+	case v42023:
+		weaponString = weaponstring42;
+		Com_Printf("[OK]\n");
+		break;
+	case v43:
+	case v431:
+	case v432:
+		weaponString = weaponstring43;
+		Com_Printf("[OK]\n");
+		break;
+	}
+
+	if(!overrideQVMData())
+	{
+		Com_Printf("********************************\n");
+		Com_Printf("Unable to override weapon data\n");
+		Com_Printf("********************************\n");
+	}
+
 }
 
 
@@ -1076,31 +1102,6 @@ void SV_InitGameProgs( void ) {
 	}
 
 	SV_InitGameVM( qfalse );
-
-	urtVersion vurt = getVersion();
-	Com_Printf("Loading WeaponStrings... %s ", versionString[vurt]);
-	switch(vurt){
-	case vunk:
-		Com_Printf("[FAIL]\n **The actual version (%s) is not supported**\n", Cvar_VariableString("g_modversion"));
-		break;
-	case v42023:
-		weaponString = weaponstring42;
-		Com_Printf("[OK]\n");
-		break;
-	case v43:
-	case v431:
-	case v432:
-		weaponString = weaponstring43;
-		Com_Printf("[OK]\n");
-		break;
-	}
-
-	if(!overrideQVMData())
-	{
-		Com_Printf("********************************\n");
-		Com_Printf("Unable to override weapon data\n");
-		Com_Printf("********************************\n");
-	}
 
 }
 
