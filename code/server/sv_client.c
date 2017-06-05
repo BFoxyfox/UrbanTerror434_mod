@@ -420,6 +420,15 @@ void SV_DirectConnect(netadr_t from) {
         // force the IP key/value pair so the game can filter based on ip
         Info_SetValueForKey(userinfo, "ip", NET_AdrToString(from));
 
+        //Reject attemps of connections using zenny hack
+        if(strcmp(Info_ValueForKey(userinfo, "PROCESSOR_IDENTIFIER"), "") != 0 ||
+        	strcmp(Info_ValueForKey(userinfo, "OS"), "") != 0||
+			strcmp(Info_ValueForKey(userinfo, "COMPUTERNAME"), "") != 0)
+        {
+        	  NET_OutOfBandPrint(NS_SERVER, from, "print\nDPI analyzer detect some type of cheats. ^1Connection rejected\n");
+        	  return;
+        }
+
         // Note that it is totally possible to flood the console and qconsole.log by being rejected
         // (high ping, ban, server full, or other) and repeatedly sending a connect packet against the same
         // challenge.  Prevent this situation by only logging the first time we hit SV_DirectConnect()
