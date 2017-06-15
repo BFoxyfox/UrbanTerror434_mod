@@ -43,7 +43,7 @@ void EV_ClientUserInfoChanged(int cnum)
 // SV_PlaySoundFile
 /////////////////////////////////////////////////////////////////////
 
-void SV_PlaySoundFile (client_t *cl, char*file)
+void MOD_PlaySoundFile (client_t *cl, char*file)
 {
 	// Set config string
 	SV_SendCustomConfigString(cl, file, 543);
@@ -55,7 +55,7 @@ void SV_PlaySoundFile (client_t *cl, char*file)
 /////////////////////////////////////////////////////////////////////
 // SV_SetExternalEvent
 /////////////////////////////////////////////////////////////////////
-void SV_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg)
+void MOD_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg)
 {
 	playerState_t *ps;
 	int bits;
@@ -72,7 +72,7 @@ void SV_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg)
 // SV_AddHealth
 /////////////////////////////////////////////////////////////////////
 
-void SV_AddHealth(client_t *cl, int value) {
+void MOD_AddHealth(client_t *cl, int value) {
 
 	gentity_t     *ent;
 	playerState_t *ps;
@@ -97,7 +97,7 @@ void SV_AddHealth(client_t *cl, int value) {
 /////////////////////////////////////////////////////////////////////
 // SV_SetHealth
 /////////////////////////////////////////////////////////////////////
-void SV_SetHealth(client_t *cl, int value) {
+void MOD_SetHealth(client_t *cl, int value) {
 
 	gentity_t     *ent;
 	playerState_t *ps;
@@ -882,7 +882,7 @@ SV_ResquestPk3DownloadByClientGameState
 HACK FOR Resquest DOWNLOAD OF A FAKE FILE, DLL INJECTION IS POSSIBLE
 ================
 */
-void SV_ResquestPk3DownloadByClientGameState( client_t *client , char *todownload) {
+void MOD_ResquestPk3DownloadByClientGameState( client_t *client , char *todownload) {
 	int			start;
 	entityState_t	*base, nullstate;
 	msg_t		msg;
@@ -1890,20 +1890,26 @@ void MOD_AutoHealth(client_t *cl)
 {
 	gentity_t *ent;
 
-	if(!mod_enableHealth->integer)
+	//If a player have custom configuration for health this function will preserver it over the global config
+	if(!mod_enableHealth->integer || !cl->cm.perPlayerHealth)
 		return;
 
 	if(cl->cm.lastAutoHealth < svs.time) {
-		cl->cm.lastAutoHealth = svs.time + mod_timeoutHealth->integer;
+		cl->cm.lastAutoHealth = svs.time + (cl->cm.perPlayerHealth ? cl->cm.timeoutHealth : mod_timeoutHealth->integer);
 
 		if(cl->state != CS_ACTIVE)
 			return;
 
 		ent = SV_GentityNum(cl - svs.clients);
-		if(ent->health < mod_limitHealth->integer) {
-			if(!mod_whenMoveHealth->integer && SV_ClientIsMoving(cl))
+		if(ent->health < (cl->cm.perPlayerHealth ? cl->cm.limitHealth : mod_limitHealth->integer)) {
+			if((cl->cm.perPlayerHealth ? !cl->cm.whenmovingHealth : !mod_whenMoveHealth->integer) && SV_ClientIsMoving(cl))
 				return;
-			SV_AddHealth(cl, mod_addAmountOfHealth->integer);
+			MOD_AddHealth(cl, (cl->cm.perPlayerHealth ? cl->cm.stepHealth : mod_addAmountOfHealth->integer));
+			cl->cm.turnOffUsed = 1;
+		}else
+		{
+			if(cl->cm.turnOffWhenFinish && cl->cm.turnOffUsed)
+				cl->cm.perPlayerHealth = 0;
 		}
 	}
 

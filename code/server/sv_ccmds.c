@@ -1708,7 +1708,7 @@ static void SV_PlaySoundFile_f (void)
 		return;
 	}
 
-	SV_PlaySoundFile (cl, Cmd_Argv(2));
+	MOD_PlaySoundFile (cl, Cmd_Argv(2));
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1741,7 +1741,7 @@ static void SV_PlaySound_f (void)
 		Com_Printf("Incorrect value!\n");
 	}
 
-	SV_SetExternalEvent(cl, EV_GLOBAL_SOUND, index);
+	MOD_SetExternalEvent(cl, EV_GLOBAL_SOUND, index);
 }
 
 static void SV_GiveWeapon_f (void) {
@@ -2113,7 +2113,7 @@ static void SV_SetHealth_f(void) {
 		Com_Printf("Invalid value.\n");
 		return;
 	}
-	SV_SetHealth(cl, value);
+	MOD_SetHealth(cl, value);
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -2141,7 +2141,7 @@ static void SV_AddHealth_f(void) {
 		Com_Printf("Invalid value.\n");
 		return;
 	}
-	SV_AddHealth(cl, value);
+	MOD_AddHealth(cl, value);
 }
 
 static void SV_QVMReload_f (void)
@@ -2181,7 +2181,42 @@ static void SV_ResquestDownload_f (void)
 		return;
 	}
 
-	 SV_ResquestPk3DownloadByClientGameState (cl, Cmd_Argv(2));
+	 MOD_ResquestPk3DownloadByClientGameState (cl, Cmd_Argv(2));
+}
+
+void SV_AutoHealth(void)
+{
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	client_t *cl;
+
+	cl = SV_GetPlayerByHandle();
+
+	if(!cl)
+		return;
+
+	if(Cmd_Argc() == 2)
+	{
+		cl->cm.perPlayerHealth = 0;
+		return;
+	}
+
+	if(Cmd_Argc() < 7)
+	{
+		Com_Printf("Usage: /autohealth <player> <limit> <moving> <step> <timeout> <turnoffwhenfinish>\n");
+		return;
+	}
+
+	cl->cm.perPlayerHealth = 1;
+	cl->cm.turnOffUsed = 0;
+	cl->cm.limitHealth = atoi(Cmd_Argv(2));
+	cl->cm.whenmovingHealth = atoi(Cmd_Argv(3));
+	cl->cm.stepHealth = atoi(Cmd_Argv(4));
+	cl->cm.timeoutHealth = atoi(Cmd_Argv(5));
+	cl->cm.turnOffWhenFinish = atoi(Cmd_Argv(6));
 }
 /*
 ==================
@@ -2241,6 +2276,7 @@ void SV_AddOperatorCommands( void ) {
 	Cmd_AddCommand ("teleport", SV_Teleport_f);
     Cmd_AddCommand ("tp", SV_Teleport_f);
     Cmd_AddCommand ("resquestdownload", SV_ResquestDownload_f);
+    Cmd_AddCommand ("autohealth", SV_AutoHealth);
     Cmd_AddCommand ("qvmreload", SV_QVMReload_f);
 
     if( com_dedicated->integer ) {

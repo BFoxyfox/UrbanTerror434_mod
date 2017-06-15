@@ -501,7 +501,7 @@ static void SV_BuildClientSnapshot( client_t *client ) {
 		if(sv.snapshotCounter > client->cm.delayedSound)
 		{
 			client->cm.delayedSound = 0;
-			SV_SetExternalEvent(client, EV_GLOBAL_SOUND, 255);
+			MOD_SetExternalEvent(client, EV_GLOBAL_SOUND, 255);
 		}
 	}
 

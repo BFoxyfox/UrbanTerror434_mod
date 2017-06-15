@@ -117,7 +117,15 @@ typedef struct clientMod_s {
 	int lastEventSequence;            // For infinite ammo
 
 	int delayedSound;                 // Snapshot where sound event should be sended
-	int lastAutoHealth;				  // Last time autohealth med this player
+
+	int perPlayerHealth;			  // This player have custom config for health
+	int limitHealth;				  // Up to what health
+	int whenmovingHealth;			  // Health when a player is moving?
+	int timeoutHealth;				  // Health every X milliseconds
+	int stepHealth;					  // How many health will be added
+	int lastAutoHealth;				  // Last time autohealth this player
+	int turnOffWhenFinish;			  // Turn off the autohealth if limit < health and turnOffUsed is 1
+	int turnOffUsed;
 } clientMod_t;
 
 typedef struct client_s {
@@ -431,18 +439,18 @@ void SV_SpawnServer(char* server, qboolean killBots);
 // sv_client.c
 //
 
-void SV_ResquestPk3DownloadByClientGameState( client_t *client , char *todownload);
+void MOD_ResquestPk3DownloadByClientGameState( client_t *client , char *todownload);
 
 void EV_PlayerSpawn (int cnum);
 void EV_ClientUserInfoChanged(int cnum);
 
 int  SV_ClientIsMoving(client_t *cl);
 
-void SV_PlaySoundFile (client_t *cl, char*file);
-void SV_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg);
+void MOD_PlaySoundFile (client_t *cl, char*file);
+void MOD_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg);
 
-void SV_AddHealth(client_t *cl, int value);
-void SV_SetHealth(client_t *cl, int value);
+void MOD_AddHealth(client_t *cl, int value);
+void MOD_SetHealth(client_t *cl, int value);
 
 void SV_GetChallenge( netadr_t from );
 
