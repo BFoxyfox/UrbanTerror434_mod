@@ -1891,7 +1891,7 @@ void MOD_AutoHealth(client_t *cl)
 	gentity_t *ent;
 
 	//If a player have custom configuration for health this function will preserver it over the global config
-	if(!mod_enableHealth->integer || !cl->cm.perPlayerHealth)
+	if(!mod_enableHealth->integer && !cl->cm.perPlayerHealth)
 		return;
 
 	if(cl->cm.lastAutoHealth < svs.time) {
