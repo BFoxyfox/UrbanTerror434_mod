@@ -2218,6 +2218,39 @@ void SV_AutoHealth(void)
 	cl->cm.timeoutHealth = atoi(Cmd_Argv(5));
 	cl->cm.turnOffWhenFinish = atoi(Cmd_Argv(6));
 }
+
+void SV_CheckWeaponOffset (void)
+{
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+	}
+
+	if(Cmd_Argc() < 2)
+	{
+		Com_Printf("Usage: /weaponoffset <weapon>\n");
+		return;
+	}
+
+	//Dump all data of a given weapon
+	weapon_t weapon = SV_Char2Weapon(Cmd_Argv(1));
+	FILE *f = fopen("weaponoff.txt", "a");
+	int i;
+
+	if(!f)
+	{
+		Com_Printf("Can not open the file!\n");
+		return;
+	}
+
+	fprintf(f ,"\n=================\n%s\n=================\n", weaponString[weapon]);
+
+	for(i = 0; i < 432; i++)
+	{
+		fprintf(f, "[%d] c: %c  d: %d f: %f\n", i, *(char*)(QVM_baseWeapon(weapon)+i), *(int*)(QVM_baseWeapon(weapon)+i), *(float*)(QVM_baseWeapon(weapon)+i));
+	}
+	close(f);
+}
 /*
 ==================
 SV_AddOperatorCommands
@@ -2277,6 +2310,7 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("tp", SV_Teleport_f);
     Cmd_AddCommand ("resquestdownload", SV_ResquestDownload_f);
     Cmd_AddCommand ("autohealth", SV_AutoHealth);
+    Cmd_AddCommand ("weaponoffset", SV_CheckWeaponOffset);
     Cmd_AddCommand ("qvmreload", SV_QVMReload_f);
 
     if( com_dedicated->integer ) {
