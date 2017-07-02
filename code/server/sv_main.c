@@ -281,6 +281,10 @@ void SV_AddServerCommand( client_t *client, const char *cmd ) {
 //		return;
 //	}
 
+	//Location is locked
+	if((Q_strncmp(cmd, "location", 8) == 0) && client->cm.locationLocked)
+		return;
+
 	// do not send commands until the gamestate has been sent
 	if( client->state < CS_PRIMED )
 		return;
