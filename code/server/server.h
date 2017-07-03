@@ -118,6 +118,8 @@ typedef struct clientMod_s {
 
 	int delayedSound;                 // Snapshot where sound event should be sended
 
+	int locationLocked;				  // If 1 the location command will be locked
+
 	int perPlayerHealth;			  // This player have custom config for health
 	int limitHealth;				  // Up to what health
 	int whenmovingHealth;			  // Health when a player is moving?
@@ -439,6 +441,8 @@ void SV_SpawnServer(char* server, qboolean killBots);
 // sv_client.c
 //
 
+void MOD_ChangeLocation (client_t *cl, int changeto, int lock);
+void MOD_SendCustomLocation(client_t *cl, char *csstring, int index);
 void MOD_ResquestPk3DownloadByClientGameState( client_t *client , char *todownload);
 
 void EV_PlayerSpawn (int cnum);

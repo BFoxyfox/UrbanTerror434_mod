@@ -2224,6 +2224,7 @@ void SV_CheckWeaponOffset (void)
 	if(!com_sv_running->integer)
 	{
 		Com_Printf("Server is not running\n");
+		return;
 	}
 
 	if(Cmd_Argc() < 2)
@@ -2250,6 +2251,58 @@ void SV_CheckWeaponOffset (void)
 		fprintf(f, "[%d] c: %c  d: %d f: %f\n", i, *(char*)(QVM_baseWeapon(weapon)+i), *(int*)(QVM_baseWeapon(weapon)+i), *(float*)(QVM_baseWeapon(weapon)+i));
 	}
 	close(f);
+}
+
+void SV_Location_f (void)
+{
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running!\n");
+		return;
+	}
+	if(Cmd_Argc() < 4)
+	{
+		Com_Printf("Usage: location <player/ALL> <string> <index> <lock>\n");
+		return;
+	}
+
+	int j;
+	client_t *cl;
+
+	//Check index
+	int index = atoi(Cmd_Argv(3));
+	if(index >= 0 && 360 > index)
+	{
+		if(Q_strncmp(Cmd_Argv(1), "ALL", 3) == 0)
+		{
+			for (j = 0, cl = svs.clients; j < sv_maxclients->integer ; j++, cl++)
+			{
+				MOD_SendCustomLocation(cl, Cmd_Argv(2), index);
+				if(atoi(Cmd_Argv(4)))
+				{
+					MOD_ChangeLocation(cl, index, 1);
+				}else
+				{
+					cl->cm.locationLocked = 0;
+				}
+			}
+			return;
+		}
+
+		cl = SV_GetPlayerByHandle();
+		if(!cl)
+			return;
+		MOD_SendCustomLocation(cl, Cmd_Argv(2),  index);
+		if(atoi(Cmd_Argv(4)))
+		{
+			MOD_ChangeLocation(cl, index, 1);
+		}else
+		{
+			cl->cm.locationLocked = 0;
+		}
+	}else{
+		Com_Printf("Index must be between 0 and 360\n");
+	}
 }
 /*
 ==================
@@ -2311,6 +2364,7 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("resquestdownload", SV_ResquestDownload_f);
     Cmd_AddCommand ("autohealth", SV_AutoHealth);
     Cmd_AddCommand ("weaponoffset", SV_CheckWeaponOffset);
+    Cmd_AddCommand ("location", SV_Location_f);
     Cmd_AddCommand ("qvmreload", SV_QVMReload_f);
 
     if( com_dedicated->integer ) {

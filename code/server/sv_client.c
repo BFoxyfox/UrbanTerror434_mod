@@ -39,6 +39,43 @@ void EV_ClientUserInfoChanged(int cnum)
 	SV_WeaponMod(cnum);
 }
 
+
+/////////////////////////////////////////////////////////////////////
+// MOD_SendCustomLocation
+/////////////////////////////////////////////////////////////////////
+void MOD_SendCustomLocation(client_t *cl, char *csstring, int index)
+{
+	if(!cl->state)
+		return;
+
+	if(index < 0 || index > 360)
+	{
+		Com_Printf("Index must be between 0 and 360\n");
+		return;
+	}
+	index += 640;
+	SV_SendCustomConfigString (cl, csstring, index);
+}
+
+/////////////////////////////////////////////////////////////////////
+// MOD_ChangeLocation
+/////////////////////////////////////////////////////////////////////
+void MOD_ChangeLocation (client_t *cl, int changeto, int lock)
+{
+	//First of all we should unlock
+	cl->cm.locationLocked = 0;
+
+	if(changeto < 0 || changeto > changeto)
+	{
+		Com_Printf("Location must be between 0 and 360\n");
+		return;
+	}
+	SV_SendServerCommand(cl, "location %d", changeto);
+
+	cl->cm.locationLocked = lock;
+}
+
+
 /////////////////////////////////////////////////////////////////////
 // SV_PlaySoundFile
 /////////////////////////////////////////////////////////////////////
