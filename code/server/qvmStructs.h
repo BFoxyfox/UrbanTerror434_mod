@@ -49,10 +49,10 @@ typedef enum {
 	UT_ITEM_GLOCK,		   // f
 	UT_ITEM_COLT1911,      // g
 	UT_ITEM_MAC11,         // h
-	UT_ITEM_FRF1,
-	UT_ITEM_BENELLI,
-	UT_ITEM_P90,
-	UT_ITEM_MAGNUM,
+	UT_ITEM_FRF1,          // i
+	UT_ITEM_BENELLI,       // j
+	UT_ITEM_P90,           // k
+	UT_ITEM_MAGNUM,        // l
 	UT_ITEM_FSTOD,
 
 	UT_ITEM_MAX,

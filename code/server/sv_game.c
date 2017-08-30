@@ -1014,7 +1014,10 @@ static void SV_InitGameVM( qboolean restart ) {
 
 	urtVersion vurt = getVersion();
 	Com_Printf("Loading WeaponStrings... %s ", versionString[vurt]);
-	switch(vurt){
+	switch(vurt)
+	{
+	default:
+        break;
 	case vunk:
 		Com_Printf("[FAIL]\n **The actual version (%s) is not supported**\n", Cvar_VariableString("g_modversion"));
 		break;
@@ -1120,6 +1123,13 @@ qboolean SV_GameCommand( void ) {
 
 	return VM_Call( gvm, GAME_CONSOLE_COMMAND );
 }
+
+
+/*
+====================
+getVersion
+====================
+*/
 urtVersion getVersion(void)
 {
 	int i;

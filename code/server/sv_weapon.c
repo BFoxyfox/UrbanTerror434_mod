@@ -48,7 +48,7 @@ weapon_t SV_Char2Weapon(char weapon[36])
 int  generateWeapon(playerState_t *ps, int clips, int mode, int bullet, int weapon)
 {
 	updateXOR(ps);
-	int pweapon;
+	int pweapon = 0;
 	UT_WEAPON_SETBULLETS(pweapon, bullet);
 	UT_WEAPON_SETCLIPS(pweapon, clips);
 	UT_WEAPON_SETMODE(pweapon, mode);

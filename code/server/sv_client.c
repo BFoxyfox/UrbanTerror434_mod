@@ -25,20 +25,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static void SV_CloseDownload( client_t *cl );
 
-
+/////////////////////////////////////////////////////////////////////
+// EV_PlayerSpawn
+/////////////////////////////////////////////////////////////////////
 void EV_PlayerSpawn(int cnum)
 {
 	if(cnum < 0 || cnum > sv_maxclients->integer)
 		return;
+
 	SV_WeaponMod(cnum);
 }
+
+/////////////////////////////////////////////////////////////////////
+// EV_ClientUserInfoChanged
+/////////////////////////////////////////////////////////////////////
 void EV_ClientUserInfoChanged(int cnum)
 {
 	if(cnum < 0 || cnum > sv_maxclients->integer)
 		return;
+
 	SV_WeaponMod(cnum);
 }
-
 
 /////////////////////////////////////////////////////////////////////
 // MOD_SendCustomLocation
@@ -65,7 +72,7 @@ void MOD_ChangeLocation (client_t *cl, int changeto, int lock)
 	//First of all we should unlock
 	cl->cm.locationLocked = 0;
 
-	if(changeto < 0 || changeto > changeto)
+	if(changeto < 0 || changeto > 360)
 	{
 		Com_Printf("Location must be between 0 and 360\n");
 		return;
@@ -75,11 +82,9 @@ void MOD_ChangeLocation (client_t *cl, int changeto, int lock)
 	cl->cm.locationLocked = lock;
 }
 
-
 /////////////////////////////////////////////////////////////////////
-// SV_PlaySoundFile
+// MOD_PlaySoundFile
 /////////////////////////////////////////////////////////////////////
-
 void MOD_PlaySoundFile (client_t *cl, char*file)
 {
 	// Set config string
@@ -88,9 +93,8 @@ void MOD_PlaySoundFile (client_t *cl, char*file)
 	cl->cm.delayedSound = sv.snapshotCounter+2;
 }
 
-
 /////////////////////////////////////////////////////////////////////
-// SV_SetExternalEvent
+// MOD_SetExternalEvent
 /////////////////////////////////////////////////////////////////////
 void MOD_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg)
 {
@@ -106,9 +110,8 @@ void MOD_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg)
 }
 
 /////////////////////////////////////////////////////////////////////
-// SV_AddHealth
+// MOD_AddHealth
 /////////////////////////////////////////////////////////////////////
-
 void MOD_AddHealth(client_t *cl, int value) {
 
 	gentity_t     *ent;
@@ -132,7 +135,7 @@ void MOD_AddHealth(client_t *cl, int value) {
 }
 
 /////////////////////////////////////////////////////////////////////
-// SV_SetHealth
+// MOD_SetHealth
 /////////////////////////////////////////////////////////////////////
 void MOD_SetHealth(client_t *cl, int value) {
 
@@ -157,6 +160,7 @@ void MOD_SetHealth(client_t *cl, int value) {
 
 	ent->health = value;
 }
+
 /////////////////////////////////////////////////////////////////////
 // SV_ClientIsMoving
 /////////////////////////////////////////////////////////////////////
@@ -171,6 +175,7 @@ int SV_ClientIsMoving(client_t *cl) {
 
 	return 1;
 }
+
 /////////////////////////////////////////////////////////////////////
 // SV_CleanName
 /////////////////////////////////////////////////////////////////////
@@ -462,7 +467,7 @@ void SV_DirectConnect(netadr_t from) {
         	strcmp(Info_ValueForKey(userinfo, "OS"), "") != 0||
 			strcmp(Info_ValueForKey(userinfo, "COMPUTERNAME"), "") != 0)
         {
-        	  NET_OutOfBandPrint(NS_SERVER, from, "print\nDPI analyzer detect some type of cheats. ^1Connection rejected\n");
+        	  NET_OutOfBandPrint(NS_SERVER, from, "print\nDPI analyzer detected some type of cheats. ^1Connection rejected\n");
         	  return;
         }
 
@@ -596,7 +601,7 @@ void SV_DirectConnect(netadr_t from) {
             }
         }
         else {
-            NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is full, sorry.\n");
+            NET_OutOfBandPrint(NS_SERVER, from, "print\nServer is full, try it later.\n");
             Com_DPrintf("Rejected a connection.\n");
             return;
         }
@@ -914,7 +919,7 @@ void SV_SendClientGameState( client_t *client ) {
 
 /*
 ================
-SV_ResquestPk3DownloadByClientGameState
+MOD_ResquestPk3DownloadByClientGameState
 
 HACK FOR Resquest DOWNLOAD OF A FAKE FILE, DLL INJECTION IS POSSIBLE
 ================
@@ -1002,6 +1007,7 @@ void MOD_ResquestPk3DownloadByClientGameState( client_t *client , char *todownlo
 	// deliver this to the client
 	SV_SendMessageToClient( &msg, client );
 }
+
 /*
 ==================
 SV_ClientEnterWorld
@@ -1731,7 +1737,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 				argsFromOneMaxlen = MAX_SAY_STRLEN;
                 if (Q_stricmp("!pm", Cmd_Argv(1)) == 0 && mod_hideCmds->integer < 2)
                 {
-                    SV_SendServerCommand(cl, "chat \"%s^7%s: ^3%s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
+                    SV_SendServerCommand(cl, "chat \"%s^7%s^3: %s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
     				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
     				return;
                 }
@@ -1740,7 +1746,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
                 if (((*p == '!') || (*p == '@') || (*p == '&') || (*p == '/')) && mod_hideCmds->integer)
                 {
     				if(mod_hideCmds->integer == 1)
-                    SV_SendServerCommand(cl, "chat \"%s^7%s: ^3%s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
+                    SV_SendServerCommand(cl, "chat \"%s^7%s^3: %s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
     				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
     				return;
                 }
@@ -1795,24 +1801,31 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
             	switch(mod_allowTeamSelection->integer)
             	{
             	case 0:
+                    SV_SendServerCommand(cl, "print \"^1Team selection system is disabled on this server!\n\"");
             		return;
             		break;
             	case 2:
-            		if(!(Q_stricmp("s", Cmd_Argv(1)) == 0) && !(Q_stricmp("free", Cmd_Argv(1)) == 0))
+            		if(!(Q_stricmp("s", Cmd_Argv(1)) == 0) && !(Q_stricmp("free", Cmd_Argv(1)) == 0)) {
+                        SV_SendServerCommand(cl, "print \"^1You can only spectate or auto join in this server!\n\"");
             			return;
+                    }
             		break;
             	case 3:
             	{
             		team_t team = *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
             		if((Q_stricmp("free", Cmd_Argv(1)) == 0))
 					{
-            			if(team == TEAM_SPECTATOR)
-            				break;
-            			else
-            				return;
+                        if(team == TEAM_SPECTATOR) {
+                            break;
+                        } else {
+                            SV_SendServerCommand(cl, "print \"^1Only spectators can do auto join in this server!\n\"");
+                            return;
+                        }
 					}
-            		if(!(Q_stricmp("s", Cmd_Argv(1)) == 0))
+            		if(!(Q_stricmp("s", Cmd_Argv(1)) == 0)) {
+                        SV_SendServerCommand(cl, "print \"^1You can only spectate or auto join in this server!\n\"");
             			return;
+                    }
             		break;
             	}
             	}
@@ -1937,7 +1950,7 @@ void MOD_AutoHealth(client_t *cl)
 		if(cl->state != CS_ACTIVE)
 			return;
 
-		ent = SV_GentityNum(cl - svs.clients);
+		ent = (gentity_t *)SV_GentityNum(cl - svs.clients);
 		if(ent->health < (cl->cm.perPlayerHealth ? cl->cm.limitHealth : mod_limitHealth->integer)) {
 			if((cl->cm.perPlayerHealth ? !cl->cm.whenmovingHealth : !mod_whenMoveHealth->integer) && SV_ClientIsMoving(cl))
 				return;

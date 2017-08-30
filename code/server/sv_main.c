@@ -104,6 +104,7 @@ cvar_t  *sv_auth_engine;
 #endif
 
 int ut_weapon_xor;
+
 const char versionString[vMAX][10] = {
 		"unknow",
 		"4.2.023",
@@ -133,6 +134,7 @@ char itemString[UT_ITEM_MAX][10] =
 	[UT_ITEM_AMMO]  = {"ammo"},
 	[UT_ITEM_APR]  = {"apr"},
 };
+
 char hitlocationstring[HL_MAX][15] =
 {
     "unknown",
@@ -151,6 +153,7 @@ char hitlocationstring[HL_MAX][15] =
     "footl",
     "footr"
 };
+
 /*
 =============================================================================
 

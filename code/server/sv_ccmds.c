@@ -663,7 +663,7 @@ static void SV_Kick_f(void) {
 
     int         i;
     client_t    *cl;
-    char        *reason = "was kicked";
+    char        *reason = "was ^1kicked^7";
 
     // make sure server is running
     if (!com_sv_running->integer ) {
@@ -678,7 +678,7 @@ static void SV_Kick_f(void) {
 
     if (Cmd_Argc() == 3) {
         // If the reason was specified attach it to the disconnect message
-        reason = va("was kicked: %s", Cmd_Argv(2));
+        reason = va("was ^1kicked^7: %s", Cmd_Argv(2));
     }
 
 
@@ -884,7 +884,7 @@ static void SV_KickNum_f(void) {
         return;
     }
 
-    SV_DropClient(cl, "was kicked");
+    SV_DropClient(cl, "was ^1kicked^7");
     cl->lastPacketTime = svs.time;    // in case there is a funny zombie
 
 }
@@ -1007,7 +1007,7 @@ static void SV_ConTell_f(void) {
     }
 
     if (Cmd_Argc() < 3) {
-        Com_Printf("Usage: tell <client> <text>\n");
+        Com_Printf("Usage: tell <client> <message>\n");
         return;
     }
 
@@ -1676,10 +1676,10 @@ static void SV_Invisible_f(void) {
 
 	if (e->r.svFlags & SVF_NOCLIENT) {
 		Com_Printf("Player %s Invisible.\n", cl->name);
-        SV_SendServerCommand(cl, "cchat \"\" \"%s^7Your Invisibility Mode turned [^2ON^7]\"", sv_tellprefix->string);
+        SV_SendServerCommand(cl, "cchat \"\" \"%s^7Your invisibility mode turned: [^2ON^7]\"", sv_tellprefix->string);
 	} else {
 		Com_Printf("Player %s Visible.\n", cl->name);
-        SV_SendServerCommand(cl, "cchat \"\" \"%s^7Your Invisibility Mode turned [^1OFF^7]\"", sv_tellprefix->string);
+        SV_SendServerCommand(cl, "cchat \"\" \"%s^7Your invisibility mode turned: [^1OFF^7]\"", sv_tellprefix->string);
 	}
 }
 
@@ -1727,7 +1727,7 @@ static void SV_PlaySound_f (void)
 
 	if(Cmd_Argc() != 3)
 	{
-		Com_Printf("Usage: playsound <player> <indexsound>\n");
+		Com_Printf("Usage: playsound <player> <index>\n");
 		return;
 	}
 
@@ -1744,12 +1744,16 @@ static void SV_PlaySound_f (void)
 	MOD_SetExternalEvent(cl, EV_GLOBAL_SOUND, index);
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_GiveWeapon_f
+/////////////////////////////////////////////////////////////////////
 static void SV_GiveWeapon_f (void) {
 
 	client_t      *cl;
 	weapon_t      wp = 0;
 	playerState_t *ps;
 	int           i;
+
 	if(!com_sv_running->integer) {
 		Com_Printf("Server is not running\n");
 		return;
@@ -1782,12 +1786,16 @@ static void SV_GiveWeapon_f (void) {
 	SV_GiveWeapon(ps, wp);
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_GiveItem_f
+/////////////////////////////////////////////////////////////////////
 static void SV_GiveItem_f (void) {
 
 	client_t      *cl;
 	utItemID_t      item = 0;
 	playerState_t *ps;
 	int           i;
+
 	if(!com_sv_running->integer) {
 		Com_Printf("Server is not running\n");
 		return;
@@ -1820,6 +1828,9 @@ static void SV_GiveItem_f (void) {
 	utPSGiveItem(ps, item);
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_RemoveWeapon_f
+/////////////////////////////////////////////////////////////////////
 static void SV_RemoveWeapon_f (void) {
 
 	client_t      *cl;
@@ -1859,12 +1870,16 @@ static void SV_RemoveWeapon_f (void) {
 	SV_RemoveWeapon(ps, wp);
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_RemoveItem_f
+/////////////////////////////////////////////////////////////////////
 static void SV_RemoveItem_f (void) {
 
 	client_t      *cl;
 	utItemID_t      item = 0;
 	playerState_t *ps;
 	int           i;
+
 	if(!com_sv_running->integer) {
 		Com_Printf("Server is not running\n");
 		return;
@@ -1896,6 +1911,7 @@ static void SV_RemoveItem_f (void) {
 
 	utPSRemoveItem(ps, item);
 }
+
 /////////////////////////////////////////////////////////////////////
 // SV_GiveClips_f
 /////////////////////////////////////////////////////////////////////
@@ -2027,6 +2043,7 @@ static void SV_SetBullets_f (void)
 
 	SV_SetBulletsAW(ps, value);
 }
+
 /////////////////////////////////////////////////////////////////////
 // SV_Teleport_f
 /////////////////////////////////////////////////////////////////////
@@ -2043,8 +2060,8 @@ static void SV_Teleport_f(void) {
 
     // check for correct number of arguments
     if (Cmd_Argc() != 2 && Cmd_Argc() != 3 && Cmd_Argc() != 5) {
-        Com_Printf("Usage: teleport <client> <target>\n"
-                   "       teleport <client> <x> <y> <z>\n");
+        Com_Printf("Usage: teleport <player1> <player2>\n"
+                   "       teleport <player> <x> <y> <z>\n");
         return;
     }
 
@@ -2075,7 +2092,7 @@ static void SV_Teleport_f(void) {
         ps_src = SV_GameClientNum(cl_src - svs.clients);
         VectorCopy(ps_src->origin, ps->origin);
 
-        SV_SendServerCommand(cl, "cchat \"\" \"%s^7You have been ^2teleported ^7to %s\"", sv_tellprefix->string, cl_src->colourName);
+        SV_SendServerCommand(cl, "cchat \"\" \"%s^7You have been ^2teleported ^7to: %s\"", sv_tellprefix->string, cl_src->colourName);
         SV_SendServerCommand(cl_src, "cchat \"\" \"%s^7Player %s ^7has been ^2teleported ^7to you!\"", sv_tellprefix->string, cl->colourName);
 
     // teleport a player to the specified x, y, z coordinates
@@ -2088,6 +2105,7 @@ static void SV_Teleport_f(void) {
     }
     VectorClear(ps->velocity);
 }
+
 /////////////////////////////////////////////////////////////////////
 // SV_SetHealth_f
 /////////////////////////////////////////////////////////////////////
@@ -2144,6 +2162,47 @@ static void SV_AddHealth_f(void) {
 	MOD_AddHealth(cl, value);
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_AutoHealth_f
+/////////////////////////////////////////////////////////////////////
+void SV_AutoHealth_f(void)
+{
+    if(!com_sv_running->integer)
+    {
+        Com_Printf("Server is not running\n");
+        return;
+    }
+    client_t *cl;
+
+    cl = SV_GetPlayerByHandle();
+
+    if(!cl)
+        return;
+
+    if(Cmd_Argc() == 2)
+    {
+        cl->cm.perPlayerHealth = 0;
+        return;
+    }
+
+    if(Cmd_Argc() < 7)
+    {
+        Com_Printf("Usage: autohealth <player> <limit> <moving> <step> <timeout> <turnoffwhenfinish>\n");
+        return;
+    }
+
+    cl->cm.perPlayerHealth = 1;
+    cl->cm.turnOffUsed = 0;
+    cl->cm.limitHealth = atoi(Cmd_Argv(2));
+    cl->cm.whenmovingHealth = atoi(Cmd_Argv(3));
+    cl->cm.stepHealth = atoi(Cmd_Argv(4));
+    cl->cm.timeoutHealth = atoi(Cmd_Argv(5));
+    cl->cm.turnOffWhenFinish = atoi(Cmd_Argv(6));
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_QVMReload_f
+/////////////////////////////////////////////////////////////////////
 static void SV_QVMReload_f (void)
 {
 	if(!com_sv_running->integer) {
@@ -2152,13 +2211,17 @@ static void SV_QVMReload_f (void)
 	}
 	if(overrideQVMData())
 	{
-		Com_Printf("Reload corretly!!\n");
+		Com_Printf("Reloaded correctly!\n");
 	}
 	else
 	{
 		Com_Printf("Unable to modify qvm data!\n");
 	}
 }
+
+/////////////////////////////////////////////////////////////////////
+// SV_ResquestDownload_f
+/////////////////////////////////////////////////////////////////////
 static void SV_ResquestDownload_f (void)
 {
 	client_t *cl;
@@ -2184,42 +2247,10 @@ static void SV_ResquestDownload_f (void)
 	 MOD_ResquestPk3DownloadByClientGameState (cl, Cmd_Argv(2));
 }
 
-void SV_AutoHealth(void)
-{
-	if(!com_sv_running->integer)
-	{
-		Com_Printf("Server is not running\n");
-		return;
-	}
-	client_t *cl;
-
-	cl = SV_GetPlayerByHandle();
-
-	if(!cl)
-		return;
-
-	if(Cmd_Argc() == 2)
-	{
-		cl->cm.perPlayerHealth = 0;
-		return;
-	}
-
-	if(Cmd_Argc() < 7)
-	{
-		Com_Printf("Usage: /autohealth <player> <limit> <moving> <step> <timeout> <turnoffwhenfinish>\n");
-		return;
-	}
-
-	cl->cm.perPlayerHealth = 1;
-	cl->cm.turnOffUsed = 0;
-	cl->cm.limitHealth = atoi(Cmd_Argv(2));
-	cl->cm.whenmovingHealth = atoi(Cmd_Argv(3));
-	cl->cm.stepHealth = atoi(Cmd_Argv(4));
-	cl->cm.timeoutHealth = atoi(Cmd_Argv(5));
-	cl->cm.turnOffWhenFinish = atoi(Cmd_Argv(6));
-}
-
-void SV_CheckWeaponOffset (void)
+/////////////////////////////////////////////////////////////////////
+// SV_CheckWeaponOffset_f
+/////////////////////////////////////////////////////////////////////
+void SV_CheckWeaponOffset_f (void)
 {
 	if(!com_sv_running->integer)
 	{
@@ -2229,7 +2260,7 @@ void SV_CheckWeaponOffset (void)
 
 	if(Cmd_Argc() < 2)
 	{
-		Com_Printf("Usage: /weaponoffset <weapon>\n");
+		Com_Printf("Usage: weaponoffset <weapon>\n");
 		return;
 	}
 
@@ -2240,7 +2271,7 @@ void SV_CheckWeaponOffset (void)
 
 	if(!f)
 	{
-		Com_Printf("Can not open the file!\n");
+		Com_Printf("Could not open the file!\n");
 		return;
 	}
 
@@ -2250,9 +2281,12 @@ void SV_CheckWeaponOffset (void)
 	{
 		fprintf(f, "[%d] c: %c  d: %d f: %f\n", i, *(char*)(QVM_baseWeapon(weapon)+i), *(int*)(QVM_baseWeapon(weapon)+i), *(float*)(QVM_baseWeapon(weapon)+i));
 	}
-	close(f);
+	fclose(f);
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_Location_f
+/////////////////////////////////////////////////////////////////////
 void SV_Location_f (void)
 {
 	if(!com_sv_running->integer)
@@ -2262,7 +2296,7 @@ void SV_Location_f (void)
 	}
 	if(Cmd_Argc() < 4)
 	{
-		Com_Printf("Usage: location <player/ALL> <string> <index> <lock>\n");
+		Com_Printf("Usage: location <player/all> <string> <index> <lock>\n");
 		return;
 	}
 
@@ -2273,7 +2307,7 @@ void SV_Location_f (void)
 	int index = atoi(Cmd_Argv(3));
 	if(index >= 0 && 360 > index)
 	{
-		if(Q_strncmp(Cmd_Argv(1), "ALL", 3) == 0)
+		if(Q_strncmp(Cmd_Argv(1), "all", 3) == 0)
 		{
 			for (j = 0, cl = svs.clients; j < sv_maxclients->integer ; j++, cl++)
 			{
@@ -2304,6 +2338,7 @@ void SV_Location_f (void)
 		Com_Printf("Index must be between 0 and 360\n");
 	}
 }
+
 /*
 ==================
 SV_AddOperatorCommands
@@ -2346,24 +2381,24 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("playsoundfile", SV_PlaySoundFile_f);
     Cmd_AddCommand ("playsound", SV_PlaySound_f);
     Cmd_AddCommand ("giveweapon", SV_GiveWeapon_f);
-    Cmd_AddCommand ("removeweapon", SV_RemoveWeapon_f);
-    Cmd_AddCommand ("giveitem", SV_GiveItem_f);
-    Cmd_AddCommand ("removeitem", SV_RemoveItem_f);
-    Cmd_AddCommand ("gi", SV_GiveItem_f);
-    Cmd_AddCommand ("ri", SV_RemoveItem_f);
     Cmd_AddCommand ("gw", SV_GiveWeapon_f);
+    Cmd_AddCommand ("removeweapon", SV_RemoveWeapon_f);
     Cmd_AddCommand ("rw", SV_RemoveWeapon_f);
-	Cmd_AddCommand("giveclips", SV_GiveClips_f);
-	Cmd_AddCommand("givebullets", SV_GiveBullets_f);
-	Cmd_AddCommand("setclips", SV_SetClips_f);
-	Cmd_AddCommand("setbullets", SV_SetBullets_f);
+    Cmd_AddCommand ("giveitem", SV_GiveItem_f);
+    Cmd_AddCommand ("gi", SV_GiveItem_f);
+    Cmd_AddCommand ("removeitem", SV_RemoveItem_f);
+    Cmd_AddCommand ("ri", SV_RemoveItem_f);
+	Cmd_AddCommand ("giveclips", SV_GiveClips_f);
+	Cmd_AddCommand ("givebullets", SV_GiveBullets_f);
+	Cmd_AddCommand ("setclips", SV_SetClips_f);
+	Cmd_AddCommand ("setbullets", SV_SetBullets_f);
 	Cmd_AddCommand ("addhealth", SV_AddHealth_f);
 	Cmd_AddCommand ("sethealth", SV_SetHealth_f);
+    Cmd_AddCommand ("autohealth", SV_AutoHealth_f);
 	Cmd_AddCommand ("teleport", SV_Teleport_f);
     Cmd_AddCommand ("tp", SV_Teleport_f);
     Cmd_AddCommand ("resquestdownload", SV_ResquestDownload_f);
-    Cmd_AddCommand ("autohealth", SV_AutoHealth);
-    Cmd_AddCommand ("weaponoffset", SV_CheckWeaponOffset);
+    Cmd_AddCommand ("weaponoffset", SV_CheckWeaponOffset_f);
     Cmd_AddCommand ("location", SV_Location_f);
     Cmd_AddCommand ("qvmreload", SV_QVMReload_f);
 

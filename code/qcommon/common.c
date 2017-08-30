@@ -105,6 +105,9 @@ char	com_errorMessage[MAXPRINTMSG];
 void Com_WriteConfig_f( void );
 void CIN_CloseAllVideos( void );
 
+void EV_PlayerSpawn (int cnum);
+void EV_ClientUserInfoChanged(int cnum);
+
 //============================================================================
 
 static char	*rd_buffer;

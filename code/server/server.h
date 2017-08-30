@@ -371,7 +371,7 @@ extern  cvar_t  *sv_auth_engine;
 
 
 //
-// qvm_weapons.c
+// qvm_offsets.c
 //
 void *QVM_baseWeapon(weapon_t weapon);
 void *QVM_bullets(weapon_t weapon);
@@ -388,6 +388,7 @@ void *QVM_WPflags(weapon_t weapon);
 //
 // sv_weapon.c
 //
+weapon_t SV_Char2Weapon(char weapon[36]);
 int overrideQVMData(void);
 void SV_GiveBulletsAW(playerState_t *ps, int bulletsCount);
 void SV_GiveBulletsAW(playerState_t *ps, int bulletsCount);
