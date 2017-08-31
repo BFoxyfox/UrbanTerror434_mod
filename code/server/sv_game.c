@@ -324,7 +324,6 @@ qboolean	SV_EntityContact( vec3_t mins, vec3_t maxs, const sharedEntity_t *gEnt,
 /*
 ===============
 SV_GetServerinfo
-
 ===============
 */
 void SV_GetServerinfo( char *buffer, int bufferSize ) {
@@ -337,7 +336,6 @@ void SV_GetServerinfo( char *buffer, int bufferSize ) {
 /*
 ===============
 SV_LocateGameData
-
 ===============
 */
 void SV_LocateGameData( sharedEntity_t *gEnts, int numGEntities, int sizeofGEntity_t,
@@ -355,7 +353,6 @@ void SV_LocateGameData( sharedEntity_t *gEnts, int numGEntities, int sizeofGEnti
 /*
 ===============
 SV_GetUsercmd
-
 ===============
 */
 void SV_GetUsercmd( int clientNum, usercmd_t *cmd ) {
@@ -363,6 +360,15 @@ void SV_GetUsercmd( int clientNum, usercmd_t *cmd ) {
 		Com_Error( ERR_DROP, "SV_GetUsercmd: bad clientNum:%i", clientNum );
 	}
 	*cmd = svs.clients[clientNum].lastUsercmd;
+
+	client_t *cl;
+	cl = &svs.clients[clientNum];
+
+	if (cl->cm.frozen > 0) {
+		cmd->forwardmove = ClampChar(0);
+		cmd->rightmove = ClampChar(0);
+		cmd->upmove = ClampChar(0);
+	}
 }
 
 //==============================================

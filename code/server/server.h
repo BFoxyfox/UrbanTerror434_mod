@@ -128,6 +128,8 @@ typedef struct clientMod_s {
 	int lastAutoHealth;				  // Last time autohealth this player
 	int turnOffWhenFinish;			  // Turn off the autohealth if limit < health and turnOffUsed is 1
 	int turnOffUsed;
+
+	int frozen;                       // Whether the player is frozen
 } clientMod_t;
 
 typedef struct client_s {

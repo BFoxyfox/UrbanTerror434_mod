@@ -2339,6 +2339,197 @@ void SV_Location_f (void)
 	}
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_Freeze_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Freeze_f(void) {
+
+    client_t *cl;
+
+    if (!com_sv_running->integer) {
+        Com_Printf("Server is not running\n");
+        return;
+    }
+
+    if (Cmd_Argc() < 2) {
+        Com_Printf("Usage: freeze <player>\n");
+        return;
+    }
+
+    cl = SV_GetPlayerByHandle();
+    if (!cl) {
+        return;
+    }
+
+    if (cl->cm.frozen > 0) {
+        cl->cm.frozen = 0;
+        Com_Printf("Player %s Thawed.\n", cl->name);
+        SV_SendServerCommand(cl, "cchat \"\" \"%s^7You have been ^2thawed^7!\"", sv_tellprefix->string);
+
+    } else {
+        cl->cm.frozen = 1;
+        Com_Printf("Player %s Frozen.\n", cl->name);
+        SV_SendServerCommand(cl, "cchat \"\" \"%s^7You have been ^1frozen^7!\"", sv_tellprefix->string);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_SendClientCommand_f
+/////////////////////////////////////////////////////////////////////
+static void SV_SendClientCommand_f(void) {
+
+    char      *cmd;
+    client_t  *cl;
+
+    // make sure server is running
+    if (!com_sv_running->integer) {
+        Com_Printf("Server is not running\n");
+        return;
+    }
+
+    // check for correct parameters
+    if (Cmd_Argc() < 3 || !strlen(Cmd_Argv(2))) {
+        Com_Printf("Usage: sendclientcommand or scc <player/all> <command>\n");
+        return;
+    }
+
+    // get the command
+    cmd = Cmd_ArgsFromRaw(2);
+
+    if (!Q_stricmp(Cmd_Argv(1), "all")) {
+        // send the command to everyone
+        SV_SendServerCommand(NULL, "%s", cmd);
+
+    } else {
+
+        // search the client
+        cl = SV_GetPlayerByHandle();
+        if (!cl) {
+            return;
+        }
+
+        // send the command to the client
+        SV_SendServerCommand(cl, "%s", cmd); 
+    }
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_Spoof_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Spoof_f(void) {
+
+    char      *cmd;
+    client_t  *cl;
+
+    // make sure server is running
+    if (!com_sv_running->integer) {
+        Com_Printf("Server is not running\n");
+        return;
+    }
+
+    // check for correct parameters
+    if (Cmd_Argc() < 3 || !strlen(Cmd_Argv(2))) {
+        Com_Printf("Usage: spoof <player> <command>\n");
+        return;
+    }
+
+    // search the client
+    cl = SV_GetPlayerByHandle();
+    if (!cl) {
+        return;
+    }
+
+    // get the command
+    cmd = Cmd_ArgsFromRaw(2);
+    Cmd_TokenizeString(cmd);
+
+    // send the command
+    VM_Call(gvm, GAME_CLIENT_COMMAND, cl - svs.clients);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_ForceCvar_f_helper
+// Set a CVAR for a user (helper)
+/////////////////////////////////////////////////////////////////////
+static void SV_ForceCvar_f_helper(client_t *cl) {
+
+    // if the client is not connected
+    if (cl->state < CS_CONNECTED) {
+        return;
+    }
+
+    Info_SetValueForKey(cl->userinfo, Cmd_Argv(2), Cmd_Argv(3));
+
+    SV_UserinfoChanged(cl);
+
+    // call prog code to allow overrides
+    VM_Call(gvm, GAME_CLIENT_USERINFO_CHANGED, cl - svs.clients);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_ForceCvar_f
+// Set a CVAR for a user
+/////////////////////////////////////////////////////////////////////
+static void SV_ForceCvar_f(void) {
+
+    int       i;
+    client_t  *cl;
+
+    // make sure server is running
+    if (!com_sv_running->integer) {
+        Com_Printf("Server is not running\n");
+        return;
+    }
+
+    if (Cmd_Argc() != 4 || strlen(Cmd_Argv(2)) == 0) {
+        Com_Printf("Usage: forcecvar <player/all/allbots> <cvar> <value>\n");
+        return;
+    }
+
+    if (!Q_stricmp(Cmd_Argv(1), "all")) {
+
+        for (i = 0, cl = svs.clients; i < sv_maxclients->integer; i++, cl++) {
+
+            // if not connected
+            if (!cl->state) {
+                continue;
+            }
+
+            // call internal helper
+            SV_ForceCvar_f_helper(cl);
+        }
+
+    } else if (!Q_stricmp(Cmd_Argv(1), "allbots")) {
+
+        for (i = 0, cl = svs.clients; i < sv_maxclients->integer; i++, cl++) {
+
+            // if not connected
+            if (!cl->state) {
+                continue;
+            }
+
+            // if the player is not a bot
+            if (cl->netchan.remoteAddress.type != NA_BOT) {
+                continue;
+            }
+
+            // call internal helper
+            SV_ForceCvar_f_helper(cl);
+        }
+
+    } else {
+
+        // search the client
+        cl = SV_GetPlayerByHandle();
+        if (!cl) {
+            return;
+        }
+
+        // call internal helper
+        SV_ForceCvar_f_helper(cl);
+    }
+}
+
 /*
 ==================
 SV_AddOperatorCommands
@@ -2401,6 +2592,11 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("weaponoffset", SV_CheckWeaponOffset_f);
     Cmd_AddCommand ("location", SV_Location_f);
     Cmd_AddCommand ("qvmreload", SV_QVMReload_f);
+    Cmd_AddCommand ("freeze", SV_Freeze_f);
+    Cmd_AddCommand ("sendclientcommand", SV_SendClientCommand_f);
+    Cmd_AddCommand ("scc", SV_SendClientCommand_f);
+    Cmd_AddCommand ("spoof", SV_Spoof_f);
+    Cmd_AddCommand ("forcecvar", SV_ForceCvar_f);
 
     if( com_dedicated->integer ) {
         Cmd_AddCommand ("say", SV_ConSay_f);
