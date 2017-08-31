@@ -1644,8 +1644,11 @@ void SV_UserinfoChanged( client_t *cl ) {
 	else
 		Info_SetValueForKey( cl->userinfo, "ip", ip );
 
+    // get the client's cg_ghost value if we are in jump mode
+    if (sv_gametype->integer == GT_JUMP) {
+        cl->cm.ghost = SV_IsClientGhost(cl);
+    }
 }
-
 
 /*
 ==================
@@ -1657,25 +1660,43 @@ void SV_UpdateUserinfo_f( client_t *cl ) {
 
 	if ( (sv_floodProtect->integer) && (cl->state >= CS_ACTIVE) && (svs.time < cl->nextReliableUserTime) ) {
 		Q_strncpyz( cl->userinfobuffer, Cmd_Argv(1), sizeof(cl->userinfobuffer) );
-		SV_SendServerCommand(cl, "print \"^7Command ^1delayed^7 due to sv_floodprotect.\"");
+		SV_SendServerCommand(cl, "print \"^7Command ^1delayed ^7due to sv_floodprotect!\"");
 		return;
 	}
+
+    qboolean ghost = cl->cm.ghost; // Save here the current cg_ghost value in order to know after if it changed
+
     gl = (gclient_t *)SV_GameClientNum(cl - svs.clients);
 	cl->userinfobuffer[0]=0;
 	cl->nextReliableUserTime = svs.time + 5000;
 
 	Q_strncpyz( cl->userinfo, Cmd_Argv(1), sizeof(cl->userinfo) );
 
-    if (mod_forceGear && Q_stricmp(mod_forceGear->string, "")) {
+    if (mod_forceGear->string && Q_stricmp(mod_forceGear->string, "")) {
         Info_SetValueForKey(cl->userinfo, "gear", mod_forceGear->string);
     }
 
 	SV_UserinfoChanged( cl );
-    
+
 	// call prog code to allow overrides
 	VM_Call( gvm, GAME_CLIENT_USERINFO_CHANGED, cl - svs.clients );
-        if (mod_colourNames->integer) 
-            Q_strncpyz(gl->pers.netname, cl->colourName, MAX_NETNAME);
+
+    if (mod_colourNames->integer) {
+        Q_strncpyz(gl->pers.netname, cl->colourName, MAX_NETNAME);
+    }
+
+    // get the client's cg_ghost value if we are in jump mode
+    if (sv_gametype->integer == GT_JUMP) {
+        cl->cm.ghost = SV_IsClientGhost(cl);
+        // display ghost mode status if it changed
+        if (ghost != cl->cm.ghost) {
+            if (cl->cm.ghost) {
+                SV_SendServerCommand(cl, "print \"^7Ghost Mode turned: [^2ON^7]\"");
+            } else {
+                SV_SendServerCommand(cl, "print \"^7Ghost Mode turned: [^1OFF^7]\"");
+            }
+        }
+    }
 }
 
 typedef struct {
@@ -1772,6 +1793,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 	                SV_SendServerCommand(cl, "print \"^1The radio chat is disabled on this server!\n\"");
 	                return;
 				}
+
 			} else if (Q_stricmp("ut_weapdrop", Cmd_Argv(0)) == 0 && !mod_allowWeapDrop->integer) {
                 SV_SendServerCommand(cl, "print \"^1This server doesn't allow dropping weapons!\n\"");
                 return;
@@ -1796,40 +1818,48 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
             } else if(Q_stricmp("callvote", Cmd_Argv(0)) == 0 && !mod_allowVote->integer) {
                 SV_SendServerCommand(cl, "print \"^1Vote system is disabled on this server!\n\"");
                 return;
-            } else if(Q_stricmp("team", Cmd_Argv(0)) == 0)
-			{
-            	switch(mod_allowTeamSelection->integer)
-            	{
-            	case 0:
-                    SV_SendServerCommand(cl, "print \"^1Team selection system is disabled on this server!\n\"");
-            		return;
-            		break;
-            	case 2:
-            		if(!(Q_stricmp("s", Cmd_Argv(1)) == 0) && !(Q_stricmp("free", Cmd_Argv(1)) == 0)) {
-                        SV_SendServerCommand(cl, "print \"^1You can only spectate or auto join in this server!\n\"");
-            			return;
-                    }
-            		break;
-            	case 3:
-            	{
-            		team_t team = *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
-            		if((Q_stricmp("free", Cmd_Argv(1)) == 0))
-					{
-                        if(team == TEAM_SPECTATOR) {
-                            break;
-                        } else {
-                            SV_SendServerCommand(cl, "print \"^1Only spectators can do auto join in this server!\n\"");
+
+            } else if(Q_stricmp("team", Cmd_Argv(0)) == 0) {
+                switch(mod_allowTeamSelection->integer) {
+                    case 0:
+                        SV_SendServerCommand(cl, "print \"^1Team selection system is disabled on this server!\n\"");
+                        return;
+                        break;
+                    case 2:
+                        if(!(Q_stricmp("s", Cmd_Argv(1)) == 0) && !(Q_stricmp("free", Cmd_Argv(1)) == 0)) {
+                            SV_SendServerCommand(cl, "print \"^1You can only spectate or auto join in this server!\n\"");
                             return;
                         }
-					}
-            		if(!(Q_stricmp("s", Cmd_Argv(1)) == 0)) {
-                        SV_SendServerCommand(cl, "print \"^1You can only spectate or auto join in this server!\n\"");
-            			return;
+                        break;
+                    case 3:
+                    {
+                        team_t team = *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
+                        if((Q_stricmp("free", Cmd_Argv(1)) == 0)) {
+                            if(team == TEAM_SPECTATOR) {
+                                break;
+                            } else {
+                                SV_SendServerCommand(cl, "print \"^1Only spectators can do auto join in this server!\n\"");
+                                return;
+                            }
+                        }
+                        if(!(Q_stricmp("s", Cmd_Argv(1)) == 0)) {
+                            SV_SendServerCommand(cl, "print \"^1You can only spectate or auto join in this server!\n\"");
+                            return;
+                        }
+                        break;
                     }
-            		break;
-            	}
-            	}
-			}
+                }
+
+            // Handle the activation of client's timer in jump mode
+            } else if(Q_stricmp("ready", Cmd_Argv(0)) == 0) {
+                if (sv_gametype->integer == GT_JUMP) {
+                    if (cl->cm.ready) {
+                        cl->cm.ready = 0;
+                    } else {
+                        cl->cm.ready = 1;
+                    }
+                }
+            }
 
 			if (argsFromOneMaxlen >= 0) {
 				charCount = 0;

@@ -211,6 +211,34 @@ void QDECL SV_LogPrintf(const char *fmt, ...) {
 	FS_FCloseFile(file);
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_GetClientTeam
+// Retrieve the team of the given client
+/////////////////////////////////////////////////////////////////////
+int SV_GetClientTeam(int cid) {
+    playerState_t *ps;
+    ps = SV_GameClientNum(cid);
+    return ps->persistant[PERS_TEAM];
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_IsClientGhost
+// Tells whether a client has cg_ghost activated
+/////////////////////////////////////////////////////////////////////
+qboolean SV_IsClientGhost(client_t *cl) {
+
+    int ghost;
+
+    // if we are not playing jump mode
+    if (sv_gametype->integer != GT_JUMP) {
+        return qfalse;
+    }
+
+    // get the cg_ghost value from the userinfo string
+    ghost = atoi(Info_ValueForKey(cl->userinfo, "cg_ghost"));
+    return ghost > 0 ? qtrue : qfalse;
+}
+
 /*
 ===============
 SV_ExpandNewlines

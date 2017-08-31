@@ -2065,7 +2065,9 @@ static void SV_Teleport_f(void) {
         return;
     }
 
-    if (!(cl = SV_GetPlayerByHandle())) {
+    cl = SV_GetPlayerByHandle();
+    // return if no client1 or if client1 may be in a jump run
+    if (!cl || cl->cm.ready) {
         return;
     }
 
@@ -2073,19 +2075,19 @@ static void SV_Teleport_f(void) {
 
     // print a player's position
     if (Cmd_Argc() == 2) {
-        Com_Printf("Position: (%f %f %f)\n", ps->origin[0], ps->origin[1], ps->origin[2]);
+        Com_Printf("Position of %s: (x: %f, y: %f, z: %f)\n", cl->name, ps->origin[0], ps->origin[1], ps->origin[2]);
         return;
-    }
 
-    // teleport a player to another player's location
-    else if (Cmd_Argc() == 3) {
+    // teleport a player to another player's position
+    } else if (Cmd_Argc() == 3) {
         client_t      *cl_src;
         playerState_t *ps_src;
 
         Cmd_TokenizeString(Cmd_Args());
 
-        // return if no client 2 or both players are the same
-        if (!(cl_src = SV_GetPlayerByHandle()) || cl_src == cl) {
+        cl_src = SV_GetPlayerByHandle();
+        // return if no client2 or if both players are the same
+        if (!cl_src || cl_src == cl) {
             return;
         }
 
@@ -2101,7 +2103,7 @@ static void SV_Teleport_f(void) {
         for (i = 0; i < 3; ++i) {
             ps->origin[i] = atof(Cmd_Argv(i + 2));
         }
-        SV_SendServerCommand(cl, "print \"You have been ^2teleported ^7to x: %f y: %f z: %f^7\n\"", ps->origin[0], ps->origin[1], ps->origin[2]);
+        SV_SendServerCommand(cl, "print \"^7You have been ^2teleported ^7to: (x: %f, y: %f, z: %f)\n\"", ps->origin[0], ps->origin[1], ps->origin[2]);
     }
     VectorClear(ps->velocity);
 }

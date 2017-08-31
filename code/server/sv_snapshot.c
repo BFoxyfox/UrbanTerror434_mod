@@ -325,6 +325,9 @@ static void SV_AddEntitiesVisibleFromPoint( vec3_t origin, clientSnapshot_t *fra
 	byte	        *clientpvs;
 	byte	        *bitvector;
 
+	client_t *cl;
+	cl = &svs.clients[frame->ps.clientNum];
+
 	// during an error shutdown message we may need to transmit
 	// the shutdown message after the server has shutdown, so
 	// specfically check for it
@@ -356,6 +359,10 @@ static void SV_AddEntitiesVisibleFromPoint( vec3_t origin, clientSnapshot_t *fra
 
 		// entities can be flagged to explicitly not be sent to the client
 		if ( ent->r.svFlags & SVF_NOCLIENT ) {
+			continue;
+		}
+
+		if(cl->cm.hidePlayers && ent->s.eType == 1) {
 			continue;
 		}
 
@@ -505,12 +512,12 @@ static void SV_BuildClientSnapshot( client_t *client ) {
 		}
 	}
 
-	// TitanMod: stamina, walljumps
-	if(mod_infiniteStamina->integer)
+	// TitanMod: infiniteStamina, infiniteWallJumps
+	if(mod_infiniteStamina->integer || client->cm.infiniteStamina > 0)
 	{
 		ps->stats[9] = ps->stats[0] * 300;
 	}
-	if(mod_infiniteWallJumps->integer)
+	if(mod_infiniteWallJumps->integer || client->cm.infiniteWallJumps > 0)
 	{
 		ps->generic1 = 0;
 	}

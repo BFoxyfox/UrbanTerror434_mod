@@ -130,6 +130,16 @@ typedef struct clientMod_s {
 	int turnOffUsed;
 
 	int frozen;                       // Whether the player is frozen
+
+	vec3_t savedPosition;             // Saved client last position coordinates
+	vec3_t savedPositionAngle;        // Saved client last position angle
+
+	qboolean ghost;                   // Whether the player has cg_ghost 1 (Jump Mode)
+	qboolean ready;                   // Whether the player has activated his timer with /ready (Jump Mode)
+
+	int infiniteStamina;              // Enable infinite stamina on a player
+	int infiniteWallJumps;            // Enable infinite walljumps on a player
+	int hidePlayers;                  // Make all other players invisible for a client
 } clientMod_t;
 
 typedef struct client_s {
@@ -387,6 +397,7 @@ void *QVM_noRecoil(weapon_t weapon, int mode);
 void *QVM_WPflags(weapon_t weapon);
 
 
+
 //
 // sv_weapon.c
 //
@@ -405,12 +416,13 @@ void utPSGiveItem ( playerState_t *ps, utItemID_t itemid );
 
 
 
-
 //
 // sv_main.c
 //
 
 void QDECL SV_LogPrintf(const char *fmt, ...);
+int SV_GetClientTeam(int cid);
+qboolean SV_IsClientGhost(client_t *cl);
 
 void SV_FinalMessage (char *message);
 void QDECL SV_SendServerCommand( client_t *cl, const char *fmt, ...);
