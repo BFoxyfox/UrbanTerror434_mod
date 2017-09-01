@@ -1669,7 +1669,7 @@ void SV_UpdateUserinfo_f( client_t *cl ) {
 
 	if ( (sv_floodProtect->integer) && (cl->state >= CS_ACTIVE) && (svs.time < cl->nextReliableUserTime) ) {
 		Q_strncpyz( cl->userinfobuffer, Cmd_Argv(1), sizeof(cl->userinfobuffer) );
-		SV_SendServerCommand(cl, "print \"^7Command ^1delayed ^7due to sv_floodprotect!\"");
+		SV_SendServerCommand(cl, "print \"^7Command ^1delayed ^7due to sv_floodprotect!\n\"");
 		return;
 	}
 
@@ -1700,9 +1700,9 @@ void SV_UpdateUserinfo_f( client_t *cl ) {
         // display ghost mode status if it changed
         if (ghost != cl->cm.ghost) {
             if (cl->cm.ghost) {
-                SV_SendServerCommand(cl, "print \"^7Ghost Mode turned: [^2ON^7]\"");
+                SV_SendServerCommand(cl, "print \"^7Ghost Mode turned: [^2ON^7]\n\"");
             } else {
-                SV_SendServerCommand(cl, "print \"^7Ghost Mode turned: [^1OFF^7]\"");
+                SV_SendServerCommand(cl, "print \"^7Ghost Mode turned: [^1OFF^7]\n\"");
             }
         }
     }
@@ -1782,7 +1782,7 @@ static void SV_SavePosition_f(client_t *cl) {
                                       cl->cm.savedPosition[1],
                                       cl->cm.savedPosition[2]);
 
-    SV_SendServerCommand(cl, "print \"Your ^6position ^7has been ^2saved\n\"");
+    SV_SendServerCommand(cl, "print \"^7Your ^6position ^7has been ^2saved\n\"");
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1852,7 +1852,87 @@ static void SV_LoadPosition_f(client_t *cl) {
                                       cl->cm.savedPosition[1],
                                       cl->cm.savedPosition[2]);
     
-    SV_SendServerCommand(cl, "print \"Your ^6position ^7has been ^5loaded\n\"");
+    SV_SendServerCommand(cl, "print \"^7Your ^6position ^7has been ^5loaded\n\"");
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_HidePlayers_f
+/////////////////////////////////////////////////////////////////////
+void SV_HidePlayers_f(client_t *cl) {
+
+    if (sv_gametype->integer != GT_JUMP) {
+        return;
+    }
+
+    if (!(mod_enableJumpCmds->integer > 0)) {
+        return;
+    }
+
+    if (cl->cm.hidePlayers > 0) {
+        cl->cm.hidePlayers = 0;
+        SV_SendServerCommand(cl, "print \"^7Hide Players turned: [^1OFF^7]\n\"");
+    } else {
+        cl->cm.hidePlayers = 1;
+        SV_SendServerCommand(cl, "print \"^7Hide Players turned: [^2ON^7]\n\"");
+    }
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_InfiniteStamina_f
+/////////////////////////////////////////////////////////////////////
+void SV_InfiniteStamina_f(client_t *cl) {
+
+    int cid;
+    cid = cl - svs.clients;
+
+    if (sv_gametype->integer != GT_JUMP) {
+        return;
+    }
+
+    if (SV_GetClientTeam(cid) == TEAM_SPECTATOR || mod_infiniteStamina->integer || Cvar_VariableIntegerValue("g_stamina") == 2) {
+       return;
+    }
+
+    if (!(mod_enableJumpCmds->integer > 0)) {
+        return;
+    }
+
+    if (cl->cm.infiniteStamina > 0) {
+       cl->cm.infiniteStamina = 0;
+       SV_SendServerCommand(cl, "print  \"^7Infinite Stamina turned: [^1OFF^7]\n\""); 
+    } else {
+       cl->cm.infiniteStamina = 1;
+       SV_SendServerCommand(cl, "print  \"^7Infinite Stamina turned: [^2ON^7]\n\""); 
+    }
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_InfiniteWallJumps_f
+/////////////////////////////////////////////////////////////////////
+void SV_InfiniteWallJumps_f(client_t *cl) {
+
+    int cid;
+    cid = cl - svs.clients;
+
+    if (sv_gametype->integer != GT_JUMP) {
+        return;
+    }
+
+    if (SV_GetClientTeam(cid) == TEAM_SPECTATOR || mod_infiniteWallJumps->integer) {
+       return;
+    }
+
+    if (!(mod_enableJumpCmds->integer > 0)) {
+        return;
+    }
+
+    if (cl->cm.infiniteWallJumps) {
+       cl->cm.infiniteWallJumps = 0;
+       SV_SendServerCommand(cl, "print  \"^7Infinite Wall Jumps turned: [^1OFF^7]\n\""); 
+    } else {
+       cl->cm.infiniteWallJumps = 1;
+       SV_SendServerCommand(cl, "print  \"^7Infinite Wall Jumps turned: [^2ON^7]\n\""); 
+    }
 }
 
 //===============================================================================
@@ -1875,7 +1955,14 @@ static ucmd_t ucmds[] = {
     {"savepos", SV_SavePosition_f},
     {"load", SV_LoadPosition_f},
     {"loadpos", SV_LoadPosition_f},
-	{NULL, NULL}
+    {NULL, NULL}
+};
+
+static ucmd_t ucmds_floodControl[] = {
+    {"hidePlayers", SV_HidePlayers_f},
+    {"infiniteStamina", SV_InfiniteStamina_f},
+    {"infiniteWallJumps", SV_InfiniteWallJumps_f},
+    {NULL, NULL}
 };
 //===============================================================================
 
@@ -1908,6 +1995,19 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 			break;
 		}
 	}
+
+    // cmds with floodControl
+    if (!bProcessed) {
+        for (u=ucmds_floodControl ; u->name ; u++) {
+            if (!Q_stricmp(Cmd_Argv(0), u->name)) {
+                if (clientOK) { 
+                    u->func(cl); 
+                }
+                bProcessed = qtrue;
+                break;
+            }
+        }
+    }
 
 	if (clientOK) {
 		ps = SV_GameClientNum(cl - svs.clients);
@@ -2054,7 +2154,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 			}
 			if (exploitDetected) {
 				Com_Printf("Buffer overflow exploit radio/say, possible attempt from %s\n", NET_AdrToString(cl->netchan.remoteAddress));
-				SV_SendServerCommand(cl, "print \"Chat dropped due to message length constraints.\n\"");
+				SV_SendServerCommand(cl, "print \"Chat dropped due to message length constraints!\n\"");
 				return;
 			}
 

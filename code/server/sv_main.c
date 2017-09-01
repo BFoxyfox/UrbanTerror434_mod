@@ -100,6 +100,7 @@ cvar_t  *mod_whenMoveHealth;
 cvar_t  *mod_allowPosSaving;
 cvar_t  *mod_persistentPositions;
 cvar_t  *mod_saveposRestrictions;
+cvar_t  *mod_enableJumpCmds;
 
 //@Barbatos
 #ifdef USE_AUTH

@@ -1042,6 +1042,7 @@ void SV_Init (void) {
 	mod_allowPosSaving = Cvar_Get("mod_allowPosSaving", "0", CVAR_ARCHIVE);
 	mod_persistentPositions = Cvar_Get("mod_persistentPositions", "1", CVAR_ARCHIVE);
 	mod_saveposRestrictions = Cvar_Get("mod_saveposRestrictions", "1", CVAR_ARCHIVE);
+	mod_enableJumpCmds = Cvar_Get("mod_enableJumpCmds", "0", CVAR_ARCHIVE);
 
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);

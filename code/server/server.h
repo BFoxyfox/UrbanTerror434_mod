@@ -377,6 +377,7 @@ extern  cvar_t  *mod_whenMoveHealth;
 extern  cvar_t  *mod_allowPosSaving;
 extern  cvar_t  *mod_persistentPositions;
 extern  cvar_t  *mod_saveposRestrictions;
+extern  cvar_t  *mod_enableJumpCmds;
 
 #ifdef USE_AUTH
 extern  cvar_t  *sv_authServerIP;
