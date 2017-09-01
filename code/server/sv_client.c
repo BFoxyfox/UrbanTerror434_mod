@@ -1935,6 +1935,18 @@ void SV_InfiniteWallJumps_f(client_t *cl) {
     }
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_ServerInfo_f
+/////////////////////////////////////////////////////////////////////
+void SV_ServerInfo_f(client_t* cl) {
+    SV_SendServerCommand(cl, "chat \"^2===========================================================\"");
+    SV_SendServerCommand(cl, "chat \"%s^7Server Version: %s\"", sv_tellprefix->string, Cvar_VariableString("version"));
+    SV_SendServerCommand(cl, "chat \"%s^7Game Version: ^1Urban Terror %s\"", sv_tellprefix->string, Cvar_VariableString("g_modversion"));
+    SV_SendServerCommand(cl, "chat \"^2===========================================================\"");
+    SV_SendServerCommand(cl, "chat \"%s^7Credits: ^3Titan Mod ^7was developed by ^5Pedrxd ^7& ^5Th3K1ll3r\"", sv_tellprefix->string);
+    SV_SendServerCommand(cl, "chat \"^2===========================================================\"");
+}
+
 //===============================================================================
 typedef struct {
 	char	*name;
@@ -1962,6 +1974,7 @@ static ucmd_t ucmds_floodControl[] = {
     {"hidePlayers", SV_HidePlayers_f},
     {"infiniteStamina", SV_InfiniteStamina_f},
     {"infiniteWallJumps", SV_InfiniteWallJumps_f},
+    {"serverInfo", SV_ServerInfo_f},
     {NULL, NULL}
 };
 //===============================================================================
