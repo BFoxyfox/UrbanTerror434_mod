@@ -37,6 +37,9 @@ static	cvar_t*		hashTable[FILE_HASH_SIZE];
 
 cvar_t *Cvar_Set2( const char *var_name, const char *value, qboolean force);
 
+// TitanMod Cvars
+cvar_t *mod_unlockCvars;
+
 /*
 ================
 return a hash value for the filename
@@ -343,19 +346,24 @@ cvar_t *Cvar_Set2( const char *var_name, const char *value, qboolean force ) {
 	// note what types of cvars have been modified (userinfo, archive, serverinfo, systeminfo)
 	cvar_modifiedFlags |= var->flags;
 
-	if (!force)
-	{
-		if (var->flags & CVAR_ROM)
-		{
-			Com_Printf ("%s is read only.\n", var_name);
-			return var;
-		}
+    if (!force)
+    {
+        if (!mod_unlockCvars->integer) {
+            if (var->flags & CVAR_ROM) {
+                Com_Printf ("%s is read only.\n", var_name);
+                return var;
+            }
 
-		if (var->flags & CVAR_INIT)
-		{
-			Com_Printf ("%s is write protected.\n", var_name);
-			return var;
-		}
+            if (var->flags & CVAR_INIT) {
+                Com_Printf ("%s is write protected.\n", var_name);
+                return var;
+            }
+
+            if ( (var->flags & CVAR_CHEAT) && !cvar_cheats->integer ) {
+                Com_Printf ("%s is cheat protected.\n", var_name);
+                return var;
+            }
+        }
 
 		if (var->flags & CVAR_LATCH)
 		{
@@ -377,14 +385,8 @@ cvar_t *Cvar_Set2( const char *var_name, const char *value, qboolean force ) {
 			var->modificationCount++;
 			return var;
 		}
-
-		if ( (var->flags & CVAR_CHEAT) && !cvar_cheats->integer )
-		{
-			Com_Printf ("%s is cheat protected.\n", var_name);
-			return var;
-		}
-
 	}
+
 	else
 	{
 		if (var->latchedString)
@@ -942,6 +944,9 @@ Reads in all archived cvars
 */
 void Cvar_Init (void) {
 	cvar_cheats = Cvar_Get("sv_cheats", "1", CVAR_ROM | CVAR_SYSTEMINFO );
+
+	// TitanMod Cvars
+	mod_unlockCvars = Cvar_Get ("mod_unlockCvars", "0", CVAR_ARCHIVE);
 
 	Cmd_AddCommand ("toggle", Cvar_Toggle_f);
 	Cmd_AddCommand ("set", Cvar_Set_f);
