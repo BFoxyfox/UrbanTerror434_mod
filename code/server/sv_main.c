@@ -97,6 +97,10 @@ cvar_t  *mod_enableHealth;
 cvar_t  *mod_addAmountOfHealth;
 cvar_t  *mod_whenMoveHealth;
 
+cvar_t  *mod_allowPosSaving;
+cvar_t  *mod_persistentPositions;
+cvar_t  *mod_saveposRestrictions;
+
 //@Barbatos
 #ifdef USE_AUTH
 cvar_t	*sv_authServerIP;
@@ -237,6 +241,98 @@ qboolean SV_IsClientGhost(client_t *cl) {
     // get the cg_ghost value from the userinfo string
     ghost = atoi(Info_ValueForKey(cl->userinfo, "cg_ghost"));
     return ghost > 0 ? qtrue : qfalse;
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_LoadPositionFromFile
+// Load the client saved position from a file
+/////////////////////////////////////////////////////////////////////
+void SV_LoadPositionFromFile(client_t *cl, char *mapname) {
+
+    fileHandle_t   file;
+    char           buffer[MAX_STRING_CHARS];
+    char           *guid;
+    char           *qpath;
+    int            len;
+
+    // if we are not supposed to save the position on a file
+    if (!mod_allowPosSaving->integer || !mod_persistentPositions->integer) {
+        return;
+    }
+
+    // get the client guid from the userinfo string
+    guid = Info_ValueForKey(cl->userinfo, "cl_guid");
+    if (!guid || !guid[0]) { 
+        return;
+    }
+
+    // open the position file
+    qpath = va("positions/%s/%s.pos", mapname, guid);
+    FS_FOpenFileByMode(qpath, &file, FS_READ);
+
+    // if not valid
+    if (!file) {
+        return;
+    }
+
+    // read the file in the buffer
+    len = FS_Read(buffer, sizeof(buffer), file);
+    if (len > 0) {
+        // copy back saved position
+        sscanf(buffer, "%f,%f,%f,%f,%f,%f", &cl->cm.savedPosition[0],
+                                            &cl->cm.savedPosition[1],
+                                            &cl->cm.savedPosition[2],
+                                            &cl->cm.savedPositionAngle[0],
+                                            &cl->cm.savedPositionAngle[1],
+                                            &cl->cm.savedPositionAngle[2]);
+    }
+
+    // close the file handle
+    FS_FCloseFile(file);  
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_SavePositionToFile
+// Save the client position to a file
+/////////////////////////////////////////////////////////////////////
+void SV_SavePositionToFile(client_t *cl, char *mapname) {
+
+    fileHandle_t   file;
+    char           buffer[MAX_STRING_CHARS];
+    char           *guid;
+    char           *qpath;
+
+    // if we are not supposed to save the position on a file
+    if (!mod_allowPosSaving->integer || !mod_persistentPositions->integer) {
+        return;
+    }
+
+    // get the client guid from the userinfo string
+    guid = Info_ValueForKey(cl->userinfo, "cl_guid");
+    if (!guid || !guid[0] || (!cl->cm.savedPosition[0] && !cl->cm.savedPosition[1] && !cl->cm.savedPosition[2])) { 
+        return;
+    }
+
+    // open the position file
+    qpath = va("positions/%s/%s.pos", mapname, guid);
+    FS_FOpenFileByMode(qpath, &file, FS_WRITE);
+
+    // if not valid
+    if (!file) {
+        return;
+    }
+
+    // compute the text to be stored in the .pos file
+    Com_sprintf(buffer, sizeof(buffer), "%f,%f,%f,%f,%f,%f", cl->cm.savedPosition[0],
+                                                             cl->cm.savedPosition[1],
+                                                             cl->cm.savedPosition[2],
+                                                             cl->cm.savedPositionAngle[0],
+                                                             cl->cm.savedPositionAngle[1],
+                                                             cl->cm.savedPositionAngle[2]);
+    
+    // write the client position and close
+    FS_Write(buffer, strlen(buffer), file);
+    FS_FCloseFile(file);  
 }
 
 /*

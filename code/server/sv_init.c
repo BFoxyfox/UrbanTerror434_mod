@@ -662,7 +662,11 @@ void SV_SpawnServer( char *server, qboolean killBots ) {
 	int			checksum;
 	qboolean	isBot;
 	char		systemInfo[16384];
+	char        mapname[MAX_QPATH];
 	const char	*p;
+
+	// save the mapname (the old level) here because it's nuked later
+    Q_strncpyz(mapname, sv_mapname->string, sizeof(mapname));
 
 	// shut down the existing game if it is running
 	SV_ShutdownGameProgs();
@@ -803,6 +807,15 @@ void SV_SpawnServer( char *server, qboolean killBots ) {
 				SV_DropClient( &svs.clients[i], denied );
 			} else {
 				if( !isBot ) {
+                    // save the client position to a file
+                    SV_SavePositionToFile(&svs.clients[i], mapname);
+
+                    // clear the saved position vector for nextmap
+                    VectorClear(svs.clients[i].cm.savedPosition);
+
+                    // load the client saved position from a file
+                    SV_LoadPositionFromFile(&svs.clients[i], sv_mapname->string);
+
 					// when we get the next packet from a connected client,
 					// the new gamestate will be sent
 					svs.clients[i].state = CS_CONNECTED;
@@ -1026,6 +1039,10 @@ void SV_Init (void) {
 	mod_addAmountOfHealth = Cvar_Get("mod_addAmountOfHealth", "1", CVAR_ARCHIVE);
 	mod_whenMoveHealth = Cvar_Get("mod_whenmovehealth", "1", CVAR_ARCHIVE);
 
+	mod_allowPosSaving = Cvar_Get("mod_allowPosSaving", "0", CVAR_ARCHIVE);
+	mod_persistentPositions = Cvar_Get("mod_persistentPositions", "1", CVAR_ARCHIVE);
+	mod_saveposRestrictions = Cvar_Get("mod_saveposRestrictions", "1", CVAR_ARCHIVE);
+
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);
 	sv_auth_engine = Cvar_Get("sv_auth_engine", "1", CVAR_ROM);
@@ -1052,11 +1069,13 @@ to totally exit after returning from this function.
 void SV_FinalMessage( char *message ) {
 	int			i, j;
 	client_t	*cl;
-	
+
 	// send it twice, ignoring rate
 	for ( j = 0 ; j < 2 ; j++ ) {
 		for (i=0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++) {
 			if (cl->state >= CS_CONNECTED) {
+				// save the client position to a file
+				SV_SavePositionToFile(cl, sv_mapname->string);
 				// don't send a disconnect to a local client
 				if ( cl->netchan.remoteAddress.type != NA_LOOPBACK ) {
 					SV_SendServerCommand( cl, "print \"%s\n\"\n", message );

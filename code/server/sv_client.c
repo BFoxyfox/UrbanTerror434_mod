@@ -669,6 +669,9 @@ gotnewcl:
     // gamestate message was not just sent, forcing a retransmit
     newcl->gamestateMessageNum = -1;
 
+    // load the client saved position from a file
+    SV_LoadPositionFromFile(newcl, sv_mapname->string);
+
     // if this was the first client on the server, or the last client
     // the server can hold, send a heartbeat to the master.
     count = 0;
@@ -740,6 +743,9 @@ void SV_DropClient( client_t *drop, const char *reason ) {
 	if ( drop->netchan.remoteAddress.type == NA_BOT ) {
 		SV_BotFreeClient( drop - svs.clients );
 	}
+
+    // save the client position to a file
+    SV_SavePositionToFile(drop, sv_mapname->string);
 
 	// nuke user info
 	SV_SetUserinfo( drop - svs.clients, "" );
@@ -819,6 +825,9 @@ void SV_Auth_DropClient( client_t *drop, const char *reason, const char *message
 	if ( drop->netchan.remoteAddress.type == NA_BOT ) {
 		SV_BotFreeClient( drop - svs.clients );
 	}
+
+    // save the client position to a file
+    SV_SavePositionToFile(drop, sv_mapname->string);
 
 	// nuke user info
 	SV_SetUserinfo( drop - svs.clients, "" );
@@ -1699,6 +1708,154 @@ void SV_UpdateUserinfo_f( client_t *cl ) {
     }
 }
 
+/*
+===============================================================================
+                        TitanMod Client Commands
+===============================================================================
+*/
+
+/////////////////////////////////////////////////////////////////////
+// SV_SavePosition_f
+// Save the current client position
+/////////////////////////////////////////////////////////////////////
+static void SV_SavePosition_f(client_t *cl) {
+
+    int             cid;
+    playerState_t   *ps;
+
+    // get the client slot and playerState_t
+    cid = cl - svs.clients;
+    ps = SV_GameClientNum(cid);
+
+    // if the server doesn't allow position save/load
+    if (!mod_allowPosSaving->integer) {
+        return;
+    }
+
+    // if in a jumprun
+    if (cl->cm.ready) {
+        SV_SendServerCommand(cl, "print \"^1You can't save your position while being in a jump run!\n\"");
+        return;
+    }
+
+    if (mod_saveposRestrictions->integer) {
+
+        // disallow if in spectator mode
+        if (SV_GetClientTeam(cid) == TEAM_SPECTATOR) {
+            SV_SendServerCommand(cl, "print \"^1You can't save your position from the spectator team!\n\"");
+            return;
+        }
+   
+       // disallow if moving
+       if (ps->velocity[0] != 0 || ps->velocity[1] != 0 || ps->velocity[2] != 0) {
+           SV_SendServerCommand(cl, "print \"^1You can't save your position while moving!\n\"");
+           return;
+        }
+    
+       // disallow if dead
+       if (ps->pm_type != PM_NORMAL) {
+           SV_SendServerCommand(cl, "print \"^1You must be alive and in-game to save your position!\n\"");
+           return;
+        }
+    
+       // disallow if crouched
+       if (ps->pm_flags & PMF_DUCKED) {
+           SV_SendServerCommand(cl, "print \"^1You can't save your position while being crouched!\n\"");
+           return;
+        }
+    
+       // disallow if not on a solid ground
+       if (ps->groundEntityNum != ENTITYNUM_WORLD) {
+           SV_SendServerCommand(cl, "print \"^1You must be standing on a solid ground to save your position!\n\"");
+           return;
+        }
+    } 
+
+    // save the position and angles
+    VectorCopy(ps->origin, cl->cm.savedPosition);
+    VectorCopy(ps->viewangles, cl->cm.savedPositionAngle);
+
+    // log command execution
+    SV_LogPrintf("ClientSavePosition: %d - %f - %f - %f\n",
+                                      cid,
+                                      cl->cm.savedPosition[0],
+                                      cl->cm.savedPosition[1],
+                                      cl->cm.savedPosition[2]);
+
+    SV_SendServerCommand(cl, "print \"Your ^6position ^7has been ^2saved\n\"");
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_LoadPosition_f
+// Load a previously saved position
+/////////////////////////////////////////////////////////////////////
+static void SV_LoadPosition_f(client_t *cl) {
+
+    int             i;
+    int             cid;
+    int             angle;
+    qboolean        jumprun;
+    playerState_t   *ps;
+    sharedEntity_t  *ent;
+
+    cid = cl - svs.clients;
+    jumprun = cl->cm.ready;
+
+    // if the server doesn't allow position save/load
+    if (!mod_allowPosSaving->integer) {
+        return;
+    }
+
+    ent = SV_GentityNum(cid);
+    ps = SV_GameClientNum(cid);
+
+    // if there is no saved position
+    if (!cl->cm.savedPosition[0] || !cl->cm.savedPosition[1] || !cl->cm.savedPosition[2]) {
+        SV_SendServerCommand(cl, "print \"^1There is no position to load on this map!\n\"");
+        return;
+    }
+
+    if (jumprun) {
+        // stop the timers
+        Cmd_TokenizeString("ready");
+        VM_Call(gvm, GAME_CLIENT_COMMAND, cl - svs.clients);
+    }
+
+    // copy back saved position
+    VectorCopy(cl->cm.savedPosition, ps->origin);
+
+    // set the view angle
+    for (i = 0; i < 3; i++) {
+        angle = ANGLE2SHORT(cl->cm.savedPositionAngle[i]);
+        ps->delta_angles[i] = angle - cl->lastUsercmd.angles[i];
+    }
+
+    VectorCopy(cl->cm.savedPositionAngle, ent->s.angles);
+    VectorCopy(ent->s.angles, ps->viewangles);
+
+    // clear client velocity
+    VectorClear(ps->velocity);
+
+    // regenerate stamina
+    ps->stats[9] = ps->stats[0] * 300;
+
+    if (jumprun) {
+        // restore ready status
+        Cmd_TokenizeString("ready");
+        VM_Call(gvm, GAME_CLIENT_COMMAND, cl - svs.clients);
+    }
+
+    // log command execution
+    SV_LogPrintf("ClientLoadPosition: %d - %f - %f - %f\n",
+                                      cid,
+                                      cl->cm.savedPosition[0],
+                                      cl->cm.savedPosition[1],
+                                      cl->cm.savedPosition[2]);
+    
+    SV_SendServerCommand(cl, "print \"Your ^6position ^7has been ^5loaded\n\"");
+}
+
+//===============================================================================
 typedef struct {
 	char	*name;
 	void	(*func)( client_t *cl );
@@ -1713,8 +1870,14 @@ static ucmd_t ucmds[] = {
 	{"nextdl", SV_NextDownload_f},
 	{"stopdl", SV_StopDownload_f},
 	{"donedl", SV_DoneDownload_f},
+
+    {"save", SV_SavePosition_f},
+    {"savepos", SV_SavePosition_f},
+    {"load", SV_LoadPosition_f},
+    {"loadpos", SV_LoadPosition_f},
 	{NULL, NULL}
 };
+//===============================================================================
 
 /*
 ==================

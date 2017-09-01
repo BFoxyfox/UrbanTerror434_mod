@@ -335,7 +335,7 @@ extern	cvar_t	*sv_lanForceRate;
 extern	cvar_t	*sv_strictAuth;
 extern	cvar_t	*sv_clientsPerIp;
 
-extern	cvar_t	*sv_demonotice;
+extern  cvar_t  *sv_demonotice;
 extern  cvar_t  *sv_sayprefix;
 extern  cvar_t  *sv_tellprefix;
 extern  cvar_t  *sv_demofolder;
@@ -365,17 +365,21 @@ extern  cvar_t  *mod_allowSuicide;
 extern  cvar_t  *mod_allowVote;
 extern  cvar_t  *mod_allowTeamSelection;
 
-extern 	cvar_t  *mod_minKillHealth;
-extern 	cvar_t  *mod_minTeamChangeHealth;
+extern  cvar_t  *mod_minKillHealth;
+extern  cvar_t  *mod_minTeamChangeHealth;
 
-extern 	cvar_t  *mod_limitHealth;
-extern	cvar_t  *mod_timeoutHealth;
-extern	cvar_t  *mod_enableHealth;
-extern 	cvar_t  *mod_addAmountOfHealth;
-extern 	cvar_t  *mod_whenMoveHealth;
+extern  cvar_t  *mod_limitHealth;
+extern  cvar_t  *mod_timeoutHealth;
+extern  cvar_t  *mod_enableHealth;
+extern  cvar_t  *mod_addAmountOfHealth;
+extern  cvar_t  *mod_whenMoveHealth;
+
+extern  cvar_t  *mod_allowPosSaving;
+extern  cvar_t  *mod_persistentPositions;
+extern  cvar_t  *mod_saveposRestrictions;
 
 #ifdef USE_AUTH
-extern	cvar_t	*sv_authServerIP;
+extern  cvar_t  *sv_authServerIP;
 extern  cvar_t  *sv_auth_engine;
 #endif
 
@@ -423,6 +427,8 @@ void utPSGiveItem ( playerState_t *ps, utItemID_t itemid );
 void QDECL SV_LogPrintf(const char *fmt, ...);
 int SV_GetClientTeam(int cid);
 qboolean SV_IsClientGhost(client_t *cl);
+void SV_LoadPositionFromFile(client_t *cl, char *mapname);
+void SV_SavePositionToFile(client_t *cl, char *mapname);
 
 void SV_FinalMessage (char *message);
 void QDECL SV_SendServerCommand( client_t *cl, const char *fmt, ...);
