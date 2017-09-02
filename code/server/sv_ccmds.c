@@ -789,7 +789,7 @@ static void SV_Ban_f(void) {
                            "banUser %i.%i.%i.%i", cl->netchan.remoteAddress.ip[0], cl->netchan.remoteAddress.ip[1],
                            cl->netchan.remoteAddress.ip[2], cl->netchan.remoteAddress.ip[3]);
 
-        Com_Printf("%s was banned from coming back\n", cl->name);
+        Com_Printf("%s ^7was banned from coming back\n", cl->name);
 
     }
 }
@@ -847,7 +847,7 @@ static void SV_BanNum_f( void ) {
                            "banUser %i.%i.%i.%i", cl->netchan.remoteAddress.ip[0], cl->netchan.remoteAddress.ip[1],
                            cl->netchan.remoteAddress.ip[2], cl->netchan.remoteAddress.ip[3] );
 
-        Com_Printf("%s was banned from coming back\n", cl->name);
+        Com_Printf("%s ^7was banned from coming back\n", cl->name);
 
     }
 }
@@ -1675,10 +1675,10 @@ static void SV_Invisible_f(void) {
 	e->r.svFlags ^= SVF_NOCLIENT;
 
 	if (e->r.svFlags & SVF_NOCLIENT) {
-		Com_Printf("Player %s Invisible.\n", cl->name);
+		Com_Printf("Player %s ^7Invisible.\n", cl->name);
         SV_SendServerCommand(cl, "cchat \"\" \"%s^7Your invisibility mode turned: [^2ON^7]\"", sv_tellprefix->string);
 	} else {
-		Com_Printf("Player %s Visible.\n", cl->name);
+		Com_Printf("Player %s ^7Visible.\n", cl->name);
         SV_SendServerCommand(cl, "cchat \"\" \"%s^7Your invisibility mode turned: [^1OFF^7]\"", sv_tellprefix->string);
 	}
 }
@@ -2075,7 +2075,7 @@ static void SV_Teleport_f(void) {
 
     // print a player's position
     if (Cmd_Argc() == 2) {
-        Com_Printf("Position of %s: (x: %f, y: %f, z: %f)\n", cl->name, ps->origin[0], ps->origin[1], ps->origin[2]);
+        Com_Printf("Position of %s^7: (x: %f, y: %f, z: %f)\n", cl->name, ps->origin[0], ps->origin[1], ps->origin[2]);
         return;
 
     // teleport a player to another player's position
@@ -2365,12 +2365,12 @@ static void SV_Freeze_f(void) {
 
     if (cl->cm.frozen > 0) {
         cl->cm.frozen = 0;
-        Com_Printf("Player %s Thawed.\n", cl->name);
+        Com_Printf("Player %s ^7Thawed.\n", cl->name);
         SV_SendServerCommand(cl, "cchat \"\" \"%s^7You have been ^2thawed^7!\"", sv_tellprefix->string);
 
     } else {
         cl->cm.frozen = 1;
-        Com_Printf("Player %s Frozen.\n", cl->name);
+        Com_Printf("Player %s ^7Frozen.\n", cl->name);
         SV_SendServerCommand(cl, "cchat \"\" \"%s^7You have been ^1frozen^7!\"", sv_tellprefix->string);
     }
 }
