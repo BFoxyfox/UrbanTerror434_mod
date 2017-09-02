@@ -1936,15 +1936,15 @@ void SV_InfiniteWallJumps_f(client_t *cl) {
 }
 
 /////////////////////////////////////////////////////////////////////
-// SV_ServerInfo_f
+// SV_ServerModInfo_f
 /////////////////////////////////////////////////////////////////////
-void SV_ServerInfo_f(client_t* cl) {
-    SV_SendServerCommand(cl, "chat \"^2===========================================================\"");
+void SV_ServerModInfo_f(client_t* cl) {
+    SV_SendServerCommand(cl, "chat \"^2==============================================================\"");
     SV_SendServerCommand(cl, "chat \"%s^7Server Version: %s\"", sv_tellprefix->string, Cvar_VariableString("version"));
     SV_SendServerCommand(cl, "chat \"%s^7Game Version: ^1Urban Terror %s\"", sv_tellprefix->string, Cvar_VariableString("g_modversion"));
-    SV_SendServerCommand(cl, "chat \"^2===========================================================\"");
+    SV_SendServerCommand(cl, "chat \"^2==============================================================\"");
     SV_SendServerCommand(cl, "chat \"%s^7Credits: ^3Titan Mod ^7was developed by ^5Pedrxd ^7& ^5Th3K1ll3r\"", sv_tellprefix->string);
-    SV_SendServerCommand(cl, "chat \"^2===========================================================\"");
+    SV_SendServerCommand(cl, "chat \"^2==============================================================\"");
 }
 
 //===============================================================================
@@ -1974,7 +1974,7 @@ static ucmd_t ucmds_floodControl[] = {
     {"hidePlayers", SV_HidePlayers_f},
     {"infiniteStamina", SV_InfiniteStamina_f},
     {"infiniteWallJumps", SV_InfiniteWallJumps_f},
-    {"serverInfo", SV_ServerInfo_f},
+    {"serverModInfo", SV_ServerModInfo_f},
     {NULL, NULL}
 };
 //===============================================================================
@@ -2032,7 +2032,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 			if (Q_stricmp("say", Cmd_Argv(0)) == 0 || Q_stricmp("say_team", Cmd_Argv(0)) == 0) {
 
 				argsFromOneMaxlen = MAX_SAY_STRLEN;
-                if (Q_stricmp("!pm", Cmd_Argv(1)) == 0 && mod_hideCmds->integer < 2)
+                if ((Q_stricmp("!tell", Cmd_Argv(1)) == 0 || Q_stricmp("!pm", Cmd_Argv(1)) == 0) && mod_hideCmds->integer < 2)
                 {
                     SV_SendServerCommand(cl, "chat \"%s^7%s^3: %s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
     				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));

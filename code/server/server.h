@@ -380,6 +380,10 @@ extern  cvar_t  *mod_saveposRestrictions;
 extern  cvar_t  *mod_enableJumpCmds;
 
 extern  cvar_t  *mod_slickSurfaces;
+extern  cvar_t  *mod_gameType;
+extern  cvar_t  *mod_ghostPlayers;
+extern  cvar_t  *mod_noWeaponRecoil;
+extern  cvar_t  *mod_noWeaponCycle;
 
 #ifdef USE_AUTH
 extern  cvar_t  *sv_authServerIP;

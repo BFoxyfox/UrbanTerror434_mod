@@ -103,6 +103,10 @@ cvar_t  *mod_saveposRestrictions;
 cvar_t  *mod_enableJumpCmds;
 
 cvar_t  *mod_slickSurfaces;
+cvar_t  *mod_gameType;
+cvar_t  *mod_ghostPlayers;
+cvar_t  *mod_noWeaponRecoil;
+cvar_t  *mod_noWeaponCycle;
 
 //@Barbatos
 #ifdef USE_AUTH
@@ -718,7 +722,12 @@ void SVC_Info( netadr_t from ) {
 	Info_SetValueForKey( infostring, "clients", va("%i", count) );
 	Info_SetValueForKey( infostring, "bots", va("%i", bots) );
 	Info_SetValueForKey( infostring, "sv_maxclients", va("%i", sv_maxclients->integer - sv_privateClients->integer ) );
-	Info_SetValueForKey( infostring, "gametype", va("%i", sv_gametype->integer ) );
+
+	if(!strcmp(mod_gameType->string, ""))
+		Info_SetValueForKey( infostring, "gametype", va("%i", sv_gametype->integer ) );
+	else
+		Info_SetValueForKey( infostring, "gametype", va("%i", mod_gameType->integer ) );
+
 	Info_SetValueForKey( infostring, "pure", va("%i", sv_pure->integer ) );
 	
 	//@Barbatos

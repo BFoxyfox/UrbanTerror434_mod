@@ -1045,6 +1045,10 @@ void SV_Init (void) {
 	mod_enableJumpCmds = Cvar_Get("mod_enableJumpCmds", "0", CVAR_ARCHIVE);
 
 	mod_slickSurfaces = Cvar_Get("mod_slickSurfaces", "0", CVAR_ARCHIVE);
+	mod_gameType = Cvar_Get("mod_gameType", "", CVAR_ARCHIVE);
+	mod_ghostPlayers = Cvar_Get("mod_ghostPlayers", "0", CVAR_ARCHIVE);
+	mod_noWeaponRecoil = Cvar_Get("mod_noWeaponRecoil", "0", CVAR_ARCHIVE);
+	mod_noWeaponCycle = Cvar_Get("mod_noWeaponCycle", "0", CVAR_ARCHIVE);
 
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);
