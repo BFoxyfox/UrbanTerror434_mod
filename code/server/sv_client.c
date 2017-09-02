@@ -85,7 +85,7 @@ void MOD_ChangeLocation (client_t *cl, int changeto, int lock)
 /////////////////////////////////////////////////////////////////////
 // MOD_PlaySoundFile
 /////////////////////////////////////////////////////////////////////
-void MOD_PlaySoundFile (client_t *cl, char*file)
+void MOD_PlaySoundFile (client_t *cl, char *file)
 {
 	// Set config string
 	SV_SendCustomConfigString(cl, file, 543);
@@ -117,7 +117,7 @@ void MOD_AddHealth(client_t *cl, int value) {
 	gentity_t     *ent;
 	playerState_t *ps;
 
-	ps = SV_GameClientNum(cl -svs.clients);
+	ps = SV_GameClientNum(cl - svs.clients);
 	ent = (gentity_t *)SV_GentityNum(cl - svs.clients);
 	if(ent->health <= 0 || ps->persistant[PERS_TEAM] == TEAM_SPECTATOR || *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]) == TEAM_SPECTATOR)
 		return;
@@ -2072,7 +2072,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 	qboolean 	bProcessed = qfalse;
 	qboolean 	exploitDetected = qfalse;
 	playerState_t *ps;
-	
+
 	Cmd_TokenizeString( s );
 
 	// see if it is a server level command
@@ -2098,7 +2098,9 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
     }
 
 	if (clientOK) {
-		ps = SV_GameClientNum(cl - svs.clients);
+        int cid;
+        cid = cl - svs.clients;
+		ps = SV_GameClientNum(cid);
 		// pass unknown strings to the game
 		if ((!u->name) && (sv.state == SS_GAME) && (cl->state == CS_ACTIVE)) {
 			Cmd_Args_Sanitize();
@@ -2123,6 +2125,15 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
     				return;
                 }
 			}
+            // Global Spectator Chat Patch
+            // It's only applied on frag gametypes. Spectators can still talking between them with say_team
+            // @Th3K1ll3r: As spectators, I don't think they need to use chat variables (public), so it's fine
+            if (Q_stricmp("say", Cmd_Argv(0)) == 0 && sv_gametype->integer != GT_JUMP && SV_GetClientTeam(cid) == TEAM_SPECTATOR && mod_specChatGlobal->integer) {
+                argsFromOneMaxlen = MAX_SAY_STRLEN;
+                SV_SendServerCommand(NULL, "chat \"^7(SPEC) %s^3: %s\"", cl->colourName, Cmd_Args());
+                SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
+                return;
+            }
 			else if (Q_stricmp("tell", Cmd_Argv(0)) == 0) {
 				// A command will look like "tell 12 hi" or "tell foo hi".  The "12"
 				// and "foo" in the examples will be counted towards MAX_SAY_STRLEN,

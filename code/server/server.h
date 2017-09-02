@@ -386,6 +386,7 @@ extern  cvar_t  *mod_gameType;
 extern  cvar_t  *mod_ghostPlayers;
 extern  cvar_t  *mod_noWeaponRecoil;
 extern  cvar_t  *mod_noWeaponCycle;
+extern  cvar_t  *mod_specChatGlobal;
 
 #ifdef USE_AUTH
 extern  cvar_t  *sv_authServerIP;
@@ -480,7 +481,7 @@ void EV_ClientUserInfoChanged(int cnum);
 
 int  SV_ClientIsMoving(client_t *cl);
 
-void MOD_PlaySoundFile (client_t *cl, char*file);
+void MOD_PlaySoundFile (client_t *cl, char *file);
 void MOD_SetExternalEvent (client_t *cl, entity_event_t event, int eventarg);
 
 void MOD_AddHealth(client_t *cl, int value);

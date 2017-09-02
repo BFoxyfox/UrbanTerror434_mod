@@ -109,6 +109,7 @@ cvar_t  *mod_gameType;
 cvar_t  *mod_ghostPlayers;
 cvar_t  *mod_noWeaponRecoil;
 cvar_t  *mod_noWeaponCycle;
+cvar_t  *mod_specChatGlobal;
 
 //@Barbatos
 #ifdef USE_AUTH
@@ -231,7 +232,8 @@ void QDECL SV_LogPrintf(const char *fmt, ...) {
 int SV_GetClientTeam(int cid) {
     playerState_t *ps;
     ps = SV_GameClientNum(cid);
-    return ps->persistant[PERS_TEAM];
+    team_t team = *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
+    return team;
 }
 
 /////////////////////////////////////////////////////////////////////
