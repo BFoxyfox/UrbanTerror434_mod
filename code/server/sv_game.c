@@ -470,8 +470,11 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 		return SV_EntityContact( VMA(1), VMA(2), VMA(3), /*int capsule*/ qtrue );
 	case G_TRACE:
 		SV_Trace( VMA(1), VMA(2), VMA(3), VMA(4), VMA(5), args[6], args[7], /*int capsule*/ qfalse );
-        if(((trace_t*)(VMA(1)))->entityNum > sv_maxclients->integer && mod_nofallDamage->integer){
+		if (((trace_t*)(VMA(1)))->entityNum > sv_maxclients->integer && mod_nofallDamage->integer) {
 			((trace_t*)(VMA(1)))->surfaceFlags |= SURF_NODAMAGE;
+		}
+		if (((trace_t*)(VMA(1)))->entityNum > sv_maxclients->integer && mod_slickSurfaces->integer) {
+			((trace_t*)(VMA(1)))->surfaceFlags |= SURF_SLICK;
 		}
 		return 0;
 	case G_TRACECAPSULE:

@@ -102,6 +102,8 @@ cvar_t  *mod_persistentPositions;
 cvar_t  *mod_saveposRestrictions;
 cvar_t  *mod_enableJumpCmds;
 
+cvar_t  *mod_slickSurfaces;
+
 //@Barbatos
 #ifdef USE_AUTH
 cvar_t	*sv_authServerIP;

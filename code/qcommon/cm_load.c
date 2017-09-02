@@ -107,6 +107,21 @@ void CMod_LoadShaders( lump_t *l ) {
 
 	out = cm.shaders;
 	for ( i=0 ; i<count ; i++, in++, out++ ) {
+
+		cvar_t *mod_specialWater;
+		mod_specialWater = Cvar_Get("mod_specialWater", "0", CVAR_ARCHIVE | CVAR_LATCH);
+
+		if (out->contentFlags & CONTENTS_WATER) {
+			if (mod_specialWater->integer == 1) {
+				out->contentFlags &= ~CONTENTS_WATER;
+				out->contentFlags |= CONTENTS_SOLID;
+				out->surfaceFlags |= SURF_SLICK;
+			} else if (mod_specialWater->integer == 2) {
+				out->contentFlags &= ~CONTENTS_WATER;
+				out->contentFlags |= CONTENTS_LAVA;
+			}
+		}
+
 		out->contentFlags = LittleLong( out->contentFlags );
 		out->surfaceFlags = LittleLong( out->surfaceFlags );
 	}

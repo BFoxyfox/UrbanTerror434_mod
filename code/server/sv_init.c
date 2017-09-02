@@ -1044,6 +1044,8 @@ void SV_Init (void) {
 	mod_saveposRestrictions = Cvar_Get("mod_saveposRestrictions", "1", CVAR_ARCHIVE);
 	mod_enableJumpCmds = Cvar_Get("mod_enableJumpCmds", "0", CVAR_ARCHIVE);
 
+	mod_slickSurfaces = Cvar_Get("mod_slickSurfaces", "0", CVAR_ARCHIVE);
+
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);
 	sv_auth_engine = Cvar_Get("sv_auth_engine", "1", CVAR_ROM);

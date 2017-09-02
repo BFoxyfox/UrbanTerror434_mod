@@ -379,6 +379,8 @@ extern  cvar_t  *mod_persistentPositions;
 extern  cvar_t  *mod_saveposRestrictions;
 extern  cvar_t  *mod_enableJumpCmds;
 
+extern  cvar_t  *mod_slickSurfaces;
+
 #ifdef USE_AUTH
 extern  cvar_t  *sv_authServerIP;
 extern  cvar_t  *sv_auth_engine;
