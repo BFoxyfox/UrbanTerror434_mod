@@ -101,6 +101,7 @@ cvar_t  *mod_allowPosSaving;
 cvar_t  *mod_persistentPositions;
 cvar_t  *mod_saveposRestrictions;
 cvar_t  *mod_enableJumpCmds;
+cvar_t  *mod_ghostRadius;
 
 cvar_t  *mod_slickSurfaces;
 cvar_t  *mod_gameType;

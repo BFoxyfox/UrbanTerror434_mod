@@ -2268,7 +2268,75 @@ void MOD_AutoHealth(client_t *cl)
 				cl->cm.perPlayerHealth = 0;
 		}
 	}
+}
 
+/////////////////////////////////////////////////////////////////////
+// SV_GhostThink
+// Fixes the bugged cg_ghost in jump mode
+/////////////////////////////////////////////////////////////////////
+void SV_GhostThink(client_t *cl) {
+
+    int               i;
+    int               num;
+    int               touch[MAX_GENTITIES];
+    float             rad;
+    vec3_t            mins, maxs;
+    sharedEntity_t    *ent;
+    sharedEntity_t    *oth;
+
+    int cid;
+    cid = cl - svs.clients;
+
+    // if we are not playing jump mode
+    if (sv_gametype->integer != GT_JUMP) {
+        return;
+    }
+
+    // if the client is a spectator
+    if (SV_GetClientTeam(cid) == TEAM_SPECTATOR) {
+        return;
+    }
+
+    // if the client has cg_ghost disabled
+    if (!cl->cm.ghost) {
+        return;
+    }
+
+    // get the correspondent entity
+    ent = SV_GentityNum(cid);
+    rad = Com_Clamp(4.0, 1000.0, mod_ghostRadius->value);
+
+    // calculate the box
+    for (i = 0; i < 3; i++) {
+        mins[i] = ent->r.currentOrigin[i] - rad;
+        maxs[i] = ent->r.currentOrigin[i] + rad;
+    }
+
+    // get the entities the client is touching (the bounding box)
+    num = SV_AreaEntities(mins, maxs, touch, MAX_GENTITIES);
+
+    for (i = 0; i < num; i++) {
+
+        // if the entity we are touching is not a client 
+        if (touch[i] < 0 || touch[i] >= sv_maxclients->integer) {
+            continue;
+        }
+
+        // get the touched entity
+        oth = SV_GentityNum(touch[i]);
+
+        // if the entity is the client itself
+        if (ent->s.number == oth->s.number) {
+            continue;
+        }
+
+        // set the content mask to both and exit
+        ent->r.contents &= ~CONTENTS_BODY;
+        ent->r.contents |= CONTENTS_CORPSE;
+        oth->r.contents &= ~CONTENTS_BODY;
+        oth->r.contents |= CONTENTS_CORPSE;
+        return;
+    }
 }
 
 /*
@@ -2281,18 +2349,24 @@ Also called by bot code
 void SV_ClientThink (client_t *cl, usercmd_t *cmd) {
 	playerState_t *ps;
 	cl->lastUsercmd = *cmd;
-	int i,j;
+	int i, j;
 
 	if ( cl->state != CS_ACTIVE ) {
 		return;		// may have been kicked during the last usercmd
 	}
-	ps = SV_GameClientNum(cl -svs.clients);
+
+	ps = SV_GameClientNum(cl - svs.clients);
+
+    SV_GhostThink(cl);
+
     if (mod_infiniteAmmo->integer) {
         for (i = 0; i < MAX_POWERUPS; i++) {
             cl->cm.powerups[i] = ps->powerups[i];
         }
     }
+
     MOD_AutoHealth(cl);
+
 	VM_Call( gvm, GAME_CLIENT_THINK, cl - svs.clients );
 
     if (mod_infiniteAmmo->integer) {

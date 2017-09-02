@@ -219,6 +219,16 @@ void SV_LinkEntity( sharedEntity_t *gEnt ) {
 		SV_UnlinkEntity( gEnt );	// unlink from old position
 	}
 
+	// Set the player names flag back (Ghost Fix - Jump Mode)
+	if (sv_gametype->integer == GT_JUMP && !mod_ghostPlayers->integer) {
+		if (!(gEnt->r.contents & CONTENTS_BODY)) {
+			if (gEnt->s.number >= 0 && gEnt->s.number < sv_maxclients->integer) {
+				gEnt->r.contents |= CONTENTS_BODY;
+				gEnt->r.contents &= ~CONTENTS_CORPSE;
+			}
+		}
+	}
+
 	if (mod_ghostPlayers->integer) {
 		if (gEnt->r.contents & CONTENTS_BODY) {
 			if (gEnt->s.number >= 0 && gEnt->s.number < sv_maxclients->integer) {
