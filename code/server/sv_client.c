@@ -1947,6 +1947,80 @@ void SV_ServerModInfo_f(client_t* cl) {
     SV_SendServerCommand(cl, "chat \"^2==============================================================\"");
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_HelpCmdsList_f
+/////////////////////////////////////////////////////////////////////
+void SV_HelpCmdsList_f(client_t* cl) {
+
+    char *version;
+    char *jump = "Jump Mode";
+    char *frag = "Frag Modes";
+
+    if (!mod_enableHelpCmd->integer) {
+        return;
+    }
+
+    if (sv_gametype->integer == GT_JUMP) {
+        version = jump;
+    } else {
+        version = frag;
+    }
+
+    if (version == jump) {
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-^7--------> Help Client - ^6List of Commands ^7[Jump Mode] <--------^8-\n\"");    
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8------------------------^7General Commands^8------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-    ^1/help           ^8-     ^2/playerlist     ^8-    ^2/cg_rgb        ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-    ^2/reconnect      ^8-                     ^8-    ^2/r_gamma       ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-    ^2/disconnect     ^8-     ^1/svModInfo      ^8-    ^2/sensitivity   ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-    ^2/connect        ^8-                     ^8-    ^2/bind          ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8--------------------------^7Game Commands^8-------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-         ^2$location             ^8-       ^2/regainstamina         ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-         ^2/name                 ^8-       ^2/save                  ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-         ^2/kill                 ^8-       ^2/load                  ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-         ^2/ready ^5(RUN)          ^8-       ^2/allowgoto             ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-         ^2/cg_ghost ^5<0|1>       ^8-       ^2/goto                  ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8- ^2/infiniteStamina       ^7[Turn ON/OFF Infinite Stamina]        ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8- ^2/infiniteWallJumps     ^7[Turn ON/OFF Infinite Wall Jumps]     ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8- ^2/hidePlayers           ^7[Make all other players invisible]    ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8- ^2/tell ^5<client> <message>                  ^7[Private Messages] ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8- ^2/callvote ^5nextmap <mapname> ^7or ^5cyclemap   ^7[Map Votes]        ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^2[INFO] ^7Restrictions of save and load:  [%s^7]\n\"", (mod_saveposRestrictions->integer > 0) ? "^2ON" : "^1OFF");
+        SV_SendServerCommand(cl, "print  \"^2[INFO] ^7Current Map:  [^3%s^7]\n\"", sv_mapname->string);
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+
+    } else if (version == frag) {
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-^7--------> Help Client - ^6List of Commands ^7[Frag Mode] <--------^8-\n\"");    
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8------------------------^7General Commands^8------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-    ^1/help           ^8-     ^2/playerlist     ^8-    ^2/cg_rgb        ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-    ^2/reconnect      ^8-                     ^8-    ^2/r_gamma       ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-    ^2/disconnect     ^8-     ^1/svModInfo      ^8-    ^2/sensitivity   ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-    ^2/connect        ^8-                     ^8-    ^2/bind          ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8--------------------------^7Game Commands^8-------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-           ^2/name            ^8-            ^2$location            ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8-           ^2/kill            ^8-                                 ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8- ^2/tell ^5<client> <message>                  ^7[Private Messages] ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8- ^2/callvote ^5nextmap <mapname> ^7or ^5cyclemap   ^7[Map Votes]        ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+        SV_SendServerCommand(cl, "print  \"^2[INFO] ^7Current Map:  [^3%s^7]\n\"", sv_mapname->string);
+        SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
+    }
+}
+
 //===============================================================================
 typedef struct {
 	char	*name;
@@ -1974,7 +2048,8 @@ static ucmd_t ucmds_floodControl[] = {
     {"hidePlayers", SV_HidePlayers_f},
     {"infiniteStamina", SV_InfiniteStamina_f},
     {"infiniteWallJumps", SV_InfiniteWallJumps_f},
-    {"serverModInfo", SV_ServerModInfo_f},
+    {"svModInfo", SV_ServerModInfo_f},
+    {"help", SV_HelpCmdsList_f},
     {NULL, NULL}
 };
 //===============================================================================

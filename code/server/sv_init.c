@@ -1043,6 +1043,7 @@ void SV_Init (void) {
 	mod_persistentPositions = Cvar_Get("mod_persistentPositions", "1", CVAR_ARCHIVE);
 	mod_saveposRestrictions = Cvar_Get("mod_saveposRestrictions", "1", CVAR_ARCHIVE);
 	mod_enableJumpCmds = Cvar_Get("mod_enableJumpCmds", "0", CVAR_ARCHIVE);
+	mod_enableHelpCmd = Cvar_Get("mod_enableHelpCmd", "1", CVAR_ARCHIVE);
 	mod_ghostRadius = Cvar_Get("mod_ghostRadius", "80.0", CVAR_ARCHIVE);
 
 	mod_slickSurfaces = Cvar_Get("mod_slickSurfaces", "0", CVAR_ARCHIVE);
