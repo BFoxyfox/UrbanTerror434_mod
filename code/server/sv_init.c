@@ -1052,6 +1052,7 @@ void SV_Init (void) {
 	mod_noWeaponRecoil = Cvar_Get("mod_noWeaponRecoil", "0", CVAR_ARCHIVE);
 	mod_noWeaponCycle = Cvar_Get("mod_noWeaponCycle", "0", CVAR_ARCHIVE);
 	mod_specChatGlobal = Cvar_Get("mod_specChatGlobal", "0", CVAR_ARCHIVE);
+	mod_cleanMapPrefixes = Cvar_Get("mod_cleanMapPrefixes", "0", CVAR_ARCHIVE);
 
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);

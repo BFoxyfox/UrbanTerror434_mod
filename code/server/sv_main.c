@@ -110,6 +110,7 @@ cvar_t  *mod_ghostPlayers;
 cvar_t  *mod_noWeaponRecoil;
 cvar_t  *mod_noWeaponCycle;
 cvar_t  *mod_specChatGlobal;
+cvar_t  *mod_cleanMapPrefixes;
 
 //@Barbatos
 #ifdef USE_AUTH
@@ -700,16 +701,37 @@ void SVC_Info( netadr_t from ) {
 	Info_SetValueForKey( infostring, "protocol", va("%i", PROTOCOL_VERSION) );
 	Info_SetValueForKey( infostring, "hostname", sv_hostname->string );
 
+	char mapname[MAX_QPATH];
+	Q_strncpyz(mapname, sv_mapname->string, sizeof(mapname));
+
+	if (mod_cleanMapPrefixes->integer) {
+		char *loc;
+		char *prefix42 = "ut42_";
+		char *prefix43 = "ut43_";
+
+		if ((loc = strstr(mapname, prefix42)) != NULL) {
+			strcpy(loc, loc + strlen(prefix42));
+		} else if ((loc = strstr(mapname, prefix43)) != NULL) {
+			strcpy(loc, loc + strlen(prefix43));
+		}
+
+		// Make first letter capital if prefixes were removed
+		if (mapname != sv_mapname->string) {
+			mapname[0] = toupper(mapname[0]);
+		}
+	}
+
 	if(!strcmp(mod_mapName->string, ""))
-		Info_SetValueForKey( infostring, "mapname", va("^%i%s", mod_mapColour->integer, sv_mapname->string) );
+		Info_SetValueForKey( infostring, "mapname", va("^%i%s", mod_mapColour->integer, mapname) );
 	else
 		Info_SetValueForKey( infostring, "mapname", va("^%i%s", mod_mapColour->integer, mod_mapName->string) );
 
 	// If playerCount is positive, the number will be added to the real player count
 	// If playerCount is negative a random number between playerCount and 1 will be added
-	if(0<mod_playerCount->integer)
-		count+=mod_playerCount->integer;
-	else if(0>mod_playerCount->integer)
+	if(0 < mod_playerCount->integer) {
+		count += mod_playerCount->integer;
+	}
+	else if(0 > mod_playerCount->integer)
 	{
 		int rand, seed;
 		rand = 0;
@@ -717,7 +739,7 @@ void SVC_Info( netadr_t from ) {
 		while (1 > rand) {
 		    rand = Q_rand(&seed) % mod_playerCount->integer +1;
 	    }
-		count+=rand;
+		count += rand;
 	}
 	if (count > sv_maxclients->integer) {
 		count = sv_maxclients->integer;

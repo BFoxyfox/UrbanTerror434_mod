@@ -2047,7 +2047,9 @@ static ucmd_t ucmds[] = {
 static ucmd_t ucmds_floodControl[] = {
     {"hidePlayers", SV_HidePlayers_f},
     {"infiniteStamina", SV_InfiniteStamina_f},
+    {"stamina", SV_InfiniteStamina_f},
     {"infiniteWallJumps", SV_InfiniteWallJumps_f},
+    {"walljumps", SV_InfiniteWallJumps_f},
     {"svModInfo", SV_ServerModInfo_f},
     {"help", SV_HelpCmdsList_f},
     {NULL, NULL}

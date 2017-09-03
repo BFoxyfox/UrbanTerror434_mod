@@ -168,18 +168,18 @@ static client_t *SV_GetPlayerByHandle(void) {
         if (count == 0) {
 
             // no match found for the given input string
-            Com_Printf("No client found matching %s\n", s);
+            Com_Printf("No client found matching: %s\n", s);
             return NULL;
 
         } else if (count > 1) {
 
             // multiple matches found for the given string
-            Com_Printf("Multiple clients found matching %s:\n", s);
+            Com_Printf("Multiple clients found matching '%s':\n", s);
 
             for (i = 0; i < count; i++) {
                 cl = matches[i];
                 strcpy(name, cl->name);
-                Com_Printf(" %2d: [%s]\n", (int)(cl - svs.clients), name);
+                Com_Printf(" %2d: [%s^7]\n", (int)(cl - svs.clients), name);
             }
 
             return NULL;

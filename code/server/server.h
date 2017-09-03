@@ -387,6 +387,7 @@ extern  cvar_t  *mod_ghostPlayers;
 extern  cvar_t  *mod_noWeaponRecoil;
 extern  cvar_t  *mod_noWeaponCycle;
 extern  cvar_t  *mod_specChatGlobal;
+extern  cvar_t  *mod_cleanMapPrefixes;
 
 #ifdef USE_AUTH
 extern  cvar_t  *sv_authServerIP;
