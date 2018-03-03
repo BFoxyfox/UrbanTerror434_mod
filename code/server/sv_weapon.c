@@ -160,7 +160,7 @@ void utPSRemoveItem ( playerState_t *ps, utItemID_t itemid )
 void SV_AutoItemGive(playerState_t *ps)
 {
 	int i;
-	team_t team = *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
+	team_t team = *(int*)((void*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
 
 	if(team == TEAM_SPECTATOR)
 		return;
@@ -177,7 +177,7 @@ void SV_AutoItemGive(playerState_t *ps)
 void SV_AutoItemTake(playerState_t *ps)
 {
 	int i;
-	team_t team = *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
+	team_t team = *(int*)((void*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
 
 	if(team == TEAM_SPECTATOR)
 		return;
@@ -233,7 +233,7 @@ void SV_RemoveWeapon(playerState_t *ps, weapon_t wp)
 void SV_AutoRemove(playerState_t *ps)
 {
 	int i;
-	team_t team = *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
+	team_t team = *(int*)((void*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
 	if(team == TEAM_SPECTATOR)
 		return;
 
@@ -249,7 +249,7 @@ void SV_AutoRemove(playerState_t *ps)
 void SV_AutoGive(playerState_t *ps)
 {
 	int i;
-	team_t team = *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
+	team_t team = *(int*)((void*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
 
 	if(team == TEAM_SPECTATOR)
 		return;
@@ -269,7 +269,7 @@ void SV_WeaponMod(int cnum)
     playerState_t *ps;
     ps = SV_GameClientNum(cnum);
 
-    if(*(int *)(((byte*)ps)+gclientOffsets[getVersion()][OFFSET_NOGEARCHANGE]))
+    if(*(int *)((void*)ps+gclientOffsets[getVersion()][OFFSET_NOGEARCHANGE]))
     {
         return;
     }

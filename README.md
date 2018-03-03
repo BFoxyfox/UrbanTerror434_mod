@@ -112,7 +112,8 @@ autohealth | &#60;player&#62; &#60;limit&#62; &#60;moving&#62; &#60;step&#62; &#
 teleport / tp | &#60;player1&#62; &#60;player2&#62; or &#60;player&#62; &#60;x&#62; &#60;y&#62; &#60;z&#62; | Teleport a player to another one or teleport a player to the specified coordinates
 resquestdownload | &#60;player&#62; &#60;file&#62; | Resquest a client the download of a pk3 file (NOTE: put the filename without extension)
 location | &#60;player/all&#62; &#60;string&#62; &#60;index&#62; &#60;lock&#62; | Change location names of a player (NOTE: 'index' is the space where location will be saved and 'lock' if it should be static)
-weaponoffset | &#60;weapon&#62; | Dump on weaponoff.txt all the data about a weapon
+dumpoffset | &#60;offset&#62; &#60;size&#62; | Dump on qvmoffset.txt the offset of size
+dumpgoffset | &#60;player&#62; &#60;offset&#62; &#60;size&#62; | Dump on goffset.txt the offset of size
 qvmreload | - | Apply the modifications of the weapons settings using the cvars (NOTE: a map restart or a map reload will do the same action)
 freeze | &#60;player&#62; | Freeze/Thaw a player
 sendclientcommand / scc | &#60;player/all&#62; &#60;command&#62; | Send a command (chat, print, cp, cs, disconnect ...) to a player

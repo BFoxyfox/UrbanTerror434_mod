@@ -2252,7 +2252,7 @@ static void SV_ResquestDownload_f (void)
 /////////////////////////////////////////////////////////////////////
 // SV_CheckWeaponOffset_f
 /////////////////////////////////////////////////////////////////////
-void SV_CheckWeaponOffset_f (void)
+void SV_CheckOffset_f (void)
 {
 	if(!com_sv_running->integer)
 	{
@@ -2260,15 +2260,17 @@ void SV_CheckWeaponOffset_f (void)
 		return;
 	}
 
-	if(Cmd_Argc() < 2)
+	if(Cmd_Argc() < 3)
 	{
-		Com_Printf("Usage: weaponoffset <weapon>\n");
+		Com_Printf("Usage: dumpoffset <offset> <size>\n");
 		return;
 	}
 
 	//Dump all data of a given weapon
-	weapon_t weapon = SV_Char2Weapon(Cmd_Argv(1));
-	FILE *f = fopen("weaponoff.txt", "a");
+	int offset = atoi(Cmd_Argv(1));
+	int size = atoi(Cmd_Argv(2));
+
+	FILE *f = fopen("qvmoffset.txt", "a");
 	int i;
 
 	if(!f)
@@ -2277,14 +2279,62 @@ void SV_CheckWeaponOffset_f (void)
 		return;
 	}
 
-	fprintf(f ,"\n=================\n%s\n=================\n", weaponString[weapon]);
+	void* startPosition = (int *)VM_ArgPtr((offset));
 
-	for(i = 0; i < 432; i++)
+	for(i = 0; i < size; i++)
 	{
-		fprintf(f, "[%d] c: %c  d: %d f: %f\n", i, *(char*)(QVM_baseWeapon(weapon)+i), *(int*)(QVM_baseWeapon(weapon)+i), *(float*)(QVM_baseWeapon(weapon)+i));
+		fprintf(f, "[%d] c %c d %d i %i \n", (offset+i), *((char*)(startPosition+i)),*((int*)(startPosition+i)),*((int*)(startPosition+i)));
 	}
 	fclose(f);
 }
+
+/////////////////////////////////////////////////////////////////////
+// SV_CheckGOffset_f
+/////////////////////////////////////////////////////////////////////
+void SV_CheckGOffset_f (void)
+{
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+
+	if(Cmd_Argc() < 4)
+	{
+		Com_Printf("Usage: dumpgoffset <player> <offset> <size>\n");
+		return;
+	}
+
+	client_t *cl;
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+		return;
+
+	playerState_t *ps;
+	ps = SV_GameClientNum(cl - svs.clients);
+
+	//Dump all data
+	int offset = atoi(Cmd_Argv(2));
+	int size = atoi(Cmd_Argv(3));
+
+	FILE *f = fopen("gdump.txt", "a");
+	int i;
+
+	if(!f)
+	{
+		Com_Printf("Could not open the file!\n");
+		return;
+	}
+
+	void* startPosition = (ps+offset);
+
+	for(i = 0; i < size; i++)
+	{
+		fprintf(f, "[%d] c %c d %d \n", (offset+i), *((char*)(startPosition+i)),*((int*)(startPosition+i)));
+	}
+	fclose(f);
+}
+
 
 /////////////////////////////////////////////////////////////////////
 // SV_Location_f
@@ -2591,7 +2641,8 @@ void SV_AddOperatorCommands( void ) {
 	Cmd_AddCommand ("teleport", SV_Teleport_f);
     Cmd_AddCommand ("tp", SV_Teleport_f);
     Cmd_AddCommand ("resquestdownload", SV_ResquestDownload_f);
-    Cmd_AddCommand ("weaponoffset", SV_CheckWeaponOffset_f);
+    Cmd_AddCommand ("dumpoffset", SV_CheckOffset_f);
+    Cmd_AddCommand ("dumpgoffset", SV_CheckGOffset_f);
     Cmd_AddCommand ("location", SV_Location_f);
     Cmd_AddCommand ("qvmreload", SV_QVMReload_f);
     Cmd_AddCommand ("freeze", SV_Freeze_f);

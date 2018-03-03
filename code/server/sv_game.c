@@ -94,6 +94,7 @@ char weaponstring43[(UT_WP_NUM_WEAPONS+3)][15] =
 };
 
 
+
 void SV_GameError( const char *string ) {
 	Com_Error( ERR_DROP, "%s", string );
 }
@@ -1037,6 +1038,7 @@ static void SV_InitGameVM( qboolean restart ) {
 	case v43:
 	case v431:
 	case v432:
+	case v433:
 		weaponString = weaponstring43;
 		Com_Printf("[OK]\n");
 		break;
