@@ -610,6 +610,11 @@ void Cvar_SetU_f( void ) {
 	if ( !v ) {
 		return;
 	}
+
+	if (v->flags & CVAR_ROM || v->flags & CVAR_INIT) {
+		return;
+	}
+
 	v->flags |= CVAR_USERINFO;
 }
 
@@ -632,6 +637,11 @@ void Cvar_SetS_f( void ) {
 	if ( !v ) {
 		return;
 	}
+
+	if (v->flags & CVAR_ROM || v->flags & CVAR_INIT) {
+		return;
+	}
+
 	v->flags |= CVAR_SERVERINFO;
 }
 
@@ -654,6 +664,11 @@ void Cvar_SetA_f( void ) {
 	if ( !v ) {
 		return;
 	}
+
+	if (v->flags & CVAR_ROM || v->flags & CVAR_INIT) {
+		return;
+	}
+
 	v->flags |= CVAR_ARCHIVE;
 }
 
