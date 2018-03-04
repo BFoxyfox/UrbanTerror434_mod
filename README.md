@@ -143,3 +143,12 @@ Extra information:
 > apt-get install mingw-w64 binutils-mingw-w64 libc6-dev-i386
 
 > make PLATFORM=mingw32 ARCH=x86 CC=i686-w64-mingw32-gcc LD=i686-w64-mingw32-ld WINDRES=i686-w64-mingw32-windres
+
+### Docker
+You can run this software with docker for easy deploy and fast test. You can create a image with: 
+> docker build -t tagname .
+
+And run it fastly with:
+> docker run -it --rm -p 27960:27960/udp tagname
+
+**You should firstly compile it with make before build the image for docker**
