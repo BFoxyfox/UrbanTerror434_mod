@@ -119,7 +119,7 @@ void MOD_AddHealth(client_t *cl, int value) {
 
 	ps = SV_GameClientNum(cl - svs.clients);
 	ent = (gentity_t *)SV_GentityNum(cl - svs.clients);
-	if(ent->health <= 0 || ps->persistant[PERS_TEAM] == TEAM_SPECTATOR || *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]) == TEAM_SPECTATOR)
+	if(ent->health <= 0 || ps->persistant[PERS_TEAM] == TEAM_SPECTATOR || *(int*)((void*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]) == TEAM_SPECTATOR)
 		return;
 
 	if(value + ent->health > 100) {
@@ -145,7 +145,7 @@ void MOD_SetHealth(client_t *cl, int value) {
 	ps = SV_GameClientNum(cl - svs.clients);
 	ent = (gentity_t *)SV_GentityNum(cl - svs.clients);
 
-	if(ent->health <= 0 || ps->persistant[PERS_TEAM] == TEAM_SPECTATOR || *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]) == TEAM_SPECTATOR)
+	if(ent->health <= 0 || ps->persistant[PERS_TEAM] == TEAM_SPECTATOR || *(int*)((void*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]) == TEAM_SPECTATOR)
 		return;
 
 	if(value > 100) {
@@ -2197,7 +2197,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
                         break;
                     case 3:
                     {
-                        team_t team = *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
+                        team_t team = *(int*)((void*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
                         if((Q_stricmp("free", Cmd_Argv(1)) == 0)) {
                             if(team == TEAM_SPECTATOR) {
                                 break;

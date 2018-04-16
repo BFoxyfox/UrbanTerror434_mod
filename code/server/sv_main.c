@@ -125,7 +125,8 @@ const char versionString[vMAX][10] = {
 		"4.2.023",
 		"4.3",
 		"4.3.1",
-		"4.3.2"
+		"4.3.2",
+		"4.3.3"
 };
 
 char teamstring[4][5] =
@@ -233,7 +234,7 @@ void QDECL SV_LogPrintf(const char *fmt, ...) {
 int SV_GetClientTeam(int cid) {
     playerState_t *ps;
     ps = SV_GameClientNum(cid);
-    team_t team = *(int*)((byte*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
+    team_t team = *(int*)((void*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
     return team;
 }
 
