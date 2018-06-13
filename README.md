@@ -56,6 +56,7 @@ mod_specialWater | &#60;value&#62; | Change water behaviour. Values: 0 = off, 1 
 mod_noWeaponRecoil | &#60;boolean&#62; | Disable all weapons recoil
 mod_noWeaponCycle | &#60;boolean&#62; | Disable all weapons cycle time (WARNING: entities spam may lead the server to crash)
 mod&#95;specChatGlobal | &#60;boolean&#62; | Make spectators chat visible to everyone in the server unless they use say_team (Frag gametypes only)
+mod_disableScope | &#60;boolean&#62; | Disable scope or zoom on weapons (sr8 g36 psg1)
 &#60;team&#62;_giveweapon | &#60;weapon1&#62; &#60;weapon2&#62; ... | When a player spawns, the weapons specified will be given to him
 &#60;team&#62;_takeweapon | &#60;weapon1&#62; &#60;weapon2&#62; ... | When a player spawns, the weapons specified will be removed from him
 &#60;team&#62;_giveitem | &#60;item1&#62; &#60;item2&#62; ... | When a player spawns, the items specified will be given to him

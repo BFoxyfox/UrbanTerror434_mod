@@ -2445,6 +2445,16 @@ void SV_ClientThink (client_t *cl, usercmd_t *cmd) {
 
 	ps = SV_GameClientNum(cl - svs.clients);
 
+	if(mod_disableScope->integer)
+    {
+        //Integer is a flag for zoom3 that include zoom1 and zoom2
+        if(cmd->buttons&24576)
+        {
+            ps->weapon=1;
+        }
+    }
+
+
     SV_GhostThink(cl);
 
     if (mod_infiniteAmmo->integer) {

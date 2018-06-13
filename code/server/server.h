@@ -389,6 +389,7 @@ extern  cvar_t  *mod_noWeaponCycle;
 extern  cvar_t  *mod_specChatGlobal;
 extern  cvar_t  *mod_cleanMapPrefixes;
 
+extern  cvar_t  *mod_disableScope;
 #ifdef USE_AUTH
 extern  cvar_t  *sv_authServerIP;
 extern  cvar_t  *sv_auth_engine;

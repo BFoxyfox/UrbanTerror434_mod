@@ -1054,6 +1054,8 @@ void SV_Init (void) {
 	mod_specChatGlobal = Cvar_Get("mod_specChatGlobal", "0", CVAR_ARCHIVE);
 	mod_cleanMapPrefixes = Cvar_Get("mod_cleanMapPrefixes", "0", CVAR_ARCHIVE);
 
+	mod_disableScope = Cvar_Get("mod_disableScope", "0", CVAR_ARCHIVE);
+
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);
 	sv_auth_engine = Cvar_Get("sv_auth_engine", "1", CVAR_ROM);

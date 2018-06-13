@@ -112,6 +112,8 @@ cvar_t  *mod_noWeaponCycle;
 cvar_t  *mod_specChatGlobal;
 cvar_t  *mod_cleanMapPrefixes;
 
+cvar_t  *mod_disableScope;
+
 //@Barbatos
 #ifdef USE_AUTH
 cvar_t	*sv_authServerIP;
