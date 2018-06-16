@@ -140,6 +140,8 @@ typedef struct clientMod_s {
 	int infiniteStamina;              // Enable infinite stamina on a player
 	int infiniteWallJumps;            // Enable infinite walljumps on a player
 	int hidePlayers;                  // Make all other players invisible for a client
+
+	int lastWeaponAfterScope;         // For disable scope is necesary save last weapon used for do switch.
 } clientMod_t;
 
 typedef struct client_s {

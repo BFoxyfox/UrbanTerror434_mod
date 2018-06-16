@@ -640,6 +640,9 @@ gotnewcl:
     Q_strncpyz(newcl->userinfo, userinfo, sizeof(newcl->userinfo));
     Com_sprintf(cl->colourName, MAX_NAME_LENGTH, "%s^7", SV_CleanName(Info_ValueForKey(newcl->userinfo, "name")));
 
+    //Allways start this value to -1
+	newcl->cm.lastWeaponAfterScope = -1;
+
 
     // get the game a chance to reject this connection or modify the userinfo
     denied = VM_Call(gvm, GAME_CLIENT_CONNECT, clientNum, qtrue, qfalse); // firstTime = qtrue
@@ -2446,13 +2449,25 @@ void SV_ClientThink (client_t *cl, usercmd_t *cmd) {
 	ps = SV_GameClientNum(cl - svs.clients);
 
 	if(mod_disableScope->integer)
-    {
-        //Integer is a flag for zoom3 that include zoom1 and zoom2
-        if(cmd->buttons&24576)
-        {
-            ps->weapon=1;
-        }
-    }
+	{
+		if(cl->cm.lastWeaponAfterScope != -1 )
+		{
+			ps->weapon = cl->cm.lastWeaponAfterScope;
+			cl->cm.lastWeaponAfterScope = -1;
+		}else
+		{
+			//24576 is the flag for zoom3 that include zoom1 and zoom2
+			if(cmd->buttons&24576)
+			{
+				cl->cm.lastWeaponAfterScope = ps->weapon;
+				//Allways the change is with the weapon 15, but if the actual weapon is 15 we use the 14.
+				if(ps->weapon==15)
+					ps->weapon=14;
+				else
+					ps->weapon=15;
+			}
+		}
+	}
 
 
     SV_GhostThink(cl);
