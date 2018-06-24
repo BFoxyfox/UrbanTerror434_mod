@@ -1840,7 +1840,7 @@ static void SV_LoadPosition_f(client_t *cl) {
     VectorClear(ps->velocity);
 
     // regenerate stamina
-    ps->stats[9] = ps->stats[0] * 300;
+    ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_STAMINA]] = ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_HEALTH]] * 300;
 
     if (jumprun) {
         // restore ready status
@@ -2176,10 +2176,10 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
             } else if (Q_stricmp("kill", Cmd_Argv(0)) == 0 && !mod_allowSuicide->integer) {
                 SV_SendServerCommand(cl, "print \"^1This server doesn't allow suiciding!\n\"");
                 return;
-            } else if (Q_stricmp("kill", Cmd_Argv(0)) == 0 && ps->stats[STAT_HEALTH] < mod_minKillHealth->integer) {
+            } else if (Q_stricmp("kill", Cmd_Argv(0)) == 0 && ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_HEALTH]] < mod_minKillHealth->integer) {
                 SV_SendServerCommand(cl, "print \"^1You need a minimum of ^2%i percent ^1of health to kill yourself!\n\"", mod_minKillHealth->integer);
                 return;
-            } else if (Q_stricmp("team", Cmd_Argv(0)) == 0 && ps->stats[STAT_HEALTH] < mod_minTeamChangeHealth->integer) {
+            } else if (Q_stricmp("team", Cmd_Argv(0)) == 0 && ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_HEALTH]] < mod_minTeamChangeHealth->integer) {
                 SV_SendServerCommand(cl, "print \"^1You need a minimum of ^2%i percent ^1of health to change of team!\n\"", mod_minTeamChangeHealth->integer);
                 return;
             } else if(Q_stricmp("callvote", Cmd_Argv(0)) == 0 && !mod_allowVote->integer) {

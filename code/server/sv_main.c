@@ -128,7 +128,8 @@ const char versionString[vMAX][10] = {
 		"4.3",
 		"4.3.1",
 		"4.3.2",
-		"4.3.3"
+		"4.3.3",
+		"4.3.4"
 };
 
 char teamstring[4][5] =

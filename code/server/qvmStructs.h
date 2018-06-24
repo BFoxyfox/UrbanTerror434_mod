@@ -75,6 +75,14 @@ enum weaponOffsetStructure
 	SIZE,
 	OFFSET_WP_MAX
 };
+
+enum playerStats
+{
+	OFFSET_PS_STAMINA,
+	OFFSET_PS_HEALTH,
+	OFFSET_PS_MAX
+};
+
 enum gclientOffsetStructure
 {
 	OFFSET_NOGEARCHANGE,
@@ -90,6 +98,7 @@ typedef enum
 	v431,
 	v432,
 	v433,
+	v434,
 	vMAX,
 }urtVersion;
 
@@ -101,6 +110,7 @@ extern char hitlocationstring[HL_MAX][15];
 
 extern int ut_weapon_xor;
 extern int gclientOffsets[vMAX][OFFSET_GL_MAX];
+extern int playerStatsOffsets[vMAX][OFFSET_PS_MAX];
 
 
 
