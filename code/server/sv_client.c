@@ -1660,6 +1660,10 @@ void SV_UserinfoChanged( client_t *cl ) {
     if (sv_gametype->integer == GT_JUMP) {
         cl->cm.ghost = SV_IsClientGhost(cl);
     }
+
+    if (mod_forceGear->string && Q_stricmp(mod_forceGear->string, "")) {
+        Info_SetValueForKey(cl->userinfo, "gear", mod_forceGear->string);
+    }
 }
 
 /*
@@ -1683,10 +1687,6 @@ void SV_UpdateUserinfo_f( client_t *cl ) {
 	cl->nextReliableUserTime = svs.time + 5000;
 
 	Q_strncpyz( cl->userinfo, Cmd_Argv(1), sizeof(cl->userinfo) );
-
-    if (mod_forceGear->string && Q_stricmp(mod_forceGear->string, "")) {
-        Info_SetValueForKey(cl->userinfo, "gear", mod_forceGear->string);
-    }
 
 	SV_UserinfoChanged( cl );
 
@@ -1741,7 +1741,7 @@ static void SV_SavePosition_f(client_t *cl) {
         return;
     }
 
-    if (mod_saveposRestrictions->integer) {
+    if (mod_saveposRestrictions->integer || cl->cm.noFreeSave) {
 
         // disallow if in spectator mode
         if (SV_GetClientTeam(cid) == TEAM_SPECTATOR) {
@@ -1856,6 +1856,24 @@ static void SV_LoadPosition_f(client_t *cl) {
                                       cl->cm.savedPosition[2]);
     
     SV_SendServerCommand(cl, "print \"^7Your ^6position ^7has been ^5loaded\n\"");
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_NoFreeSave_f
+/////////////////////////////////////////////////////////////////////
+void SV_NoFreeSave_f(client_t *cl) {
+
+    if (!mod_allowPosSaving->integer || mod_saveposRestrictions->integer) {
+        return;
+    }
+
+    if (cl->cm.noFreeSave) {
+        cl->cm.noFreeSave = qfalse;
+        SV_SendServerCommand(cl, "print \"^7Free position saving turned: [^2ON^7]\n\"");
+    } else {
+        cl->cm.noFreeSave = qtrue;
+        SV_SendServerCommand(cl, "print \"^7Free position saving turned: [^1OFF^7]\n\"");
+    }
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1991,6 +2009,7 @@ void SV_HelpCmdsList_f(client_t* cl) {
         SV_SendServerCommand(cl, "print  \"^8- ^2/infiniteStamina       ^7[Turn ON/OFF Infinite Stamina]        ^8-\n\"");
         SV_SendServerCommand(cl, "print  \"^8- ^2/infiniteWallJumps     ^7[Turn ON/OFF Infinite Wall Jumps]     ^8-\n\"");
         SV_SendServerCommand(cl, "print  \"^8- ^2/hidePlayers           ^7[Make all other players invisible]    ^8-\n\"");
+        SV_SendServerCommand(cl, "print  \"^8- ^2/freeSave              ^7[Turn ON/OFF the free position saving]^8-\n\"");
         SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
         SV_SendServerCommand(cl, "print  \"^8- ^2/tell ^5<client> <message>                  ^7[Private Messages] ^8-\n\"");
         SV_SendServerCommand(cl, "print  \"^8- ^2/callvote ^5nextmap <mapname> ^7or ^5cyclemap   ^7[Map Votes]        ^8-\n\"");
@@ -2048,6 +2067,7 @@ static ucmd_t ucmds[] = {
 };
 
 static ucmd_t ucmds_floodControl[] = {
+    {"freeSave", SV_NoFreeSave_f},
     {"hidePlayers", SV_HidePlayers_f},
     {"infiniteStamina", SV_InfiniteStamina_f},
     {"stamina", SV_InfiniteStamina_f},
@@ -2179,7 +2199,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
             } else if (Q_stricmp("kill", Cmd_Argv(0)) == 0 && ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_HEALTH]] < mod_minKillHealth->integer) {
                 SV_SendServerCommand(cl, "print \"^1You need a minimum of ^2%i percent ^1of health to kill yourself!\n\"", mod_minKillHealth->integer);
                 return;
-            } else if (Q_stricmp("team", Cmd_Argv(0)) == 0 && ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_HEALTH]] < mod_minTeamChangeHealth->integer) {
+            } else if (Q_stricmp("team", Cmd_Argv(0)) == 0 && ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_HEALTH]] < mod_minTeamChangeHealth->integer && SV_GetClientTeam(cid) != TEAM_SPECTATOR) {
                 SV_SendServerCommand(cl, "print \"^1You need a minimum of ^2%i percent ^1of health to change of team!\n\"", mod_minTeamChangeHealth->integer);
                 return;
             } else if(Q_stricmp("callvote", Cmd_Argv(0)) == 0 && !mod_allowVote->integer) {
@@ -2191,7 +2211,6 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
                     case 0:
                         SV_SendServerCommand(cl, "print \"^1Team selection system is disabled on this server!\n\"");
                         return;
-                        break;
                     case 2:
                         if(!(Q_stricmp("s", Cmd_Argv(1)) == 0) && !(Q_stricmp("free", Cmd_Argv(1)) == 0)) {
                             SV_SendServerCommand(cl, "print \"^1You can only spectate or auto join in this server!\n\"");
@@ -2215,6 +2234,13 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
                         }
                         break;
                     }
+                }
+
+                if (mod_fastTeamChange->integer) {
+                    char cmdText[30] = "";
+                    snprintf(cmdText, sizeof(cmdText), "forceteam %d %s", cid, Cmd_Argv(1));
+                    Cmd_ExecuteString(cmdText);
+                    return;
                 }
 
             // Handle the activation of client's timer in jump mode

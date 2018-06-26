@@ -113,6 +113,7 @@ cvar_t  *mod_specChatGlobal;
 cvar_t  *mod_cleanMapPrefixes;
 
 cvar_t  *mod_disableScope;
+cvar_t  *mod_fastTeamChange;
 
 //@Barbatos
 #ifdef USE_AUTH

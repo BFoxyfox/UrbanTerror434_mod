@@ -136,6 +136,7 @@ typedef struct clientMod_s {
 
 	qboolean ghost;                   // Whether the player has cg_ghost 1 (Jump Mode)
 	qboolean ready;                   // Whether the player has activated his timer with /ready (Jump Mode)
+	qboolean noFreeSave;              // Whether the player wants to disable the free-saving feature (Jump Mode)
 
 	int infiniteStamina;              // Enable infinite stamina on a player
 	int infiniteWallJumps;            // Enable infinite walljumps on a player
@@ -392,6 +393,8 @@ extern  cvar_t  *mod_specChatGlobal;
 extern  cvar_t  *mod_cleanMapPrefixes;
 
 extern  cvar_t  *mod_disableScope;
+extern  cvar_t  *mod_fastTeamChange;
+
 #ifdef USE_AUTH
 extern  cvar_t  *sv_authServerIP;
 extern  cvar_t  *sv_auth_engine;

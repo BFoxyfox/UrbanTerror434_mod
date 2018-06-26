@@ -8,12 +8,12 @@
 
 int   playerStatsOffsets[vMAX][OFFSET_PS_MAX] =
 {
-		[v42023] = 	{ 9, 0},
-		[v43] = 	{ 9, 0},
-		[v431] = 	{ 9, 0},
-		[v432] = 	{ 9, 0},
-		[v433] =	{ 9, 0},
-		[v434] =	{ 0, 6}
+		[v42023] = 	{ 9, 0, 3},
+		[v43] = 	{ 9, 0, 3},
+		[v431] = 	{ 9, 0, 3},
+		[v432] = 	{ 9, 0, 3},
+		[v433] =	{ 9, 0, 3},
+		[v434] =	{ 0, 6, 1}
 };
 
 //Values are enumerated here -> gclientOffsetStructure

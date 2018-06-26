@@ -519,11 +519,8 @@ static void SV_BuildClientSnapshot( client_t *client ) {
 	if (mod_infiniteWallJumps->integer || client->cm.infiniteWallJumps > 0) {
 		ps->generic1 = 0;
 	}
-	if (mod_noWeaponRecoil->integer && getVersion() != v434) {
-		//FixMe: The index of stats completly change on 4.3.4 version. This values can be wrong and must be checked
-		ps->stats[3] = 0;
-		ps->stats[4] = 0;
-		ps->stats[11] = 0;
+	if (mod_noWeaponRecoil->integer) {
+        ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_RECOIL]] = 0;
 	}
 	if (mod_noWeaponCycle->integer) {
 		ps->weaponTime = 0;

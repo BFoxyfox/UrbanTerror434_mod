@@ -3,7 +3,7 @@ Pedrxd and Th3K1ll3r are proud to announce the new Titan Mod completely rewritte
 
 The usage of this software is *UNDER YOUR OWN RISK*.
 
---> Server Mod version: **Titan[MOD]/v3.3.0**
+--> Server Mod version: **Titan[MOD]/v3.4.0**
 
 --> Supported UrT version: **4.2.023** to **4.3.4**
 
@@ -57,6 +57,7 @@ mod_noWeaponRecoil | &#60;boolean&#62; | Disable all weapons recoil
 mod_noWeaponCycle | &#60;boolean&#62; | Disable all weapons cycle time (WARNING: entities spam may lead the server to crash)
 mod&#95;specChatGlobal | &#60;boolean&#62; | Make spectators chat visible to everyone in the server unless they use say_team (Frag gametypes only)
 mod_disableScope | &#60;boolean&#62; | Disable scope or zoom on weapons (sr8 g36 psg1)
+mod_fastTeamChange | &#60;boolean&#62; | Remove the 5 seconds wait time between team changes
 &#60;team&#62;_giveweapon | &#60;weapon1&#62; &#60;weapon2&#62; ... | When a player spawns, the weapons specified will be given to him
 &#60;team&#62;_takeweapon | &#60;weapon1&#62; &#60;weapon2&#62; ... | When a player spawns, the weapons specified will be removed from him
 &#60;team&#62;_giveitem | &#60;item1&#62; &#60;item2&#62; ... | When a player spawns, the items specified will be given to him
@@ -126,6 +127,7 @@ Command | Syntax | Description
 --- | --- | ---
 savepos / save | - | Save the current position
 loadpos / load | - | Load the last saved position
+freeSave | - | Turn (ON/OFF) the free position saving (if it's enabled)
 hidePlayers | - | Make all other players invisible (Jump Mode only)
 infiniteStamina / stamina | - | Turn (ON/OFF) infinite stamina (Jump Mode only)
 infiniteWallJumps / walljumps | - | Turn (ON/OFF) infinite wall jumps (Jump Mode only)
