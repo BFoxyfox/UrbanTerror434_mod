@@ -1055,6 +1055,7 @@ void SV_Init (void) {
 	mod_cleanMapPrefixes = Cvar_Get("mod_cleanMapPrefixes", "0", CVAR_ARCHIVE);
 
 	mod_disableScope = Cvar_Get("mod_disableScope", "0", CVAR_ARCHIVE);
+	mod_fastTeamChange = Cvar_Get("mod_fastTeamChange", "0", CVAR_ARCHIVE);
 
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);

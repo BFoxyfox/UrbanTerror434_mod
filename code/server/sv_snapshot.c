@@ -514,15 +514,13 @@ static void SV_BuildClientSnapshot( client_t *client ) {
 
 	// TitanMod: infiniteStamina, infiniteWallJumps, noWeaponRecoil, noWeaponCycle
 	if (mod_infiniteStamina->integer || client->cm.infiniteStamina > 0) {
-		ps->stats[9] = ps->stats[0] * 300;
+		ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_STAMINA]] = ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_HEALTH]] * 300;
 	}
 	if (mod_infiniteWallJumps->integer || client->cm.infiniteWallJumps > 0) {
 		ps->generic1 = 0;
 	}
 	if (mod_noWeaponRecoil->integer) {
-		ps->stats[3] = 0;
-		ps->stats[4] = 0;
-		ps->stats[11] = 0;
+        ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_RECOIL]] = 0;
 	}
 	if (mod_noWeaponCycle->integer) {
 		ps->weaponTime = 0;

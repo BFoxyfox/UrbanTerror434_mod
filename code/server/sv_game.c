@@ -1039,6 +1039,7 @@ static void SV_InitGameVM( qboolean restart ) {
 	case v431:
 	case v432:
 	case v433:
+	case v434:
 		weaponString = weaponstring43;
 		Com_Printf("[OK]\n");
 		break;
