@@ -678,7 +678,6 @@ void *VM_ExplicitArgPtr( vm_t *vm, intptr_t intValue ) {
 	}
 }
 
-
 /*
 ==============
 VM_Call

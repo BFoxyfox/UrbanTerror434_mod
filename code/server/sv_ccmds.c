@@ -2250,6 +2250,164 @@ static void SV_ResquestDownload_f (void)
 }
 
 /////////////////////////////////////////////////////////////////////
+// DV_Searchfor
+/////////////////////////////////////////////////////////////////////
+void DV_SearchFor_f (void)
+{
+    if(!com_sv_running->integer)
+    {
+        Com_Printf("Server is not running\n");
+        return;
+    }
+
+    if(Cmd_Argc() < 2)
+    {
+        Com_Printf("Usage: searchfor <command> [options] [...]\n");
+        Com_Printf("For more info check README file\n");
+        return;
+    }else
+    {
+
+        if(Q_stricmp(Cmd_Argv(1), "add") == 0)
+        {
+            if(Cmd_Argc() == 3)
+            {
+                int noff = addOffset(atoi(Cmd_Argv(2)));
+                if(noff != -1)
+                {
+                    Com_Printf("[%d] Added!\n", noff);
+                }else
+                {
+                    Com_Printf("Something goes wrong!");
+                }
+            }else
+            {
+                Com_Printf("/searchfor add <address>\n");
+            }
+        }else if(Q_stricmp(Cmd_Argv(1),"remove") == 0)
+        {
+            if(Cmd_Argc() == 3)
+            {
+                int noff = removeOffset(atoi(Cmd_Argv(2)));
+                if(noff != -1)
+                {
+                    Com_Printf("[%d] Removed!\n", noff);
+                }else
+                {
+                    Com_Printf("Something goes wrong!\n");
+                }
+            }else
+            {
+                Com_Printf("/searchfor remove <index>\n");
+            }
+        }else if(Q_stricmp(Cmd_Argv(1),"int") == 0)
+        {
+            if(Cmd_Argc() == 3)
+            {
+                int noff = searchForI(atoi(Cmd_Argv(2)));
+                if(noff != -1) {
+                    Com_Printf("[%d] Matched some offset\n", noff);
+                }else
+                {
+                    Com_Printf("Something goes wrong!\n");
+                }
+            }else
+            {
+                Com_Printf("/searchfor int <number>\n");
+            }
+        }else if(Q_stricmp(Cmd_Argv(1),"float") == 0)
+        {
+            if(Cmd_Argc() == 3)
+            {
+                int noff = searchForF(atof(Cmd_Argv(2)));
+                if(noff != -1) {
+                    Com_Printf("[%d] Matched some offset\n", noff);
+                }else
+                {
+                    Com_Printf("Something goes wrong!\n");
+                }
+            }else
+            {
+                Com_Printf("/searchfor float <number>\n");
+            }
+        }else if(Q_stricmp(Cmd_Argv(1),"string") == 0)
+        {
+            //ToDo: Full string support must be implemented
+            Com_Printf("Right now this feature is on development\n");
+        }else if(Q_stricmp(Cmd_Argv(1),"double") == 0)
+        {
+            if(Cmd_Argc() == 3)
+            {
+                int noff = searchForD(atof(Cmd_Argv(2)));
+                if(noff != -1) {
+                    Com_Printf("[%d] Matched some offset\n", noff);
+                }else
+                {
+                    Com_Printf("Something goes wrong!\n");
+                }
+            }else
+            {
+                Com_Printf("/searchfor double <number>\n");
+            }
+        }else if(Q_stricmp(Cmd_Argv(1),"long") == 0)
+        {
+            if(Cmd_Argc() == 3)
+            {
+                int noff = searchForL(atol(Cmd_Argv(2)));
+                if(noff != -1) {
+                    Com_Printf("[%d] Matched some offset\n", noff);
+                }else
+                {
+                    Com_Printf("Something goes wrong!\n");
+                }
+            }else
+            {
+                Com_Printf("/searchfor long <number>\n");
+            }
+        }else if(Q_stricmp(Cmd_Argv(1),"set") == 0)
+        {
+            if(Cmd_Argc() == 5)
+            {
+                switch (Cmd_Argv(2)[0])
+                {
+                    case 'i':
+	                    *(int *)VM_ArgPtr(atoi(Cmd_Argv(3))) = atoi(Cmd_Argv(4));
+                        break;
+                    case 'l':
+	                    *(long *)VM_ArgPtr(atoi(Cmd_Argv(3))) = atol(Cmd_Argv(4));
+                        break;
+                    case 'f':
+	                    *(float *)VM_ArgPtr(atoi(Cmd_Argv(3))) = atof(Cmd_Argv(4));
+                        break;
+                    case 'd':
+	                    *(double *)VM_ArgPtr(atoi(Cmd_Argv(3))) = (double)atof(Cmd_Argv(4));
+                        break;
+                    case 's':
+                        //Todo: String support not working
+                        break;
+                    default:
+                        Com_Printf("Not a correct type!\n");
+                }
+            }else
+            {
+                Com_Printf("/searchfor set <i/l/f/d/s> <offset> <value>\n");
+            }
+        }else if(Q_stricmp(Cmd_Argv(1),"clean") == 0)
+        {
+            cleanOffset();
+            Com_Printf("Cleaned!\n");
+        }else if(Q_stricmp(Cmd_Argv(1),"list") == 0)
+        {
+            listData();
+        }
+        else
+        {
+            Com_Printf("Command not found!\n");
+        }
+    }
+
+}
+/////////////////////////////////////////////////////////////////////
 // SV_CheckWeaponOffset_f
 /////////////////////////////////////////////////////////////////////
 void SV_CheckOffset_f (void)
@@ -2641,8 +2799,13 @@ void SV_AddOperatorCommands( void ) {
 	Cmd_AddCommand ("teleport", SV_Teleport_f);
     Cmd_AddCommand ("tp", SV_Teleport_f);
     Cmd_AddCommand ("resquestdownload", SV_ResquestDownload_f);
+
+    //Fast search of variables
+    Cmd_AddCommand ("searchfor", DV_SearchFor_f);
+
     Cmd_AddCommand ("dumpoffset", SV_CheckOffset_f);
     Cmd_AddCommand ("dumpgoffset", SV_CheckGOffset_f);
+
     Cmd_AddCommand ("location", SV_Location_f);
     Cmd_AddCommand ("qvmreload", SV_QVMReload_f);
     Cmd_AddCommand ("freeze", SV_Freeze_f);

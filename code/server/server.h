@@ -631,3 +631,35 @@ void SV_Netchan_Transmit( client_t *client, msg_t *msg);
 void SV_Netchan_TransmitNextFragment( client_t *client );
 qboolean SV_Netchan_Process( client_t *client, msg_t *msg );
 
+//
+// dv_searcher.c
+//
+
+typedef enum
+{
+	sNone,
+	sInt,
+	sFloat,
+	sString,
+	sDouble,
+	sLong
+}dataType;
+
+typedef struct
+{
+	int offset;
+	dataType type;
+	void *value;
+}valuesData;
+
+int addOffset(int offset);
+int removeOffset(int index);
+
+void listData(void);
+
+int searchForI(int offset);
+int searchForD(double offset);
+int searchForF(float offset);
+int searchForL(long offset);
+
+void cleanOffset(void);

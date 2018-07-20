@@ -1117,6 +1117,7 @@ Q3OBJ = \
   $(B)/client/sv_world.o \
   $(B)/client/sv_weapon.o \
   $(B)/client/qvm_offsets.o \
+  $(B)/client/dv_searcher.o \
   \
   $(B)/client/q_math.o \
   $(B)/client/q_shared.o \
@@ -1334,6 +1335,7 @@ Q3DOBJ = \
   $(B)/ded/sv_world.o \
   $(B)/ded/sv_weapon.o \
   $(B)/ded/qvm_offsets.o \
+  $(B)/ded/dv_searcher.o \
   \
   $(B)/ded/cm_load.o \
   $(B)/ded/cm_patch.o \
