@@ -143,6 +143,8 @@ typedef struct clientMod_s {
 	int hidePlayers;                  // Make all other players invisible for a client
 
 	int lastWeaponAfterScope;         // For disable scope is necesary save last weapon used for do switch.
+
+	char authcl[32];                  // Change for custom auths.
 } clientMod_t;
 
 typedef struct client_s {
@@ -395,6 +397,9 @@ extern  cvar_t  *mod_cleanMapPrefixes;
 extern  cvar_t  *mod_disableScope;
 extern  cvar_t  *mod_fastTeamChange;
 
+extern  cvar_t  *mod_auth;
+extern  cvar_t  *mod_defaultauth;
+
 #ifdef USE_AUTH
 extern  cvar_t  *sv_authServerIP;
 extern  cvar_t  *sv_auth_engine;
@@ -434,7 +439,6 @@ void SV_RemoveWeapon(playerState_t *ps, weapon_t wp);
 void SV_WeaponMod(int cnum);
 void utPSRemoveItem ( playerState_t *ps, utItemID_t itemid );
 void utPSGiveItem ( playerState_t *ps, utItemID_t itemid );
-
 
 
 //
@@ -517,7 +521,7 @@ void SV_ClientThink (client_t *cl, usercmd_t *cmd);
 
 void SV_WriteDownloadToClient( client_t *cl , msg_t *msg );
 
-
+char *SV_CleanName(char *name);
 
 //
 // sv_ccmds.c

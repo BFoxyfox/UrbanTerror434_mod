@@ -58,6 +58,8 @@ mod_noWeaponCycle | &#60;boolean&#62; | Disable all weapons cycle time (WARNING:
 mod&#95;specChatGlobal | &#60;boolean&#62; | Make spectators chat visible to everyone in the server unless they use say_team (Frag gametypes only)
 mod_disableScope | &#60;boolean&#62; | Disable scope or zoom on weapons (sr8 g36 psg1)
 mod_fastTeamChange | &#60;boolean&#62; | Remove the 5 seconds wait time between team changes
+mod_auth | &#60;string&#62; | Give a special syntax to auth. (Replacements: %s -> realauth, %d -> num of player) (WARNING: Spaces can lead to unexpected behavior)
+mod_defaultauth | &#60;string&#62; | Change the default auth (---) to else
 &#60;team&#62;_giveweapon | &#60;weapon1&#62; &#60;weapon2&#62; ... | When a player spawns, the weapons specified will be given to him
 &#60;team&#62;_takeweapon | &#60;weapon1&#62; &#60;weapon2&#62; ... | When a player spawns, the weapons specified will be removed from him
 &#60;team&#62;_giveitem | &#60;item1&#62; &#60;item2&#62; ... | When a player spawns, the items specified will be given to him
@@ -121,6 +123,7 @@ freeze | &#60;player&#62; | Freeze/Thaw a player
 sendclientcommand / scc | &#60;player/all&#62; &#60;command&#62; | Send a command (chat, print, cp, cs, disconnect ...) to a player
 spoof | &#60;player&#62; &#60;command&#62; | Make a player execute the specified game command (callvote, say, say_team, team, kill, ut_radio, noclip ...)
 forcecvar | &#60;player/all/allbots&#62; &#60;cvar&#62; &#60;value&#62; | Set a certain value to a cvar of player's userinfo (name, funfree, gear, cg_, cl_ ...)
+changeauth | &#60;player&#62; &#60;auth&#62; | Change the current auth for the new given
 
 ### Commands (Client)
 Command | Syntax | Description

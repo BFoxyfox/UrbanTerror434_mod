@@ -1160,6 +1160,6 @@ extern huffman_t clientHuffTables;
 // last N CS will be used:
 #define PURE_COMPRESS_NUMCS 8
 
-
+void str_replace(char *target, const char *needle, const char *replacement, int destsize);
 
 #endif // _QCOMMON_H_

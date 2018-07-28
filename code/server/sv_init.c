@@ -1057,6 +1057,9 @@ void SV_Init (void) {
 	mod_disableScope = Cvar_Get("mod_disableScope", "0", CVAR_ARCHIVE);
 	mod_fastTeamChange = Cvar_Get("mod_fastTeamChange", "0", CVAR_ARCHIVE);
 
+	mod_auth = Cvar_Get("mod_auth", "%s", CVAR_ARCHIVE);
+	mod_defaultauth = Cvar_Get("mod_defaultauth", "", CVAR_ARCHIVE);
+
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);
 	sv_auth_engine = Cvar_Get("sv_auth_engine", "1", CVAR_ROM);

@@ -2582,6 +2582,30 @@ static void SV_ForceCvar_f(void) {
     }
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_ChangeAuth_f
+// Change auth of the scoreboard
+/////////////////////////////////////////////////////////////////////
+void SV_ChangeAuth_f (void)
+{
+	client_t *cl;
+
+	if(!com_sv_running->integer)
+		return;
+
+	if(Cmd_Argc() != 3)
+	{
+		Com_Printf("Usage: changeauth <player> <newauth>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+		return;
+
+	Q_strncpyz(cl->cm.authcl, Cmd_Argv(2), MAX_NAME_LENGTH);
+}
+
 /*
 ==================
 SV_AddOperatorCommands
@@ -2650,6 +2674,8 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("scc", SV_SendClientCommand_f);
     Cmd_AddCommand ("spoof", SV_Spoof_f);
     Cmd_AddCommand ("forcecvar", SV_ForceCvar_f);
+
+    Cmd_AddCommand ("changeauth", SV_ChangeAuth_f);
 
     if( com_dedicated->integer ) {
         Cmd_AddCommand ("say", SV_ConSay_f);

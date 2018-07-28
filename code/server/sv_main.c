@@ -115,6 +115,9 @@ cvar_t  *mod_cleanMapPrefixes;
 cvar_t  *mod_disableScope;
 cvar_t  *mod_fastTeamChange;
 
+cvar_t  *mod_auth;
+cvar_t  *mod_defaultauth;
+
 //@Barbatos
 #ifdef USE_AUTH
 cvar_t	*sv_authServerIP;
@@ -425,9 +428,6 @@ void SV_AddServerCommand( client_t *client, const char *cmd ) {
 //		return;
 //	}
 
-	//Location is locked
-	if((Q_strncmp(cmd, "location", 8) == 0) && client->cm.locationLocked)
-		return;
 
 	// do not send commands until the gamestate has been sent
 	if( client->state < CS_PRIMED )
@@ -451,6 +451,98 @@ void SV_AddServerCommand( client_t *client, const char *cmd ) {
 	Q_strncpyz( client->reliableCommands[ index ], cmd, sizeof( client->reliableCommands[ index ] ) );
 }
 
+void MOD_modifiedAuth(char *auth, char *newauth, int cnum)
+{
+	char ccnum[3];
+	char realauth[MAX_NAME_LENGTH*2];
+	client_t *client;
+	playerState_t *ps;
+
+	client = &svs.clients[cnum];
+	ps = SV_GameClientNum(client-svs.clients);
+	sprintf(ccnum, "%d", cnum);
+
+	//Save auth of the player
+	Q_strncpyz(realauth,auth,MAX_NAME_LENGTH*2);
+	//Get the format for the new auth
+	Q_strncpyz(newauth, mod_auth->string, MAX_NAME_LENGTH*2);
+
+
+	if(Q_stricmp(realauth, "---")==0 && mod_defaultauth->string[0])
+	{
+		//If a default auth is spotted is replaced with the new defaultauth
+		Q_strncpyz(realauth, mod_defaultauth->string,MAX_NAME_LENGTH*2);
+	}
+
+	if(client->cm.authcl[0])
+	{
+		//If a player has a custum auth it is changed
+		Q_strncpyz(realauth, client->cm.authcl, MAX_NAME_LENGTH*2);
+	}
+
+	//Apply format on the new auth
+	str_replace(newauth, "%s",realauth, MAX_NAME_LENGTH*2);
+	str_replace(newauth, "%d",ccnum, MAX_NAME_LENGTH*2);
+}
+
+void MOD_parseScore(char *cmd)
+{
+	int j = 0,cnum;
+	byte        csmessage[MAX_MSGLEN] = {0};
+	char newauth[MAX_NAME_LENGTH*2]; //Replace string is generated here
+
+	char* token = strtok(cmd, " ");
+	//Recursive loop into each args
+	while(token) {
+		//This arg should be the cnum of the client
+		if((j-4)%13==0)
+		{
+			cnum = atoi (token);
+		}
+		//This arg should be the auth of a player
+		if((j-16)%13==0 && j!=3)
+		{
+			MOD_modifiedAuth(token, newauth, cnum);
+
+			//Append to the command
+			strcat(csmessage, va("%s ", newauth));
+
+		}else // If its not the auth just save as it is
+		{
+			strcat(csmessage, va("%s ", token));
+		}
+		j++;
+		token=strtok(NULL, " ");
+	}
+	strcpy(cmd, csmessage);
+}
+void MOD_parseScoresAndDouble(char *cmd)
+{
+	int j = 0, cnum;
+	byte csmessage[MAX_MSGLEN] = {0};
+	char newauth[MAX_NAME_LENGTH*2];
+
+	char* token = strtok(cmd, " ");
+	while(token)
+	{
+		if((j-1)%13==0)
+		{
+			cnum = atoi(token);
+		}
+		if((j-13)%13==0 && j!=0)
+		{
+			MOD_modifiedAuth(token, newauth, cnum);
+
+			strcat(csmessage, va("%s ", newauth));
+		}else
+		{
+			strcat(csmessage, va("%s ", token));
+		}
+		j++;
+		token = strtok(NULL, " ");
+	}
+	strcpy(cmd,csmessage);
+}
 
 /*
 =================
@@ -466,10 +558,25 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) {
 	byte		message[MAX_MSGLEN];
 	client_t	*client;
 	int			j;
-	
+
+
 	va_start (argptr,fmt);
 	Q_vsnprintf ((char *)message, sizeof(message), fmt,argptr);
 	va_end (argptr);
+
+	//Location is locked
+	if((Q_strncmp(message, "location", 8) == 0) && cl->cm.locationLocked)
+		return;
+
+	//Modify scoreboard for auth change
+	{
+		if(Q_strncmp(message, "scores ", 7) == 0) {
+			MOD_parseScore(message);
+		}
+		if(Q_strncmp(message, "scoress ", 8) == 0 || Q_strncmp(message, "scoresd ", 8) == 0) {
+			MOD_parseScoresAndDouble(message);
+		}
+	}
 
 	// Fix to http://aluigi.altervista.org/adv/q3msgboom-adv.txt
 	// The actual cause of the bug is probably further downstream
