@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // q_shared.h -- included first by ALL program modules.
 // A user mod should never modify this file
 
-#define Q3_VERSION            "^5Titan^7[^6MOD^7]/^2v^73.4"
+#define Q3_VERSION            "^5Titan^7[^6MOD^7]/^2v^73.5"
 
 #ifndef SVN_VERSION
 #define SVN_VERSION Q3_VERSION
