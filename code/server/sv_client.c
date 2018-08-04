@@ -180,34 +180,27 @@ int SV_ClientIsMoving(client_t *cl) {
 // SV_CleanName
 /////////////////////////////////////////////////////////////////////
 char *SV_CleanName(char *name) {
-    char  *d;
-    char  *s;
-    int   c;
 
-    s = name;
-    d = name;
+	static char cleaned[MAX_NAME_LENGTH];
+	int i, j = 0;
 
-    while ((c = *s) != 0) {
-        if (c >= 33 && c <= 126) {
-            *d++ = c;
-            s++;
-        } else {
-            s++;
-        }
-    }
-    *d = 0;
+	if ( !Q_stricmp( name, "UnnamedPlayer" ) ) {
+		sprintf(cleaned, "%s^7", "UnnamedPlayer");
+		return cleaned;
+	}
 
-    if(!Q_stricmp(name, "all"))
-    {
-    	sprintf(name, "%s","UnnamedPlayer");
-    }
+	if ( !Q_stricmp( name, "" ) ) {
+		sprintf(cleaned, "%s^7", "UnnamedPlayer");
+		return cleaned;
+	}
 
-    if(!Q_stricmp(name, ""))
-    {
-    	sprintf(name, "%s","UnnamedPlayer");
-    }
+	for (i = 0; i < strlen(name); i++) {
+		if (name[i] >= 39 && name[i] <= 126 && name[i] != '\\')
+			cleaned[j++] = name[i];
+	}
 
-    return name;
+	cleaned[j] = 0;
+	return cleaned;
 }
 
 /////////////////////////////////////////////////////////////////////
