@@ -124,6 +124,9 @@ sendclientcommand / scc | &#60;player/all&#62; &#60;command&#62; | Send a comman
 spoof | &#60;player&#62; &#60;command&#62; | Make a player execute the specified game command (callvote, say, say_team, team, kill, ut_radio, noclip ...)
 forcecvar | &#60;player/all/allbots&#62; &#60;cvar&#62; &#60;value&#62; | Set a certain value to a cvar of player's userinfo (name, funfree, gear, cg_, cl_ ...)
 changeauth | &#60;player&#62; &#60;auth&#62; | Change the current auth for the new given
+infinitestamina | &#60;player&#62; &#60;integer&#62; | (0) Default config , (1) Enable , (2) Disable
+infinitewalljumps | &#60;player&#62; &#60;integer&#62; | (0) Default config , (1) Enable , (2) Disable
+
 
 ### Commands (Client)
 Command | Syntax | Description

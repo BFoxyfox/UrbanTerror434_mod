@@ -1918,8 +1918,8 @@ void SV_InfiniteStamina_f(client_t *cl) {
         return;
     }
 
-    if (cl->cm.infiniteStamina > 0) {
-       cl->cm.infiniteStamina = 0;
+    if (cl->cm.infiniteStamina==1) {
+       cl->cm.infiniteStamina = 2;
        SV_SendServerCommand(cl, "print  \"^7Infinite Stamina turned: [^1OFF^7]\n\""); 
     } else {
        cl->cm.infiniteStamina = 1;
@@ -1947,8 +1947,8 @@ void SV_InfiniteWallJumps_f(client_t *cl) {
         return;
     }
 
-    if (cl->cm.infiniteWallJumps) {
-       cl->cm.infiniteWallJumps = 0;
+    if (cl->cm.infiniteWallJumps==1) {
+       cl->cm.infiniteWallJumps = 2;
        SV_SendServerCommand(cl, "print  \"^7Infinite Wall Jumps turned: [^1OFF^7]\n\""); 
     } else {
        cl->cm.infiniteWallJumps = 1;

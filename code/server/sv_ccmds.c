@@ -2606,6 +2606,43 @@ void SV_ChangeAuth_f (void)
 	Q_strncpyz(cl->cm.authcl, Cmd_Argv(2), MAX_NAME_LENGTH);
 }
 
+void SV_InfiniteStamina_fc(void)
+{
+    client_t *cl;
+
+    if(!com_sv_running->integer)
+        return;
+
+    if(Cmd_Argc() != 3)
+    {
+        Com_Printf("Usage: infinitestamina <player> <integer>");
+    }
+
+    cl = SV_GetPlayerByHandle();
+    if(!cl)
+        return;
+
+    cl->cm.infiniteStamina = atoi(Cmd_Argv(2));
+}
+
+void SV_InfiniteWallJumps_fc(void)
+{
+    client_t *cl;
+
+    if(!com_sv_running->integer)
+        return;
+
+    if(Cmd_Argc() != 3)
+    {
+        Com_Printf("Usage: infinitewalljumps <player> <integer>");
+    }
+
+    cl = SV_GetPlayerByHandle();
+    if(!cl)
+        return;
+
+    cl->cm.infiniteWallJumps = atoi(Cmd_Argv(2));
+}
 /*
 ==================
 SV_AddOperatorCommands
@@ -2674,8 +2711,9 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("scc", SV_SendClientCommand_f);
     Cmd_AddCommand ("spoof", SV_Spoof_f);
     Cmd_AddCommand ("forcecvar", SV_ForceCvar_f);
-
     Cmd_AddCommand ("changeauth", SV_ChangeAuth_f);
+    Cmd_AddCommand ("infinitestamina", SV_InfiniteStamina_fc);
+    Cmd_AddCommand ("infinitewalljumps", SV_InfiniteWallJumps_fc);
 
     if( com_dedicated->integer ) {
         Cmd_AddCommand ("say", SV_ConSay_f);
