@@ -2127,17 +2127,22 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 			if (Q_stricmp("say", Cmd_Argv(0)) == 0 || Q_stricmp("say_team", Cmd_Argv(0)) == 0) {
 
 				argsFromOneMaxlen = MAX_SAY_STRLEN;
-                if ((Q_stricmp("!tell", Cmd_Argv(1)) == 0 || Q_stricmp("!pm", Cmd_Argv(1)) == 0) && mod_hideCmds->integer < 2)
+
+				p = Cmd_Argv(1);
+				while (*p == ' ') p++;
+
+				//Check if the message start with some of the command triggereds
+				if (((*p == '!') || (*p == '@') || (*p == '&') || (*p == '/')) && mod_hideCmds->integer)
+				{
+					if(mod_hideCmds->integer == 1)
+						SV_SendServerCommand(cl, "chat \"%s^7%s^3: %s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
+					SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
+					return;
+				}
+
+				//If pm was not mute previusly, force mute now
+                if (Q_stricmp("!pm", p) == 0)
                 {
-                    SV_SendServerCommand(cl, "chat \"%s^7%s^3: %s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
-    				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
-    				return;
-                }
-                p = Cmd_Argv(1);
-                while (*p == ' ') p++;
-                if (((*p == '!') || (*p == '@') || (*p == '&') || (*p == '/')) && mod_hideCmds->integer)
-                {
-    				if(mod_hideCmds->integer == 1)
                     SV_SendServerCommand(cl, "chat \"%s^7%s^3: %s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
     				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
     				return;
