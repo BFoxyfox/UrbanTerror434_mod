@@ -36,6 +36,7 @@ mod_allowFlagDrop | &#60;boolean&#62; | Allow dropping the flag on the server
 mod_allowSuicide | &#60;boolean&#62; | Allow /kill command on the server
 mod_allowVote | &#60;boolean&#62; | Allow /callvote command on the server
 mod_allowTeamSelection | &#60;value&#62; | Values: 0 = disable full team selection system, 1 = allow normal team selection, 2 = only allow spec and autojoin, 3 = like 2 + only specs can do autojoin
+mod_allowWeapLink | &#60;integer&#62; | This cvar will make impossible to new weapons spawn on the world
 mod_minKillHealth | &#60;integer&#62; | Set the minimum percent of health necessary to execute /kill command (Range: 0 -> 100)
 mod_minTeamChangeHealth | &#60;integer&#62; | Set the minimum percent of health necessary to execute /team command (Range: 0 -> 100)
 mod_enableHealth | &#60;boolean&#62; | Enable or disable auto health features

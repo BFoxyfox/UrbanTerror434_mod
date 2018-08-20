@@ -87,6 +87,7 @@ cvar_t  *mod_allowFlagDrop;
 cvar_t  *mod_allowSuicide;
 cvar_t  *mod_allowVote;
 cvar_t  *mod_allowTeamSelection;
+cvar_t  *mod_allowWeapLink;
 
 cvar_t  *mod_minKillHealth;
 cvar_t  *mod_minTeamChangeHealth;

@@ -369,6 +369,7 @@ extern  cvar_t  *mod_allowFlagDrop;
 extern  cvar_t  *mod_allowSuicide;
 extern  cvar_t  *mod_allowVote;
 extern  cvar_t  *mod_allowTeamSelection;
+extern  cvar_t  *mod_allowWeapLink;
 
 extern  cvar_t  *mod_minKillHealth;
 extern  cvar_t  *mod_minTeamChangeHealth;
@@ -399,6 +400,8 @@ extern  cvar_t  *mod_fastTeamChange;
 
 extern  cvar_t  *mod_auth;
 extern  cvar_t  *mod_defaultauth;
+
+
 
 #ifdef USE_AUTH
 extern  cvar_t  *sv_authServerIP;

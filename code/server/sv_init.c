@@ -1029,6 +1029,7 @@ void SV_Init (void) {
 	mod_allowSuicide = Cvar_Get("mod_allowSuicide", "1", CVAR_ARCHIVE);
 	mod_allowVote = Cvar_Get("mod_allowVote", "1", CVAR_ARCHIVE);
 	mod_allowTeamSelection = Cvar_Get("mod_allowteamselection", "1", CVAR_ARCHIVE);
+	mod_allowWeapLink = Cvar_Get("mod_allowWeapLink", "1", CVAR_ARCHIVE);
 
 	mod_minKillHealth = Cvar_Get("mod_minKillHealth", "0", CVAR_ARCHIVE);
 	mod_minTeamChangeHealth = Cvar_Get("mod_minTeamChangeHealth", "0", CVAR_ARCHIVE);

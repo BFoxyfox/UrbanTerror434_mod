@@ -219,6 +219,15 @@ void SV_LinkEntity( sharedEntity_t *gEnt ) {
 		SV_UnlinkEntity( gEnt );	// unlink from old position
 	}
 
+	//If a weapon is trying to be linked, return it
+	if(gEnt->s.eType == ET_ITEM &&
+		gEnt->s.modelindex >= UT_ITEM_BERETTA &&
+		gEnt->s.modelindex < UT_ITEM_MAX &&
+		mod_allowWeapLink->integer==0)
+	{
+		return;
+	}
+
 	// Set the player names flag back (Ghost Fix - Jump Mode)
 	if (sv_gametype->integer == GT_JUMP && !mod_ghostPlayers->integer) {
 		if (!(gEnt->r.contents & CONTENTS_BODY)) {
