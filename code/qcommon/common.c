@@ -81,6 +81,7 @@ cvar_t  *cl_packetdelay;
 cvar_t  *sv_packetdelay;
 cvar_t	*com_cameraMode;
 cvar_t 	*com_logfileName;
+cvar_t  *mod_contraband;
 
 qboolean dev = qfalse;
 
@@ -2511,6 +2512,8 @@ void Com_Init( char *commandLine ) {
 	com_buildScript = Cvar_Get( "com_buildScript", "0", 0 );
 
 	com_introPlayed = Cvar_Get( "com_introplayed", "0", CVAR_ARCHIVE);
+
+	mod_contraband = Cvar_Get( "mod_contraband", "0", CVAR_ARCHIVE);
 
 #if defined(_WIN32) && defined(_DEBUG)
 	com_noErrorInterrupt = Cvar_Get( "com_noErrorInterrupt", "0", 0 );
