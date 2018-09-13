@@ -100,7 +100,7 @@ cvar_t  *mod_whenMoveHealth;
 
 cvar_t  *mod_allowPosSaving;
 cvar_t  *mod_persistentPositions;
-cvar_t  *mod_saveposRestrictions;
+cvar_t  *mod_freeSaving;
 cvar_t  *mod_enableJumpCmds;
 cvar_t  *mod_enableHelpCmd;
 cvar_t  *mod_ghostRadius;
@@ -262,6 +262,33 @@ qboolean SV_IsClientGhost(client_t *cl) {
     // get the cg_ghost value from the userinfo string
     ghost = atoi(Info_ValueForKey(cl->userinfo, "cg_ghost"));
     return ghost > 0 ? qtrue : qfalse;
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_IsClientInPosition
+// Tells whether a client is in the specified position
+/////////////////////////////////////////////////////////////////////
+qboolean SV_IsClientInPosition(int cid, float x, float y, float z, float xPlus, float yPlus, float zPlus) {
+    playerState_t *ps;
+    ps = SV_GameClientNum(cid);
+    if (ps->origin[0] >= x-xPlus && ps->origin[0] <= x+xPlus &&
+        ps->origin[1] >= y-yPlus && ps->origin[1] <= y+yPlus &&
+        ps->origin[2] >= z-zPlus && ps->origin[2] <= z+zPlus) {
+        return qtrue;
+    }
+    return qfalse;
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_SetClientPosition
+// Teleport a client to the specified position
+/////////////////////////////////////////////////////////////////////
+void SV_SetClientPosition(int cid, float x, float y, float z) {
+    playerState_t *ps;
+    ps = SV_GameClientNum(cid);
+    ps->origin[0] = x;
+    ps->origin[1] = y;
+    ps->origin[2] = z;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -457,10 +484,8 @@ void MOD_modifiedAuth(char *auth, char *newauth, int cnum)
 	char ccnum[3];
 	char realauth[MAX_NAME_LENGTH*2];
 	client_t *client;
-	playerState_t *ps;
 
 	client = &svs.clients[cnum];
-	ps = SV_GameClientNum(client-svs.clients);
 	sprintf(ccnum, "%d", cnum);
 
 	//Save auth of the player
@@ -506,16 +531,16 @@ void MOD_parseScore(char *cmd)
 			MOD_modifiedAuth(token, newauth, cnum);
 
 			//Append to the command
-			strcat(csmessage, va("%s ", newauth));
+			strcat((char *)csmessage, va("%s ", newauth));
 
 		}else // If its not the auth just save as it is
 		{
-			strcat(csmessage, va("%s ", token));
+			strcat((char *)csmessage, va("%s ", token));
 		}
 		j++;
 		token=strtok(NULL, " ");
 	}
-	strcpy(cmd, csmessage);
+	strcpy(cmd, (char *)csmessage);
 }
 void MOD_parseScoresAndDouble(char *cmd)
 {
@@ -534,15 +559,15 @@ void MOD_parseScoresAndDouble(char *cmd)
 		{
 			MOD_modifiedAuth(token, newauth, cnum);
 
-			strcat(csmessage, va("%s ", newauth));
+			strcat((char *)csmessage, va("%s ", newauth));
 		}else
 		{
-			strcat(csmessage, va("%s ", token));
+			strcat((char *)csmessage, va("%s ", token));
 		}
 		j++;
 		token = strtok(NULL, " ");
 	}
-	strcpy(cmd,csmessage);
+	strcpy(cmd, (char *)csmessage);
 }
 
 /*
@@ -566,16 +591,16 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) {
 	va_end (argptr);
 
 	//Location is locked
-	if((Q_strncmp(message, "location", 8) == 0) && cl->cm.locationLocked)
+	if((Q_strncmp((char *)message, "location", 8) == 0) && cl->cm.locationLocked)
 		return;
 
 	//Modify scoreboard for auth change
 	{
-		if(Q_strncmp(message, "scores ", 7) == 0) {
-			MOD_parseScore(message);
+		if(Q_strncmp((char *)message, "scores ", 7) == 0) {
+			MOD_parseScore((char *)message);
 		}
-		if(Q_strncmp(message, "scoress ", 8) == 0 || Q_strncmp(message, "scoresd ", 8) == 0) {
-			MOD_parseScoresAndDouble(message);
+		if(Q_strncmp((char *)message, "scoress ", 8) == 0 || Q_strncmp((char *)message, "scoresd ", 8) == 0) {
+			MOD_parseScoresAndDouble((char *)message);
 		}
 	}
 

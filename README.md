@@ -3,7 +3,7 @@ Pedrxd and Th3K1ll3r are proud to announce the new Titan Mod completely rewritte
 
 The usage of this software is *UNDER YOUR OWN RISK*.
 
---> Server Mod version: **Titan[MOD]/v3.5**
+--> Server Mod version: **Titan[MOD]/v3.6**
 
 --> Supported UrT version: **4.2.023** to **4.3.4**
 
@@ -46,7 +46,7 @@ mod_addAmountOfHealth | &#60;integer&#62; | Percentatge of health that auto heal
 mod_whenMoveHealth | &#60;boolean&#62; | Enable or disable auto health when the player is moving
 mod_allowPosSaving | &#60;boolean&#62; | Enable or disable /savepos and /loadpos client commands
 mod_persistentPositions | &#60;boolean&#62; | Make positions being saved permanently in a file when the player disconnects
-mod_saveposRestrictions | &#60;boolean&#62; | Enable or disable savepos restrictions, which disallow saving in some cases
+mod_freeSaving | &#60;boolean&#62; | Enable or disable savepos restrictions, which disallow saving in some cases
 mod_enableJumpCmds | &#60;boolean&#62; | Enable or disable special client jump cmds: /hidePlayers, /infiniteStamina, /infiniteWallJumps
 mod_enableHelpCmd | &#60;boolean&#62; | Enable or disable the /help client command
 mod_ghostPlayers | &#60;boolean&#62; | Enable or disable ghost players

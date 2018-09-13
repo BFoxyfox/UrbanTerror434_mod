@@ -537,6 +537,7 @@ static void SV_BuildClientSnapshot( client_t *client ) {
 		ps->weaponTime = 0;
 	}
 
+    /*
     // @Th3K1ll3r: I need to hardcode the following here until we make some good Teleport/Health Station function that reads mapname and coordinates from a file
     // Issue on Jump Mode: the map ut4_icycastle_alpha5 has a jump that crashes the server because of too much entities spam. It produces the error: G_Spawn: no free entities
     // TODO: A solution could be stopping entites spam until there is available free space for them. In UrT 4.1 there was something like that since the server didn't crash because it didn't allow a booster to fire
@@ -544,43 +545,16 @@ static void SV_BuildClientSnapshot( client_t *client ) {
         char *mapname = "ut4_icycastle_alpha5";
 
         if (!Q_stricmp(sv_mapname->string, mapname)) {
-            float a = -5200.000000;
-            float b = -5000.000000;
-            float c = -1100.000000;
-            float d = -1000.000000;
-            float e = 4850.000000;
-            float f = 5050.000000;
+            int cid = client - svs.clients;
 
-            float g = -6450.000000;
-            float h = -5800.000000;
-            float i = -2300.000000;
-            float j = -2200.000000;
-            float k = 5600.000000;
-            float l = 5700.000000;
-
-            float m = -6850.000000;
-            float n = -6800.000000;
-            float o = -5600.000000;
-            float p = -5400.000000;
-            float q = 7100.000000;
-            float r = 7300.000000;
-
-            if ((ps->origin[0] >= a && ps->origin[0] <= b && ps->origin[1] >= c && ps->origin[1] <= d && ps->origin[2] >= e && ps->origin[2] <= f) ||
-                (ps->origin[0] >= g && ps->origin[0] <= h && ps->origin[1] >= i && ps->origin[1] <= j && ps->origin[2] >= k && ps->origin[2] <= l) ||
-                (ps->origin[0] >= m && ps->origin[0] <= n && ps->origin[1] >= o && ps->origin[1] <= p && ps->origin[2] >= q && ps->origin[2] <= r)) {
-                float x = -6580.000000;
-                float y = -5500.000000;
-                float z = 7200.000000;
-
-                ps->origin[0] = x;
-                ps->origin[1] = y;
-                ps->origin[2] = z;
-                SV_SendServerCommand(client, "chat \"%s^7The previous jump (^14.2 Vertical Turbine - Leet^7) crashes the server!\"", sv_tellprefix->string);
-                SV_SendServerCommand(client, "chat \"%s^7You have been ^2teleported ^7to jump: ^34.3 Excite Hike - Leet\"", sv_tellprefix->string);
-                SV_SendServerCommand(client, "chat \"%s^7Please, go ahead!\"", sv_tellprefix->string);
+            if (SV_IsClientInPosition(cid, -6135, -3315, 5068, 260, 495, 3000)) // Another tp is actually needed, but nvm
+            {
+                SV_SetClientPosition(cid, -6580, -5500, 7200);
+                SV_SendServerCommand(client, "chat \"%s^7You found a ^2teleport ^7station!\"", sv_tellprefix->string);
             }
         }
     }
+    */
 
 	frame->ps = *ps;
 
