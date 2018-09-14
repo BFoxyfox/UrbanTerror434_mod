@@ -537,7 +537,6 @@ static void SV_BuildClientSnapshot( client_t *client ) {
 		ps->weaponTime = 0;
 	}
 
-    /*
     // @Th3K1ll3r: I need to hardcode the following here until we make some good Teleport/Health Station function that reads mapname and coordinates from a file
     // Issue on Jump Mode: the map ut4_icycastle_alpha5 has a jump that crashes the server because of too much entities spam. It produces the error: G_Spawn: no free entities
     // TODO: A solution could be stopping entites spam until there is available free space for them. In UrT 4.1 there was something like that since the server didn't crash because it didn't allow a booster to fire
@@ -547,14 +546,14 @@ static void SV_BuildClientSnapshot( client_t *client ) {
         if (!Q_stricmp(sv_mapname->string, mapname)) {
             int cid = client - svs.clients;
 
-            if (SV_IsClientInPosition(cid, -6135, -3315, 5068, 260, 495, 3000)) // Another tp is actually needed, but nvm
+            if (SV_IsClientInPosition(cid, -6135, -3315, 5068, 260, 495, 3000) ||
+            	SV_IsClientInPosition(cid, -6658, -3315, 6074, 255, 495, 2006))
             {
                 SV_SetClientPosition(cid, -6580, -5500, 7200);
                 SV_SendServerCommand(client, "chat \"%s^7You found a ^2teleport ^7station!\"", sv_tellprefix->string);
             }
         }
     }
-    */
 
 	frame->ps = *ps;
 

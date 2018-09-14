@@ -2109,6 +2109,55 @@ static void SV_Teleport_f(void) {
 }
 
 /////////////////////////////////////////////////////////////////////
+// SV_Switch_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Switch_f(void) {
+
+    client_t      *cl, *cl2;
+    playerState_t *ps, *ps2;
+
+    // make sure server is running
+    if (!com_sv_running->integer) {
+        Com_Printf("Server is not running.\n");
+        return;
+    }
+
+    // check for correct number of arguments
+    if (Cmd_Argc() != 3) {
+        Com_Printf("Usage: switch <player1> <player2>\n");
+        return;
+    }
+
+    cl = SV_GetPlayerByHandle();
+    // return if no client1 or if client1 may be in a jump run
+    if (!cl || cl->cm.ready) {
+        return;
+    }
+    ps = SV_GameClientNum(cl - svs.clients);
+
+    Cmd_TokenizeString(Cmd_Args());
+
+    cl2 = SV_GetPlayerByHandle();
+    // return if no client2, if client2 may be in a jump run or if both players are the same
+    if (!cl2 || cl2->cm.ready || cl2 == cl) {
+        return;
+    }
+    ps2 = SV_GameClientNum(cl2 - svs.clients);
+
+    // switch clients positions
+    vec3_t tmp;
+    VectorCopy(ps2->origin, tmp);
+    VectorCopy(ps->origin, ps2->origin);
+    VectorCopy(tmp, ps->origin);
+
+    SV_SendServerCommand(cl, "cchat \"\" \"%s^7Your position has been ^2switched ^7with: %s\"", sv_tellprefix->string, cl2->colourName);
+    SV_SendServerCommand(cl2, "cchat \"\" \"%s^7Your position has been ^2switched ^7with: %s\"", sv_tellprefix->string, cl->colourName);
+
+    VectorClear(ps->velocity);
+    VectorClear(ps2->velocity);
+}
+
+/////////////////////////////////////////////////////////////////////
 // SV_SetHealth_f
 /////////////////////////////////////////////////////////////////////
 static void SV_SetHealth_f(void) {
@@ -2700,6 +2749,7 @@ void SV_AddOperatorCommands( void ) {
 	Cmd_AddCommand ("sethealth", SV_SetHealth_f);
     Cmd_AddCommand ("autohealth", SV_AutoHealth_f);
 	Cmd_AddCommand ("teleport", SV_Teleport_f);
+    Cmd_AddCommand ("switch", SV_Switch_f);
     Cmd_AddCommand ("tp", SV_Teleport_f);
     Cmd_AddCommand ("resquestdownload", SV_ResquestDownload_f);
     Cmd_AddCommand ("dumpoffset", SV_CheckOffset_f);
