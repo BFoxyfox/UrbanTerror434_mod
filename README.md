@@ -3,7 +3,7 @@ Pedrxd and Th3K1ll3r are proud to announce the new Titan Mod completely rewritte
 
 The usage of this software is *UNDER YOUR OWN RISK*.
 
---> Server Mod version: **Titan[MOD]/v3.6**
+--> Server Mod version: **Titan[MOD]/v3.7**
 
 --> Supported UrT version: **4.2.023** to **4.3.4**
 
