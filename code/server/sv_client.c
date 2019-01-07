@@ -34,6 +34,12 @@ void EV_PlayerSpawn(int cnum)
 		return;
 
 	SV_WeaponMod(cnum);
+
+    if (sv_gametype->integer == GT_JUMP) {
+        client_t *cl;
+        cl = cnum + svs.clients;
+        cl->cm.ready = 0;
+    }
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -195,7 +201,7 @@ char *SV_CleanName(char *name) {
 	}
 
 	for (i = 0; i < strlen(name); i++) {
-		if (name[i] >= 39 && name[i] <= 126 && name[i] != '\\')
+		if (name[i] >= 33 && name[i] <= 126 && name[i] != '\\')
 			cleaned[j++] = name[i];
 	}
 
@@ -1734,7 +1740,7 @@ static void SV_SavePosition_f(client_t *cl) {
         return;
     }
 
-    if (mod_saveposRestrictions->integer || cl->cm.noFreeSave) {
+    if (!mod_freeSaving->integer || cl->cm.noFreeSave) {
 
         // disallow if in spectator mode
         if (SV_GetClientTeam(cid) == TEAM_SPECTATOR) {
@@ -1743,7 +1749,7 @@ static void SV_SavePosition_f(client_t *cl) {
         }
    
        // disallow if moving
-       if (ps->velocity[0] != 0 || ps->velocity[1] != 0 || ps->velocity[2] != 0) {
+       if (SV_ClientIsMoving(cl) == 1) {
            SV_SendServerCommand(cl, "print \"^1You can't save your position while moving!\n\"");
            return;
         }
@@ -1856,7 +1862,7 @@ static void SV_LoadPosition_f(client_t *cl) {
 /////////////////////////////////////////////////////////////////////
 void SV_NoFreeSave_f(client_t *cl) {
 
-    if (!mod_allowPosSaving->integer || mod_saveposRestrictions->integer) {
+    if (!mod_allowPosSaving->integer || !mod_freeSaving->integer) {
         return;
     }
 
@@ -2007,7 +2013,7 @@ void SV_HelpCmdsList_f(client_t* cl) {
         SV_SendServerCommand(cl, "print  \"^8- ^2/tell ^5<client> <message>                  ^7[Private Messages] ^8-\n\"");
         SV_SendServerCommand(cl, "print  \"^8- ^2/callvote ^5nextmap <mapname> ^7or ^5cyclemap   ^7[Map Votes]        ^8-\n\"");
         SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
-        SV_SendServerCommand(cl, "print  \"^2[INFO] ^7Restrictions of save and load:  [%s^7]\n\"", (mod_saveposRestrictions->integer > 0) ? "^2ON" : "^1OFF");
+        SV_SendServerCommand(cl, "print  \"^2[INFO] ^7Free position saving:  [%s^7]\n\"", (mod_freeSaving->integer > 0) ? "^2ON" : "^1OFF");
         SV_SendServerCommand(cl, "print  \"^2[INFO] ^7Current Map:  [^3%s^7]\n\"", sv_mapname->string);
         SV_SendServerCommand(cl, "print  \"^8----------------------------------------------------------------\n\"");
 
@@ -2141,7 +2147,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 				}
 
 				//If pm was not mute previusly, force mute now
-                if (Q_stricmp("!pm", p) == 0)
+                if (Q_stricmp("!pm", p) == 0 || Q_stricmp("!tell", p) == 0)
                 {
                     SV_SendServerCommand(cl, "chat \"%s^7%s^3: %s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
     				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
@@ -2235,15 +2241,13 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
                 }
 
                 if (mod_fastTeamChange->integer) {
-                    char cmdText[30] = "";
-                    snprintf(cmdText, sizeof(cmdText), "forceteam %d %s", cid, Cmd_Argv(1));
-                    Cmd_ExecuteString(cmdText);
+                    Cmd_ExecuteString(va("forceteam %d %s", cid, Cmd_Argv(1)));
                     return;
                 }
 
             // Handle the activation of client's timer in jump mode
             } else if(Q_stricmp("ready", Cmd_Argv(0)) == 0) {
-                if (sv_gametype->integer == GT_JUMP) {
+                if (sv_gametype->integer == GT_JUMP && SV_GetClientTeam(cid) != TEAM_SPECTATOR) {
                     if (cl->cm.ready) {
                         cl->cm.ready = 0;
                     } else {
@@ -2445,12 +2449,15 @@ void SV_GhostThink(client_t *cl) {
             continue;
         }
 
-        // set the content mask to both and exit
-        ent->r.contents &= ~CONTENTS_BODY;
-        ent->r.contents |= CONTENTS_CORPSE;
-        oth->r.contents &= ~CONTENTS_BODY;
-        oth->r.contents |= CONTENTS_CORPSE;
-        return;
+        // set the content mask to both
+        if (ent->r.contents & CONTENTS_BODY) {
+            ent->r.contents &= ~CONTENTS_BODY;
+            ent->r.contents |= CONTENTS_CORPSE;
+        }
+        if (oth->r.contents & CONTENTS_BODY) {
+            oth->r.contents &= ~CONTENTS_BODY;
+            oth->r.contents |= CONTENTS_CORPSE;
+        }
     }
 }
 
@@ -2573,8 +2580,10 @@ static void SV_UserMove( client_t *cl, msg_t *msg, qboolean delta ) {
 		oldcmd = cmd;
 	}
 
-	// save time for ping calculation
-	cl->frames[ cl->messageAcknowledge & PACKET_MASK ].messageAcked = svs.time;
+    // save time for ping calculation, only in the first acknowledge
+    if (cl->frames[ cl->messageAcknowledge & PACKET_MASK ].messageAcked < 0) {
+        cl->frames[ cl->messageAcknowledge & PACKET_MASK ].messageAcked = Sys_Milliseconds();
+    }
 
 	// TTimo
 	// catch the no-cp-yet situation before SV_ClientEnterWorld

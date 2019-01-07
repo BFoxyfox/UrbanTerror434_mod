@@ -409,6 +409,10 @@ intptr_t SV_GameSystemCalls( intptr_t *args ) {
 		Cvar_Update( VMA(1) );
 		return 0;
 	case G_CVAR_SET:
+	    // let's exclude some game module cvars
+        if (!Q_stricmp((char *)VMA(1), "sv_fps")) {
+            return 0;
+        }
 		Cvar_Set( (const char *)VMA(1), (const char *)VMA(2) );
 		return 0;
 	case G_CVAR_VARIABLE_INTEGER_VALUE:

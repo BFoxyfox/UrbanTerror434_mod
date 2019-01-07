@@ -382,7 +382,7 @@ extern  cvar_t  *mod_whenMoveHealth;
 
 extern  cvar_t  *mod_allowPosSaving;
 extern  cvar_t  *mod_persistentPositions;
-extern  cvar_t  *mod_saveposRestrictions;
+extern  cvar_t  *mod_freeSaving;
 extern  cvar_t  *mod_enableJumpCmds;
 extern  cvar_t  *mod_enableHelpCmd;
 extern  cvar_t  *mod_ghostRadius;
@@ -451,6 +451,8 @@ void utPSGiveItem ( playerState_t *ps, utItemID_t itemid );
 void QDECL SV_LogPrintf(const char *fmt, ...);
 int SV_GetClientTeam(int cid);
 qboolean SV_IsClientGhost(client_t *cl);
+qboolean SV_IsClientInPosition(int cid, float x, float y, float z, float xPlus, float yPlus, float zPlus);
+void SV_SetClientPosition(int cid, float x, float y, float z);
 void SV_LoadPositionFromFile(client_t *cl, char *mapname);
 void SV_SavePositionToFile(client_t *cl, char *mapname);
 

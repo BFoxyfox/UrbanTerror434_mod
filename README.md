@@ -3,7 +3,7 @@ Pedrxd and Th3K1ll3r are proud to announce the new Titan Mod completely rewritte
 
 The usage of this software is *UNDER YOUR OWN RISK*.
 
---> Server Mod version: **Titan[MOD]/v3.5**
+--> Server Mod version: **Titan[MOD]/v3.7**
 
 --> Supported UrT version: **4.2.023** to **4.3.4**
 
@@ -46,7 +46,7 @@ mod_addAmountOfHealth | &#60;integer&#62; | Percentatge of health that auto heal
 mod_whenMoveHealth | &#60;boolean&#62; | Enable or disable auto health when the player is moving
 mod_allowPosSaving | &#60;boolean&#62; | Enable or disable /savepos and /loadpos client commands
 mod_persistentPositions | &#60;boolean&#62; | Make positions being saved permanently in a file when the player disconnects
-mod_saveposRestrictions | &#60;boolean&#62; | Enable or disable savepos restrictions, which disallow saving in some cases
+mod_freeSaving | &#60;boolean&#62; | Enable or disable savepos restrictions, which disallow saving in some cases
 mod_enableJumpCmds | &#60;boolean&#62; | Enable or disable special client jump cmds: /hidePlayers, /infiniteStamina, /infiniteWallJumps
 mod_enableHelpCmd | &#60;boolean&#62; | Enable or disable the /help client command
 mod_ghostPlayers | &#60;boolean&#62; | Enable or disable ghost players
@@ -116,6 +116,7 @@ addhealth | &#60;player&#62; &#60;value&#62; | Add health to a player
 sethealth | &#60;player&#62; &#60;value&#62; | Set health to a player
 autohealth | &#60;player&#62; &#60;limit&#62; &#60;moving&#62; &#60;step&#62; &#60;timeout&#62; &#60;turnoffwhenfinish&#62; | Set auto health to an exclusive client
 teleport / tp | &#60;player1&#62; &#60;player2&#62; or &#60;player&#62; &#60;x&#62; &#60;y&#62; &#60;z&#62; | Teleport a player to another one or teleport a player to the specified coordinates
+switch | &#60;player1&#62; &#60;player2&#62; | Switch players positions
 resquestdownload | &#60;player&#62; &#60;file&#62; | Resquest a client the download of a pk3 file (NOTE: put the filename without extension)
 location | &#60;player/all&#62; &#60;string&#62; &#60;index&#62; &#60;lock&#62; | Change location names of a player (NOTE: 'index' is the space where location will be saved and 'lock' if it should be static)
 dumpoffset | &#60;offset&#62; &#60;size&#62; | Dump on qvmoffset.txt the offset of size

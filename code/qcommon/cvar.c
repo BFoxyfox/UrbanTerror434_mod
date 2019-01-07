@@ -365,6 +365,12 @@ cvar_t *Cvar_Set2( const char *var_name, const char *value, qboolean force ) {
             }
         }
 
+        // Do not allow to modify version cvar
+        if (!strcmp(var_name, "version")) {
+        	Com_Printf ("Titan Mod version cannot be changed.\n");
+    		return var;
+    	}
+
 		if (var->flags & CVAR_LATCH)
 		{
 			if (var->latchedString)
