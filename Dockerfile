@@ -1,9 +1,4 @@
-FROM pedrxd/urbanterror-data:4.3.4
+FROM pedrxd/urbanterror
 
-COPY build/release-linux-x86_64/titanMod.x86_64 /UrbanTerror43/titan-ded.x86_64
-RUN chmod +x /UrbanTerror43/titan-ded.x86_64
-
-RUN mkdir /server %% mkdir /server/q3ut4
-COPY urt /bin/urt
-
-ENTRYPOINT ["/bin/urt"]
+COPY build/release-linux-x86_64/titanMod.x86_64 /data/UrbanTerror43/urbanterror-server
+RUN chmod +x /data/UrbanTerror43/urbanterror-server
