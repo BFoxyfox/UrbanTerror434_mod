@@ -200,9 +200,10 @@ char *SV_CleanName(char *name) {
 		return cleaned;
 	}
 
-	for (i = 0; i < strlen(name); i++) {
-		if (name[i] >= 33 && name[i] <= 126 && name[i] != '\\')
-			cleaned[j++] = name[i];
+	for (i = 0; i < strlen(name) && j < MAX_NAME_LENGTH-1; i++) {
+		if (name[i] >= 39 && name[i] <= 126)
+            if(name[i] != ' ' || name[i] != '\\')
+                cleaned[j++] = name[i];
 	}
 
 	cleaned[j] = 0;
@@ -1693,7 +1694,7 @@ void SV_UpdateUserinfo_f( client_t *cl ) {
 	VM_Call( gvm, GAME_CLIENT_USERINFO_CHANGED, cl - svs.clients );
 
     if (mod_colourNames->integer) {
-        Q_strncpyz(gl->pers.netname, cl->colourName, MAX_NETNAME);
+        Q_strncpyz(gl->pers.netname, cl->colourName, MAX_NAME_LENGTH);
     }
 
     // get the client's cg_ghost value if we are in jump mode
