@@ -104,7 +104,7 @@ setdeaths | &#60;player&#62; &#60;value&#62; | Set a certain deaths to a player 
 invisible | &#60;player&#62; | Turn (ON/OFF) the invisible mode of a player
 playsound | &#60;player&#62; &#60;index&#62; | Play a sound that is on the index of client's configstrings
 playsoundfile | &#60;player&#62; &#60;file&#62; | Play a sound that is on the pk3 files of client's game folder. Must specify the path to the file (sound(s)/.../file.wav)
-giveweapon / gw | &#60;player&#62; &#60;weapon&#62; | Give a weapon to a player
+giveweapon / gw | &#60;player&#62; &#60;weapon&#62; [ [bullets] [clips] ] | Give a weapon to a player
 removeweapon / rw | &#60;player&#62; &#60;weapon&#62; | Remove a weapon from a player
 giveitem / gi | &#60;player&#62; &#60;item&#62; | Give an item to a player
 removeitem / ri | &#60;player&#62; &#60;item&#62; | Remove an item from a player

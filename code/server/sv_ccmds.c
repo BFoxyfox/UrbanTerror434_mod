@@ -1760,7 +1760,7 @@ static void SV_GiveWeapon_f (void) {
 	}
 
 	if(Cmd_Argc() < 3) {
-		Com_Printf("Usage: giveweapon <player> <weapon>\n");
+		Com_Printf("Usage: giveweapon <player> <weapon> [ [bullets] [clips] ]\n");
 		return;
 	}
 
@@ -1783,7 +1783,11 @@ static void SV_GiveWeapon_f (void) {
 
 	ps = SV_GameClientNum(cl - svs.clients);
 
-	SV_GiveWeapon(ps, wp);
+	if(Cmd_Argc() <= 4)
+	    SV_GiveWeapon(ps, wp);
+    else if(Cmd_Argc()  == 5)
+        SV_GiveWeaponCB(ps, wp, atoi(Cmd_Argv(3)), atoi(Cmd_Argv(4)));
+
 }
 
 /////////////////////////////////////////////////////////////////////

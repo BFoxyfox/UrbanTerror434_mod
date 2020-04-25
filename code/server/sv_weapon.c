@@ -213,6 +213,32 @@ void SV_GiveWeapon(playerState_t *ps, weapon_t wp)
 		}
 	}
 }
+
+void SV_GiveWeaponCB(playerState_t *ps, weapon_t wp, int bullets, int clips)
+{
+    int i;
+    for(i = 0; i < (MAX_POWERUPS - 1); i++)
+    {
+        if(i == 15)
+        {
+            Com_Printf("No space\n");
+            return;
+        }
+        if(ps->powerups[i] == ps->powerups[(MAX_POWERUPS - 1)])
+        {
+            int mode;
+            mode = Info_ValueForKey(svs.clients[ps->clientNum].userinfo, "weapmodes")[wp] - '0';
+            if(mode > 2)
+                mode = 0;
+            ps->powerups[i] = generateWeapon(ps, clips, mode, bullets,wp);
+            break;
+        }
+    }
+}
+
+
+
+
 void SV_RemoveWeapon(playerState_t *ps, weapon_t wp)
 {
 	int i;
