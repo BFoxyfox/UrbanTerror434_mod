@@ -96,7 +96,7 @@ void MOD_PlaySoundFile (client_t *cl, char *file)
 	// Set config string
 	SV_SendCustomConfigString(cl, file, 543);
 	// Make a delay to reproduce
-	cl->cm.delayedSound = sv.snapshotCounter+2;
+	cl->cm.delayedSound = sv.snapshotCounter+15;
 }
 
 /////////////////////////////////////////////////////////////////////
