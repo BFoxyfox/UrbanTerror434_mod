@@ -510,6 +510,9 @@ void MOD_modifiedAuth(char *auth, char *newauth, int cnum)
 	//Apply format on the new auth
 	str_replace(newauth, "%s",realauth, MAX_NAME_LENGTH*2);
 	str_replace(newauth, "%d",ccnum, MAX_NAME_LENGTH*2);
+
+	//Clean newauth
+	Q_strncpyz(newauth, SV_CleanName(newauth), MAX_NAME_LENGTH*2);
 }
 
 void MOD_parseScore(char *cmd)
