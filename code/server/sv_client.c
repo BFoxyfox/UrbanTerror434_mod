@@ -752,8 +752,12 @@ void SV_DropClient( client_t *drop, const char *reason ) {
 
 	// nuke user info
 	SV_SetUserinfo( drop - svs.clients, "" );
-	
-	Com_DPrintf( "Going to CS_ZOMBIE for %s\n", drop->name );
+
+    //Clean Mod structure
+    memset(&(drop->cm), 0, sizeof(clientMod_t));
+    drop->colourName[0] = 0;
+
+    Com_DPrintf( "Going to CS_ZOMBIE for %s\n", drop->name );
 	drop->state = CS_ZOMBIE;		// become free in a few seconds
 
 	// if this was the last client on the server, send a heartbeat
@@ -1694,7 +1698,8 @@ void SV_UpdateUserinfo_f( client_t *cl ) {
 	VM_Call( gvm, GAME_CLIENT_USERINFO_CHANGED, cl - svs.clients );
 
     if (mod_colourNames->integer) {
-        Q_strncpyz(gl->pers.netname, cl->colourName, MAX_NAME_LENGTH);
+        if(cl->colourName[0] != 0)
+            Q_strncpyz(gl->pers.netname, cl->colourName, MAX_NAME_LENGTH);
     }
 
     // get the client's cg_ghost value if we are in jump mode
