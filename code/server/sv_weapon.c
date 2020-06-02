@@ -117,6 +117,19 @@ void SV_SetClipsAW(playerState_t *ps, int clipsCount, int weapon)
 	UT_WEAPON_SETCLIPS(ps->powerups[weapon], clipsCount);
 }
 
+int utPSFirstMath (playerState_t *ps, utItemID_t itemid)
+{
+    int i;
+    for(i = 0; i < MAX_WEAPONS; i++)
+    {
+        if(UT_ITEM_GETID(ps->ammo[i]) == itemid)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void utPSGiveItem ( playerState_t *ps, utItemID_t itemid )
 {
 	int  i,itemSlot = -1;

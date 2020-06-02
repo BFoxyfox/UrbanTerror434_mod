@@ -1752,7 +1752,7 @@ static void SV_GiveWeapon_f (void) {
 	client_t      *cl;
 	weapon_t      wp = 0;
 	playerState_t *ps;
-	int           i;
+	int targetweapon;
 
 	if(!com_sv_running->integer) {
 		Com_Printf("Server is not running\n");
@@ -1769,12 +1769,7 @@ static void SV_GiveWeapon_f (void) {
         return;
     }
 
-	for(i = 0; i < UT_WP_NUM_WEAPONS; i++) {
-		if(Q_stricmp( Cmd_Argv(2), weaponString[i] ) == 0) {
-			wp = i;
-			break;
-		}
-	}
+	wp = SV_Char2Weapon(Cmd_Argv(2));
 
 	if(wp == 0) {
 		Com_Printf("Weapon not found\n");
@@ -1783,11 +1778,27 @@ static void SV_GiveWeapon_f (void) {
 
 	ps = SV_GameClientNum(cl - svs.clients);
 
-	if(Cmd_Argc() <= 4)
-	    SV_GiveWeapon(ps, wp);
-    else if(Cmd_Argc()  == 5)
-        SV_GiveWeaponCB(ps, wp, atoi(Cmd_Argv(3)), atoi(Cmd_Argv(4)));
+	//If the player have the weapon only add the clips.
+	targetweapon = SV_FirstMatchFor(ps, wp);
 
+    if(Cmd_Argc() <= 4) {
+        if (targetweapon == -1) {
+            SV_GiveWeapon(ps, wp);
+        } else {
+            SV_GiveClipsAW(ps, *(int*)QVM_clips(wp)+UT_WEAPON_GETCLIPS(targetweapon), targetweapon);
+        }
+    }
+    else if(Cmd_Argc()  == 5)
+    {
+        if(targetweapon == -1)
+        {
+            SV_GiveWeaponCB(ps, wp, atoi(Cmd_Argv(3)), atoi(Cmd_Argv(4)));
+        }else
+        {
+            SV_GiveBulletsAW(ps, atoi(Cmd_Argv(3))+UT_WEAPON_GETBULLETS(targetweapon), targetweapon);
+            SV_GiveClipsAW(ps, atoi(Cmd_Argv(4))+UT_WEAPON_GETCLIPS(targetweapon), targetweapon);
+        }
+    }
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1798,7 +1809,6 @@ static void SV_GiveItem_f (void) {
 	client_t      *cl;
 	utItemID_t      item = 0;
 	playerState_t *ps;
-	int           i;
 
 	if(!com_sv_running->integer) {
 		Com_Printf("Server is not running\n");
@@ -1815,12 +1825,7 @@ static void SV_GiveItem_f (void) {
         return;
     }
 
-	for(i = 0; i < UT_ITEM_MAX; i++) {
-		if(Q_stricmp( Cmd_Argv(2), itemString[i] ) == 0) {
-			item = i;
-			break;
-		}
-	}
+	item = SV_Char2Item(Cmd_Argv(2));
 
 	if(item == 0) {
 		Com_Printf("Item not found\n");
@@ -1828,8 +1833,8 @@ static void SV_GiveItem_f (void) {
 	}
 
 	ps = SV_GameClientNum(cl - svs.clients);
-
-	utPSGiveItem(ps, item);
+    if(utPSFirstMath(ps,item) == -1)
+	    utPSGiveItem(ps, item);
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1840,7 +1845,6 @@ static void SV_RemoveWeapon_f (void) {
 	client_t      *cl;
 	weapon_t      wp = 0;
 	playerState_t *ps;
-	int           i;
 
 	if(!com_sv_running->integer) {
 		Com_Printf("Server is not running\n");
@@ -1857,12 +1861,7 @@ static void SV_RemoveWeapon_f (void) {
         return;
     }
 
-	for(i = 0; i < UT_WP_NUM_WEAPONS; i++) {
-		if(Q_stricmp( Cmd_Argv(2), weaponString[i] ) == 0) {
-			wp = i;
-			break;
-		}
-	}
+	wp = SV_Char2Weapon(Cmd_Argv(2));
 
 	if(wp == 0) {
 		Com_Printf("Weapon not found\n");
@@ -1882,7 +1881,6 @@ static void SV_RemoveItem_f (void) {
 	client_t      *cl;
 	utItemID_t      item = 0;
 	playerState_t *ps;
-	int           i;
 
 	if(!com_sv_running->integer) {
 		Com_Printf("Server is not running\n");
@@ -1899,14 +1897,9 @@ static void SV_RemoveItem_f (void) {
         return;
     }
 
-	for(i = 0; i < UT_ITEM_MAX; i++) {
-		if(Q_stricmp( Cmd_Argv(2), itemString[i] ) == 0) {
-			item = i;
-			break;
-		}
-	}
+	item = SV_Char2Item(Cmd_Argv(2));
 
-	if(item == 0) {
+    if(item == 0) {
 		Com_Printf("Item not found\n");
 		return;
 	}

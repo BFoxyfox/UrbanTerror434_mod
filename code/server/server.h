@@ -432,6 +432,7 @@ void *QVM_WPflags(weapon_t weapon);
 // sv_weapon.c
 //
 weapon_t SV_Char2Weapon(char weapon[36]);
+utItemID_t SV_Char2Item(char *item);
 int overrideQVMData(void);
 void SV_GiveBulletsAW(playerState_t *ps, int bulletsCount, int weapon);
 void SV_GiveClipsAW(playerState_t *ps, int clipsCount, int weapon);
@@ -443,6 +444,7 @@ void SV_RemoveWeapon(playerState_t *ps, weapon_t wp);
 void SV_WeaponMod(int cnum);
 void utPSRemoveItem ( playerState_t *ps, utItemID_t itemid );
 void utPSGiveItem ( playerState_t *ps, utItemID_t itemid );
+int utPSFirstMath (playerState_t *ps, utItemID_t itemid);
 int SV_FirstMatchFor(playerState_t *ps, weapon_t weapon);
 
 
