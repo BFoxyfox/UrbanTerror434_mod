@@ -1924,6 +1924,7 @@ static void SV_GiveClips_f (void)
 	client_t *cl;
 	playerState_t *ps;
 	int value;
+	int toweapon;
 
 	if(!com_sv_running->integer)
 	{
@@ -1932,7 +1933,7 @@ static void SV_GiveClips_f (void)
 	}
 	if(Cmd_Argc() < 3)
 	{
-		Com_Printf("Usage: giveclips <player> <value>\n");
+		Com_Printf("Usage: giveclips <player> <value> [weapon]\n");
 		return;
 	}
 
@@ -1946,7 +1947,21 @@ static void SV_GiveClips_f (void)
 
 	ps = SV_GameClientNum(cl - svs.clients);
 
-	SV_GiveClipsAW(ps, value);
+    //if contain weapon
+    if(Cmd_Argc() >= 3)
+    {
+        toweapon = SV_FirstMatchFor(ps, SV_Char2Weapon(Cmd_Argv(3)));
+        if(toweapon == -1)
+        {
+            Com_Printf("Can't find the weapon");
+            return;
+        }
+    }else
+    {
+        toweapon = ps->weapon;
+    }
+
+	SV_GiveClipsAW(ps, value, toweapon);
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1957,7 +1972,7 @@ static void SV_GiveBullets_f (void)
 	client_t *cl;
 	playerState_t *ps;
 	int value;
-
+    int toweapon;
 	if(!com_sv_running->integer)
 	{
 		Com_Printf("Server is not running\n");
@@ -1965,7 +1980,7 @@ static void SV_GiveBullets_f (void)
 	}
 	if(Cmd_Argc() < 3)
 	{
-		Com_Printf("Usage: givebullets <player> <value>\n");
+		Com_Printf("Usage: givebullets <player> <value> [weapon]\n");
 		return;
 	}
 
@@ -1979,7 +1994,21 @@ static void SV_GiveBullets_f (void)
 
 	ps = SV_GameClientNum(cl - svs.clients);
 
-	SV_GiveBulletsAW(ps, value);
+    //if contain weapon
+    if(Cmd_Argc() >= 3)
+    {
+        toweapon = SV_FirstMatchFor(ps, SV_Char2Weapon(Cmd_Argv(3)));
+        if(toweapon == -1)
+        {
+            Com_Printf("Can't find the weapon");
+            return;
+        }
+    }else
+    {
+        toweapon = ps->weapon;
+    }
+
+	SV_GiveBulletsAW(ps, value, toweapon);
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1990,6 +2019,7 @@ static void SV_SetClips_f (void)
 	client_t *cl;
 	playerState_t *ps;
 	int value;
+	int toweapon;
 
 	if(!com_sv_running->integer)
 	{
@@ -1998,7 +2028,7 @@ static void SV_SetClips_f (void)
 	}
 	if(Cmd_Argc() < 3)
 	{
-		Com_Printf("Usage: setclips <player> <value>\n");
+		Com_Printf("Usage: setclips <player> <value> [weapon]\n");
 		return;
 	}
 
@@ -2012,7 +2042,21 @@ static void SV_SetClips_f (void)
 
 	ps = SV_GameClientNum(cl - svs.clients);
 
-	SV_SetClipsAW(ps, value);
+    //if contain weapon
+    if(Cmd_Argc() >= 3)
+    {
+        toweapon = SV_FirstMatchFor(ps, SV_Char2Weapon(Cmd_Argv(3)));
+        if(toweapon == -1)
+        {
+            Com_Printf("Can't find the weapon");
+            return;
+        }
+    }else
+    {
+        toweapon = ps->weapon;
+    }
+
+	SV_SetClipsAW(ps, value, toweapon);
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -2023,6 +2067,7 @@ static void SV_SetBullets_f (void)
 	client_t *cl;
 	playerState_t *ps;
 	int value;
+	int toweapon;
 
 	if(!com_sv_running->integer)
 	{
@@ -2031,7 +2076,7 @@ static void SV_SetBullets_f (void)
 	}
 	if(Cmd_Argc() < 3)
 	{
-		Com_Printf("Usage: setbullets <player> <value>\n");
+		Com_Printf("Usage: setbullets <player> <value> [weapon]\n");
 		return;
 	}
 
@@ -2045,7 +2090,21 @@ static void SV_SetBullets_f (void)
 
 	ps = SV_GameClientNum(cl - svs.clients);
 
-	SV_SetBulletsAW(ps, value);
+    //if contain weapon
+    if(Cmd_Argc() >= 3)
+    {
+        toweapon = SV_FirstMatchFor(ps, SV_Char2Weapon(Cmd_Argv(3)));
+        if(toweapon == -1)
+        {
+            Com_Printf("Can't find the weapon");
+            return;
+        }
+    }else
+    {
+        toweapon = ps->weapon;
+    }
+
+	SV_SetBulletsAW(ps, value, toweapon);
 }
 
 /////////////////////////////////////////////////////////////////////

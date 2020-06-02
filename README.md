@@ -109,10 +109,10 @@ giveweapon / gw | &#60;player&#62; &#60;weapon&#62; [ [bullets] [clips] ] | Give
 removeweapon / rw | &#60;player&#62; &#60;weapon&#62; | Remove a weapon from a player
 giveitem / gi | &#60;player&#62; &#60;item&#62; | Give an item to a player
 removeitem / ri | &#60;player&#62; &#60;item&#62; | Remove an item from a player
-giveclips | &#60;player&#62; &#60;value&#62; | Add clips to the current weapon of a player
-givebullets | &#60;player&#62; &#60;value&#62; | Add bullets to the current weapon of a player
-setclips | &#60;player&#62; &#60;value&#62; | Set clips to the current weapon of a player
-setbullets | &#60;player&#62; &#60;value&#62; | Set bullets to the current weapon of a player
+giveclips | &#60;player&#62; &#60;value&#62; &#91;weapon&#93; | Add clips to the current weapon of a player
+givebullets | &#60;player&#62; &#60;value&#62; &#91;weapon&#93; | Add bullets to the current weapon of a player
+setclips | &#60;player&#62; &#60;value&#62; &#91;weapon&#93; | Set clips to the current weapon of a player
+setbullets | &#60;player&#62; &#60;value&#62; &#91;weapon&#93; | Set bullets to the current weapon of a player
 addhealth | &#60;player&#62; &#60;value&#62; | Add health to a player
 sethealth | &#60;player&#62; &#60;value&#62; | Set health to a player
 autohealth | &#60;player&#62; &#60;limit&#62; &#60;moving&#62; &#60;step&#62; &#60;timeout&#62; &#60;turnoffwhenfinish&#62; | Set auto health to an exclusive client

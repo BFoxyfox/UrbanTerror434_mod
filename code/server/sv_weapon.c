@@ -45,6 +45,24 @@ weapon_t SV_Char2Weapon(char weapon[36])
 	}
 	return 0;
 }
+
+int SV_FirstMatchFor(playerState_t *ps, weapon_t weapon)
+{
+    int i;
+    if (weapon == UT_WP_NONE)
+        return -1;
+
+    for(i = 0; i < MAX_POWERUPS; i++)
+    {
+        if(UT_WEAPON_GETID(ps->powerups[i]) == weapon)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 int  generateWeapon(playerState_t *ps, int clips, int mode, int bullet, int weapon)
 {
 	updateXOR(ps);
@@ -56,29 +74,29 @@ int  generateWeapon(playerState_t *ps, int clips, int mode, int bullet, int weap
 
 	return pweapon;
 }
-void SV_GiveBulletsAW(playerState_t *ps, int bulletsCount)
+void SV_GiveBulletsAW(playerState_t *ps, int bulletsCount, int weapon)
 {
 	updateXOR(ps);
-	bulletsCount += UT_WEAPON_GETBULLETS(ps->powerups[ps->weapon]);
+	bulletsCount += UT_WEAPON_GETBULLETS(ps->powerups[weapon]);
 	//The max bullets allowed on urbanterror is 255, we should handle it
 	if(bulletsCount > 255)
 		bulletsCount = 255;
 	if(bulletsCount < 0)
 		bulletsCount = 0;
-	UT_WEAPON_SETBULLETS(ps->powerups[ps->weapon], bulletsCount);
+	UT_WEAPON_SETBULLETS(ps->powerups[weapon], bulletsCount);
 }
-void SV_GiveClipsAW(playerState_t *ps, int clipsCount)
+void SV_GiveClipsAW(playerState_t *ps, int clipsCount, int weapon)
 {
 	updateXOR(ps);
-	clipsCount += UT_WEAPON_GETCLIPS(ps->powerups[ps->weapon]);
+	clipsCount += UT_WEAPON_GETCLIPS(ps->powerups[weapon]);
 	//The max clips allowed on urbanterror is 255, we should handle it
 	if(clipsCount > 255)
 		clipsCount = 255;
 	if(clipsCount < 0)
 		clipsCount = 0;
-	UT_WEAPON_SETCLIPS(ps->powerups[ps->weapon], clipsCount);
+	UT_WEAPON_SETCLIPS(ps->powerups[weapon], clipsCount);
 }
-void SV_SetBulletsAW(playerState_t *ps, int bulletsCount)
+void SV_SetBulletsAW(playerState_t *ps, int bulletsCount, int weapon)
 {
 	updateXOR(ps);
 	//The max bullets allowed on urbanterror is 255, we should handle it
@@ -86,9 +104,9 @@ void SV_SetBulletsAW(playerState_t *ps, int bulletsCount)
 		bulletsCount = 255;
 	if(bulletsCount < 0)
 		bulletsCount = 0;
-	UT_WEAPON_SETBULLETS(ps->powerups[ps->weapon], bulletsCount);
+	UT_WEAPON_SETBULLETS(ps->powerups[weapon], bulletsCount);
 }
-void SV_SetClipsAW(playerState_t *ps, int clipsCount)
+void SV_SetClipsAW(playerState_t *ps, int clipsCount, int weapon)
 {
 	updateXOR(ps);
 	//The max clips allowed on urbanterror is 255, we should handle it
@@ -96,7 +114,7 @@ void SV_SetClipsAW(playerState_t *ps, int clipsCount)
 		clipsCount = 255;
 	if(clipsCount < 0)
 		clipsCount = 0;
-	UT_WEAPON_SETCLIPS(ps->powerups[ps->weapon], clipsCount);
+	UT_WEAPON_SETCLIPS(ps->powerups[weapon], clipsCount);
 }
 
 void utPSGiveItem ( playerState_t *ps, utItemID_t itemid )
