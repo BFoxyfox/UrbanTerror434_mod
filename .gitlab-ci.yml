@@ -1,13 +1,15 @@
-build-64bits:
-  script:
-    - apt-get update -qq && apt-get install -y -qq gcc make
-    - make
-  artifacts:
-    paths:
-      - build/release-linux-x86_64/titanMod.x86_64
+image: docker:19.03.8
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+
+services:
+  - docker:19.03.8-dind
+
+before_script:
+  - docker info
 
 build-docker:
-  image: docker:19.03.1
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t $CI_REGISTRY_IMAGE .
