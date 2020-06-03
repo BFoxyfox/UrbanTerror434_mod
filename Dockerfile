@@ -3,7 +3,7 @@ FROM debian AS builder
 WORKDIR /code/
 
 RUN apt-get update
-RUN apt-get install -y gcc make
+RUN apt-get install -y gcc make git
 
 #Build code
 COPY ./ /code/

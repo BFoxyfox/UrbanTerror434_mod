@@ -890,6 +890,9 @@ ifeq ($(USE_CCACHE),1)
   CC := ccache $(CC)
 endif
 
+GIT_VERSION := $(shell git describe --long)
+BASE_CFLAGS += -DGIT_VERSION=\\\"$(GIT_VERSION)\\\"
+
 #Barbatos
 ifeq ($(USE_AUTH),1)
   BASE_CFLAGS += -DUSE_AUTH=1
