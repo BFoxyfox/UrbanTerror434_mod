@@ -1941,12 +1941,12 @@ static void SV_GiveClips_f (void)
 	ps = SV_GameClientNum(cl - svs.clients);
 
     //if contain weapon
-    if(Cmd_Argc() >= 3)
+    if(Cmd_Argc() > 3)
     {
         toweapon = SV_FirstMatchFor(ps, SV_Char2Weapon(Cmd_Argv(3)));
         if(toweapon == -1)
         {
-            Com_Printf("Can't find the weapon");
+            Com_Printf("Can't find the weapon\n");
             return;
         }
     }else
@@ -1988,12 +1988,12 @@ static void SV_GiveBullets_f (void)
 	ps = SV_GameClientNum(cl - svs.clients);
 
     //if contain weapon
-    if(Cmd_Argc() >= 3)
+    if(Cmd_Argc() > 3)
     {
         toweapon = SV_FirstMatchFor(ps, SV_Char2Weapon(Cmd_Argv(3)));
         if(toweapon == -1)
         {
-            Com_Printf("Can't find the weapon");
+            Com_Printf("Can't find the weapon\n");
             return;
         }
     }else
@@ -2036,12 +2036,12 @@ static void SV_SetClips_f (void)
 	ps = SV_GameClientNum(cl - svs.clients);
 
     //if contain weapon
-    if(Cmd_Argc() >= 3)
+    if(Cmd_Argc() > 3)
     {
         toweapon = SV_FirstMatchFor(ps, SV_Char2Weapon(Cmd_Argv(3)));
         if(toweapon == -1)
         {
-            Com_Printf("Can't find the weapon");
+            Com_Printf("Can't find the weapon\n");
             return;
         }
     }else
@@ -2084,12 +2084,12 @@ static void SV_SetBullets_f (void)
 	ps = SV_GameClientNum(cl - svs.clients);
 
     //if contain weapon
-    if(Cmd_Argc() >= 3)
+    if(Cmd_Argc() > 3)
     {
         toweapon = SV_FirstMatchFor(ps, SV_Char2Weapon(Cmd_Argv(3)));
         if(toweapon == -1)
         {
-            Com_Printf("Can't find the weapon");
+            Com_Printf("Can't find the weapon\n");
             return;
         }
     }else
