@@ -67,6 +67,10 @@ int SV_BotAllocateClient(void) {
 	cl->netchan.remoteAddress.type = NA_BOT;
 	cl->rate = 16384;
 
+	//Clean Mod structure
+	memset(&(cl->cm), 0, sizeof(clientMod_t));
+	cl->colourName[0] = 0;
+
 	return i;
 }
 
