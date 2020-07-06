@@ -147,6 +147,57 @@ typedef enum {
 	HL_MAX
 } ariesHitLocation_t;
 
+typedef enum {
+	UT_ITEM_NONE,
+
+	UT_ITEM_REDFLAG,
+	UT_ITEM_BLUEFLAG,
+	UT_ITEM_NEUTRALFLAG,
+
+	UT_ITEM_KNIFE,		   // E
+	UT_ITEM_BERETTA,	   // F
+	UT_ITEM_DEAGLE, 	   // G
+	UT_ITEM_SPAS12, 	   // H
+	UT_ITEM_MP5K,		   // I
+	UT_ITEM_UMP45,		   // J
+	UT_ITEM_HK69,		   // K
+	UT_ITEM_LR, 		   // L
+	UT_ITEM_G36,		   // M
+	UT_ITEM_PSG1,		   // N
+
+	UT_ITEM_GRENADE_HE,    // O
+	UT_ITEM_GRENADE_FLASH,
+	UT_ITEM_GRENADE_SMOKE, // Q
+
+	UT_ITEM_VEST,		   // R
+	UT_ITEM_NVG,		   // S
+	UT_ITEM_MEDKIT, 	   // T
+	UT_ITEM_SILENCER,	   // U
+	UT_ITEM_LASER,		   // V
+	UT_ITEM_HELMET, 	   // W
+	UT_ITEM_AMMO,		   // X
+	UT_ITEM_APR,		   // Y
+
+	UT_ITEM_SR8,		   // Z
+
+	UT_ITEM_AK103,		   // a
+	UT_ITEM_BOMB,		   // b
+	UT_ITEM_NEGEV,		   // c
+	UT_ITEM_GRENADE_FRAG,  // d
+	UT_ITEM_M4, 		   // e
+	UT_ITEM_GLOCK,		   // f
+	UT_ITEM_COLT1911,      // g
+	UT_ITEM_MAC11,         // h
+	UT_ITEM_FRF1,          // i
+	UT_ITEM_BENELLI,       // j
+	UT_ITEM_P90,           // k
+	UT_ITEM_MAGNUM,        // l
+	UT_ITEM_FSTOD,
+
+	UT_ITEM_MAX,
+
+	UT_ITEM_C4,
+} utItemID_t;
 
 typedef enum {
 	UT_WP_NONE = 0,
