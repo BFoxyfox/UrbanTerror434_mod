@@ -589,24 +589,27 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) {
 	client_t	*client;
 	int			j;
 
-
 	va_start (argptr,fmt);
 	Q_vsnprintf ((char *)message, sizeof(message), fmt,argptr);
 	va_end (argptr);
 
-	//Location is locked
+	// Location is locked
 	if((Q_strncmp((char *)message, "location", 8) == 0) && cl->cm.locationLocked)
 		return;
 
-	//Modify scoreboard for auth change
-	{
-		if(Q_strncmp((char *)message, "scores ", 7) == 0) {
-			MOD_parseScore((char *)message);
-		}
-		if(Q_strncmp((char *)message, "scoress ", 8) == 0 || Q_strncmp((char *)message, "scoresd ", 8) == 0) {
-			MOD_parseScoresAndDouble((char *)message);
-		}
-	}
+	// Set client's ready flag
+    if (Q_strncmp((char *)message, "scoress ", 8) == 0) {
+        char *r = Com_SkipTokens((char *)message, 7, " ");
+        cl->cm.ready = (!Q_strncmp(r, "1 ", 2))? 1 : 0;
+    }
+
+	// Modify scoreboard for auth change
+    if (Q_strncmp((char *)message, "scores ", 7) == 0) {
+        MOD_parseScore((char *)message);
+    }
+    if (Q_strncmp((char *)message, "scoress ", 8) == 0 || Q_strncmp((char *)message, "scoresd ", 8) == 0) {
+        MOD_parseScoresAndDouble((char *)message);
+    }
 
 	// Fix to http://aluigi.altervista.org/adv/q3msgboom-adv.txt
 	// The actual cause of the bug is probably further downstream

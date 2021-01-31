@@ -34,12 +34,6 @@ void EV_PlayerSpawn(int cnum)
 		return;
 
 	SV_WeaponMod(cnum);
-
-    if (sv_gametype->integer == GT_JUMP) {
-        client_t *cl;
-        cl = cnum + svs.clients;
-        cl->cm.ready = 0;
-    }
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -2251,15 +2245,8 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
                     return;
                 }
 
-            // Handle the activation of client's timer in jump mode
             } else if(Q_stricmp("ready", Cmd_Argv(0)) == 0) {
-                if (sv_gametype->integer == GT_JUMP && SV_GetClientTeam(cid) != TEAM_SPECTATOR) {
-                    if (cl->cm.ready) {
-                        cl->cm.ready = 0;
-                    } else {
-                        cl->cm.ready = 1;
-                    }
-                }
+                // In-game client's timer in jump mode will be handled by parsing scoress
             }
 
 			if (argsFromOneMaxlen >= 0) {
