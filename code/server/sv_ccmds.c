@@ -2122,8 +2122,7 @@ static void SV_Teleport_f(void) {
     }
 
     cl = SV_GetPlayerByHandle();
-    // return if no client1 or if client1 may be in a jump run
-    if (!cl || cl->cm.ready) {
+    if (!cl) {
         return;
     }
 
@@ -2133,9 +2132,10 @@ static void SV_Teleport_f(void) {
     if (Cmd_Argc() == 2) {
         Com_Printf("Position of %s^7: (x: %f, y: %f, z: %f)\n", cl->name, ps->origin[0], ps->origin[1], ps->origin[2]);
         return;
+    }
 
     // teleport a player to another player's position
-    } else if (Cmd_Argc() == 3) {
+    if (Cmd_Argc() == 3) {
         client_t      *cl_src;
         playerState_t *ps_src;
 
@@ -2150,6 +2150,7 @@ static void SV_Teleport_f(void) {
         ps_src = SV_GameClientNum(cl_src - svs.clients);
         VectorCopy(ps_src->origin, ps->origin);
 
+        Com_Printf("Teleported %s to %s\n", cl->name, cl_src->name);
         SV_SendServerCommand(cl, "cchat \"\" \"%s^7You have been ^2teleported ^7to: %s\"", sv_tellprefix->string, cl_src->colourName);
         SV_SendServerCommand(cl_src, "cchat \"\" \"%s^7Player %s ^7has been ^2teleported ^7to you!\"", sv_tellprefix->string, cl->colourName);
 
@@ -2159,6 +2160,7 @@ static void SV_Teleport_f(void) {
         for (i = 0; i < 3; ++i) {
             ps->origin[i] = atof(Cmd_Argv(i + 2));
         }
+        Com_Printf("Teleported %s to (x: %f, y: %f, z: %f)\n", cl->name, ps->origin[0], ps->origin[1], ps->origin[2]);
         SV_SendServerCommand(cl, "print \"^7You have been ^2teleported ^7to: (x: %f, y: %f, z: %f)\n\"", ps->origin[0], ps->origin[1], ps->origin[2]);
     }
     VectorClear(ps->velocity);
@@ -2185,8 +2187,7 @@ static void SV_Switch_f(void) {
     }
 
     cl = SV_GetPlayerByHandle();
-    // return if no client1 or if client1 may be in a jump run
-    if (!cl || cl->cm.ready) {
+    if (!cl) {
         return;
     }
     ps = SV_GameClientNum(cl - svs.clients);
@@ -2194,8 +2195,8 @@ static void SV_Switch_f(void) {
     Cmd_TokenizeString(Cmd_Args());
 
     cl2 = SV_GetPlayerByHandle();
-    // return if no client2, if client2 may be in a jump run or if both players are the same
-    if (!cl2 || cl2->cm.ready || cl2 == cl) {
+    // return if no client2 or if both players are the same
+    if (!cl2 || cl2 == cl) {
         return;
     }
     ps2 = SV_GameClientNum(cl2 - svs.clients);
@@ -2206,6 +2207,7 @@ static void SV_Switch_f(void) {
     VectorCopy(ps->origin, ps2->origin);
     VectorCopy(tmp, ps->origin);
 
+    Com_Printf("Positions of players %s and %s were switched.\n", cl->name, cl2->name);
     SV_SendServerCommand(cl, "cchat \"\" \"%s^7Your position has been ^2switched ^7with: %s\"", sv_tellprefix->string, cl2->colourName);
     SV_SendServerCommand(cl2, "cchat \"\" \"%s^7Your position has been ^2switched ^7with: %s\"", sv_tellprefix->string, cl->colourName);
 
@@ -2748,6 +2750,25 @@ void SV_InfiniteWallJumps_fc(void)
 
     cl->cm.infiniteWallJumps = atoi(Cmd_Argv(2));
 }
+
+void SV_IsJumpTimerEnabled(void)
+{
+    client_t *cl;
+
+    if (!com_sv_running->integer)
+        return;
+
+    if (Cmd_Argc() != 2) {
+        Com_Printf("Usage: isJumpTimerOn <player>");
+    }
+
+    cl = SV_GetPlayerByHandle();
+    if (!cl)
+        return;
+
+    Com_Printf("%d\n", cl->cm.ready);
+}
+
 /*
 ==================
 SV_AddOperatorCommands
@@ -2820,6 +2841,7 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("changeauth", SV_ChangeAuth_f);
     Cmd_AddCommand ("infinitestamina", SV_InfiniteStamina_fc);
     Cmd_AddCommand ("infinitewalljumps", SV_InfiniteWallJumps_fc);
+    Cmd_AddCommand ("isJumpTimerOn", SV_IsJumpTimerEnabled);
 
     if( com_dedicated->integer ) {
         Cmd_AddCommand ("say", SV_ConSay_f);

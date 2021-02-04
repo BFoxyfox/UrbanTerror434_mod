@@ -597,12 +597,6 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) {
 	if((Q_strncmp((char *)message, "location", 8) == 0) && cl->cm.locationLocked)
 		return;
 
-	// Set client's ready flag
-    if (Q_strncmp((char *)message, "scoress ", 8) == 0) {
-        char *r = Com_SkipTokens((char *)message, 7, " ");
-        cl->cm.ready = (!Q_strncmp(r, "1 ", 2))? 1 : 0;
-    }
-
 	// Modify scoreboard for auth change
     if (Q_strncmp((char *)message, "scores ", 7) == 0) {
         MOD_parseScore((char *)message);

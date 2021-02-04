@@ -116,7 +116,7 @@ setbullets | &#60;player&#62; &#60;value&#62; &#91;weapon&#93; | Set bullets to 
 addhealth | &#60;player&#62; &#60;value&#62; | Add health to a player
 sethealth | &#60;player&#62; &#60;value&#62; | Set health to a player
 autohealth | &#60;player&#62; &#60;limit&#62; &#60;moving&#62; &#60;step&#62; &#60;timeout&#62; &#60;turnoffwhenfinish&#62; | Set auto health to an exclusive client
-teleport / tp | &#60;player1&#62; &#60;player2&#62; or &#60;player&#62; &#60;x&#62; &#60;y&#62; &#60;z&#62; | Teleport a player to another one or teleport a player to the specified coordinates
+teleport / tp | &#60;player1&#62; &#91;&#60;player2&#62; / &#60;x&#62; &#60;y&#62; &#60;z&#62;&#93; | Teleport a player to another one or to the specified coordinates
 switch | &#60;player1&#62; &#60;player2&#62; | Switch players positions
 resquestdownload | &#60;player&#62; &#60;file&#62; | Resquest a client the download of a pk3 file (NOTE: put the filename without extension)
 location | &#60;player/all&#62; &#60;string&#62; &#60;index&#62; &#60;lock&#62; | Change location names of a player (NOTE: 'index' is the space where location will be saved and 'lock' if it should be static)
@@ -130,7 +130,7 @@ forcecvar | &#60;player/all/allbots&#62; &#60;cvar&#62; &#60;value&#62; | Set a 
 changeauth | &#60;player&#62; &#60;auth&#62; | Change the current auth for the new given
 infinitestamina | &#60;player&#62; &#60;integer&#62; | (0) Default config , (1) Enable , (2) Disable
 infinitewalljumps | &#60;player&#62; &#60;integer&#62; | (0) Default config , (1) Enable , (2) Disable
-
+isJumpTimerOn | &#60;player&#62; | Prints 1 if client's jump timer is enabled. Prints 0 otherwise.
 
 ### Commands (Client)
 Command | Syntax | Description

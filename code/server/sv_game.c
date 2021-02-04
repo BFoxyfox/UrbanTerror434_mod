@@ -151,12 +151,26 @@ Sends a command string to a client
 ===============
 */
 void SV_GameSendServerCommand( int clientNum, const char *text ) {
+    int  cid, ready, val[10];
+    char cmd[32], auth[MAX_NAME_LENGTH];
+
 	if ( clientNum == -1 ) {
 		SV_SendServerCommand( NULL, "%s", text );
 	} else {
 		if ( clientNum < 0 || clientNum >= sv_maxclients->integer ) {
 			return;
 		}
+
+        // Scan scoress game command
+        if (!Q_strncmp(text, "scoress ", 8)) {
+            if (sscanf(text, "%s %i %i %i %i %i %i %i %i %i %i %s", cmd, &cid, &val[1], &val[2], &val[3], &val[4],
+                       &val[5], &ready, &val[7], &val[8], &val[9], auth) != EOF)
+            {
+                // set the ready flag (jump timer)
+                svs.clients[cid].cm.ready = (qboolean) ready;
+            }
+        }
+
 		SV_SendServerCommand( svs.clients + clientNum, "%s", text );	
 	}
 }
