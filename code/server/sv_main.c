@@ -120,6 +120,8 @@ cvar_t  *mod_fastTeamChange;
 cvar_t  *mod_auth;
 cvar_t  *mod_defaultauth;
 
+cvar_t  *mod_hideServer;
+
 //@Barbatos
 #ifdef USE_AUTH
 cvar_t	*sv_authServerIP;
@@ -660,6 +662,10 @@ void SV_MasterHeartbeat( void ) {
 		return;		// only dedicated servers send heartbeats
 	}
 
+    // do not send a heartbeat if hidden server
+    if (mod_hideServer->integer)
+        return;
+
 	// if not time yet, don't send anything
 	if ( svs.time < svs.nextHeartbeatTime ) {
 		return;
@@ -765,6 +771,10 @@ void SVC_Status( netadr_t from ) {
 		return;
 	}
 
+	// ignore if hidden server
+	if (mod_hideServer->integer)
+        return;
+
 	strcpy( infostring, Cvar_InfoString( CVAR_SERVERINFO ) );
 
 	// echo back the parameter to status. so master servers can use it as a challenge
@@ -809,6 +819,10 @@ void SVC_Info( netadr_t from ) {
 	if ( Cvar_VariableValue( "g_gametype" ) == GT_SINGLE_PLAYER || Cvar_VariableValue("ui_singlePlayerActive")) {
 		return;
 	}
+
+    // ignore if hidden server
+    if (mod_hideServer->integer)
+        return;
 
 	/*
 	 * Check whether Cmd_Argv(1) has a sane length. This was not done in the original Quake3 version which led

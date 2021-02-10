@@ -402,6 +402,7 @@ extern  cvar_t  *mod_fastTeamChange;
 extern  cvar_t  *mod_auth;
 extern  cvar_t  *mod_defaultauth;
 
+extern  cvar_t  *mod_hideServer;
 
 
 #ifdef USE_AUTH
