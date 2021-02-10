@@ -662,9 +662,9 @@ void SV_MasterHeartbeat( void ) {
 		return;		// only dedicated servers send heartbeats
 	}
 
-    // do not send a heartbeat if hidden server
-    if (mod_hideServer->integer)
-        return;
+	// do not send a heartbeat if hidden server
+	if (mod_hideServer->integer)
+	    return;
 
 	// if not time yet, don't send anything
 	if ( svs.time < svs.nextHeartbeatTime ) {
@@ -820,9 +820,9 @@ void SVC_Info( netadr_t from ) {
 		return;
 	}
 
-    // ignore if hidden server
-    if (mod_hideServer->integer)
-        return;
+	// ignore if hidden server
+	if (mod_hideServer->integer)
+	    return;
 
 	/*
 	 * Check whether Cmd_Argv(1) has a sane length. This was not done in the original Quake3 version which led
@@ -830,7 +830,7 @@ void SVC_Info( netadr_t from ) {
 	 */
 
 	// A maximum challenge length of 128 should be more than plenty.
-	if(strlen(Cmd_Argv(1)) > 128)
+	if (strlen(Cmd_Argv(1)) > 128)
 		return;
 
 	// don't count privateclients

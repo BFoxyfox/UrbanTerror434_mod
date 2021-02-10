@@ -132,6 +132,7 @@ changeauth | &#60;player&#62; &#60;auth&#62; | Change the current auth for the n
 infinitestamina | &#60;player&#62; &#60;integer&#62; | (0) Default config , (1) Enable , (2) Disable
 infinitewalljumps | &#60;player&#62; &#60;integer&#62; | (0) Default config , (1) Enable , (2) Disable
 isJumpTimerOn | &#60;player&#62; | Prints 1 if client's jump timer is enabled. Prints 0 otherwise.
+fs_restart | - | Restart the file system
 
 ### Commands (Client)
 Command | Syntax | Description

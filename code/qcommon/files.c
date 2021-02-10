@@ -305,6 +305,8 @@ char lastValidGame[MAX_OSPATH];
 FILE*		missingFiles = NULL;
 #endif
 
+void FS_Reload( void );
+
 /*
 ==============
 FS_Initialized
@@ -2742,6 +2744,7 @@ void FS_Shutdown( qboolean closemfp ) {
 	Cmd_RemoveCommand( "dir" );
 	Cmd_RemoveCommand( "fdir" );
 	Cmd_RemoveCommand( "touchFile" );
+    Cmd_RemoveCommand( "fs_restart" );
 
 #ifdef FS_MISSING
 	if (closemfp) {
@@ -2877,6 +2880,7 @@ static void FS_Startup( const char *gameName )
 	Cmd_AddCommand ("dir", FS_Dir_f );
 	Cmd_AddCommand ("fdir", FS_NewDir_f );
 	Cmd_AddCommand ("touchFile", FS_TouchFile_f );
+    Cmd_AddCommand ("fs_restart", FS_Reload );
 
 	// https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=506
 	// reorder the pure pk3 files according to server order
@@ -3469,6 +3473,16 @@ void FS_Restart( int checksumFeed ) {
 	Q_strncpyz(lastValidBase, fs_basepath->string, sizeof(lastValidBase));
 	Q_strncpyz(lastValidGame, fs_gamedirvar->string, sizeof(lastValidGame));
 
+}
+
+/*
+=================
+FS_Reload
+=================
+*/
+void FS_Reload( void )
+{
+    FS_Restart( fs_checksumFeed );
 }
 
 /*

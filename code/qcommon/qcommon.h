@@ -564,6 +564,7 @@ void	FS_Shutdown( qboolean closemfp );
 
 qboolean	FS_ConditionalRestart( int checksumFeed );
 void	FS_Restart( int checksumFeed );
+void	FS_Reload( void );
 // shutdown and restart the filesystem so changes to fs_gamedir can take effect
 
 char	**FS_ListFiles( const char *directory, const char *extension, int *numfiles );
