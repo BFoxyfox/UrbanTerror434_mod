@@ -1831,6 +1831,7 @@ static void SV_LoadPosition_f(client_t *cl) {
         angle = ANGLE2SHORT(cl->cm.savedPositionAngle[i]);
         ps->delta_angles[i] = angle - cl->lastUsercmd.angles[i];
     }
+    ps->delta_angles[0] -= 2000;
 
     VectorCopy(cl->cm.savedPositionAngle, ent->s.angles);
     VectorCopy(ent->s.angles, ps->viewangles);
