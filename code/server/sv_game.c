@@ -152,6 +152,7 @@ Sends a command string to a client
 */
 void SV_GameSendServerCommand( int clientNum, const char *text ) {
     int  cid, ready, val[10];
+    int  current;
     char cmd[32], auth[MAX_NAME_LENGTH];
 
 	if ( clientNum == -1 ) {
@@ -166,12 +167,18 @@ void SV_GameSendServerCommand( int clientNum, const char *text ) {
             if (sscanf(text, "%s %i %i %i %i %i %i %i %i %i %i %s", cmd, &cid, &val[1], &val[2], &val[3], &val[4],
                        &val[5], &ready, &val[7], &val[8], &val[9], auth) != EOF)
             {
-                // set the ready flag (jump timer)
-                svs.clients[cid].cm.ready = (qboolean) ready;
+                // update the ready flag (jump timer)
+                current = svs.clients[cid].cm.ready;
+                if (current != ready) {
+                    svs.clients[cid].cm.ready = (qboolean) ready;
+                    // Set stamina and walljumps back to default
+                    svs.clients[cid].cm.infiniteStamina = 0;
+                    svs.clients[cid].cm.infiniteWallJumps = 0;
+                }
             }
         }
 
-		SV_SendServerCommand( svs.clients + clientNum, "%s", text );	
+		SV_SendServerCommand( svs.clients + clientNum, "%s", text );
 	}
 }
 

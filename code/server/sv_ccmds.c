@@ -633,6 +633,10 @@ static void SV_MapRestart_f( void ) {
 			continue;
 		}
 
+        // set stamina and walljumps back to default
+        client->cm.infiniteStamina = 0;
+        client->cm.infiniteWallJumps = 0;
+
 		if(client->state == CS_ACTIVE) {
 			SV_ClientEnterWorld(client, &client->lastUsercmd);
 		}
@@ -2717,17 +2721,23 @@ void SV_InfiniteStamina_fc(void)
 {
     client_t *cl;
 
-    if(!com_sv_running->integer)
+    if (!com_sv_running->integer)
         return;
 
-    if(Cmd_Argc() != 3)
-    {
-        Com_Printf("Usage: infinitestamina <player> <integer>");
+    if (Cmd_Argc() != 3) {
+        Com_Printf("Usage: infinitestamina <player> <integer>\n");
+        Com_Printf("0 = Default config; 1 = Enable; 2 = Disable\n");
+        return;
     }
 
     cl = SV_GetPlayerByHandle();
-    if(!cl)
+    if (!cl)
         return;
+
+    if (Cvar_VariableIntegerValue("g_stamina") == 2) {
+        Com_Printf("Warning: g_stamina is 2.\n");
+        //return;
+    }
 
     cl->cm.infiniteStamina = atoi(Cmd_Argv(2));
 }
@@ -2736,16 +2746,17 @@ void SV_InfiniteWallJumps_fc(void)
 {
     client_t *cl;
 
-    if(!com_sv_running->integer)
+    if (!com_sv_running->integer)
         return;
 
-    if(Cmd_Argc() != 3)
-    {
-        Com_Printf("Usage: infinitewalljumps <player> <integer>");
+    if (Cmd_Argc() != 3) {
+        Com_Printf("Usage: infinitewalljumps <player> <integer>\n");
+        Com_Printf("0 = Default config; 1 = Enable; 2 = Disable\n");
+        return;
     }
 
     cl = SV_GetPlayerByHandle();
-    if(!cl)
+    if (!cl)
         return;
 
     cl->cm.infiniteWallJumps = atoi(Cmd_Argv(2));

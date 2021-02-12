@@ -813,6 +813,10 @@ void SV_SpawnServer( char *server, qboolean killBots ) {
                     // clear the saved position vector for nextmap
                     VectorClear(svs.clients[i].cm.savedPosition);
 
+                    // set stamina and walljumps back to default
+                    svs.clients[i].cm.infiniteStamina = 0;
+                    svs.clients[i].cm.infiniteWallJumps = 0;
+
                     // load the client saved position from a file
                     SV_LoadPositionFromFile(&svs.clients[i], sv_mapname->string);
 

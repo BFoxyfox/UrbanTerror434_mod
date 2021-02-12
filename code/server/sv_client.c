@@ -1884,7 +1884,7 @@ void SV_HidePlayers_f(client_t *cl) {
         return;
     }
 
-    if (!(mod_enableJumpCmds->integer > 0)) {
+    if (!mod_enableJumpCmds->integer) {
         return;
     }
 
@@ -1901,28 +1901,24 @@ void SV_HidePlayers_f(client_t *cl) {
 // SV_InfiniteStamina_f
 /////////////////////////////////////////////////////////////////////
 void SV_InfiniteStamina_f(client_t *cl) {
-
     int cid;
     cid = cl - svs.clients;
 
-    if (sv_gametype->integer != GT_JUMP) {
+    if (sv_gametype->integer != GT_JUMP || !mod_enableJumpCmds->integer)
         return;
-    }
 
-    if (SV_GetClientTeam(cid) == TEAM_SPECTATOR || mod_infiniteStamina->integer || Cvar_VariableIntegerValue("g_stamina") == 2) {
+    if (SV_GetClientTeam(cid) == TEAM_SPECTATOR || cl->cm.ready)
+        return;
+
+    if (Cvar_VariableIntegerValue("g_stamina") == 2)
        return;
-    }
 
-    if (!(mod_enableJumpCmds->integer > 0)) {
-        return;
-    }
-
-    if (cl->cm.infiniteStamina==1) {
+    if (cl->cm.infiniteStamina == 1 || (!cl->cm.infiniteStamina && mod_infiniteStamina->integer)) {
        cl->cm.infiniteStamina = 2;
-       SV_SendServerCommand(cl, "print  \"^7Infinite Stamina turned: [^1OFF^7]\n\""); 
+       SV_SendServerCommand(cl, "print  \"^7Infinite Stamina turned: [^1OFF^7]\n\""); // back to g_stamina
     } else {
        cl->cm.infiniteStamina = 1;
-       SV_SendServerCommand(cl, "print  \"^7Infinite Stamina turned: [^2ON^7]\n\""); 
+       SV_SendServerCommand(cl, "print  \"^7Infinite Stamina turned: [^2ON^7]\n\"");
     }
 }
 
@@ -1930,28 +1926,21 @@ void SV_InfiniteStamina_f(client_t *cl) {
 // SV_InfiniteWallJumps_f
 /////////////////////////////////////////////////////////////////////
 void SV_InfiniteWallJumps_f(client_t *cl) {
-
     int cid;
     cid = cl - svs.clients;
 
-    if (sv_gametype->integer != GT_JUMP) {
+    if (sv_gametype->integer != GT_JUMP || !mod_enableJumpCmds->integer)
         return;
-    }
 
-    if (SV_GetClientTeam(cid) == TEAM_SPECTATOR || mod_infiniteWallJumps->integer) {
+    if (SV_GetClientTeam(cid) == TEAM_SPECTATOR || cl->cm.ready)
        return;
-    }
 
-    if (!(mod_enableJumpCmds->integer > 0)) {
-        return;
-    }
-
-    if (cl->cm.infiniteWallJumps==1) {
+    if (cl->cm.infiniteWallJumps == 1 || (!cl->cm.infiniteWallJumps && mod_infiniteWallJumps->integer)) {
        cl->cm.infiniteWallJumps = 2;
-       SV_SendServerCommand(cl, "print  \"^7Infinite Wall Jumps turned: [^1OFF^7]\n\""); 
+       SV_SendServerCommand(cl, "print  \"^7Infinite Wall Jumps turned: [^1OFF^7]\n\""); // back to g_walljumps
     } else {
        cl->cm.infiniteWallJumps = 1;
-       SV_SendServerCommand(cl, "print  \"^7Infinite Wall Jumps turned: [^2ON^7]\n\""); 
+       SV_SendServerCommand(cl, "print  \"^7Infinite Wall Jumps turned: [^2ON^7]\n\"");
     }
 }
 
