@@ -2563,8 +2563,11 @@ static void SV_UserMove( client_t *cl, msg_t *msg, qboolean delta ) {
 		oldcmd = cmd;
 	}
 
-    // save time for ping calculation, only in the first acknowledge
-    if (cl->frames[ cl->messageAcknowledge & PACKET_MASK ].messageAcked < 0) {
+    // save time for ping calculation
+    //cl->frames[ cl->messageAcknowledge & PACKET_MASK ].messageAcked = svs.time;
+
+    // Store the time of the first acknowledge, instead of the last. And use a time value not limited by sv_fps.
+    if ( cl->frames[ cl->messageAcknowledge & PACKET_MASK ].messageAcked == -1 ) {
         cl->frames[ cl->messageAcknowledge & PACKET_MASK ].messageAcked = Sys_Milliseconds();
     }
 
