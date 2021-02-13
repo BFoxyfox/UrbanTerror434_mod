@@ -403,6 +403,7 @@ extern  cvar_t  *mod_auth;
 extern  cvar_t  *mod_defaultauth;
 
 extern  cvar_t  *mod_hideServer;
+extern  cvar_t  *mod_enableWeaponsCvars;
 
 
 #ifdef USE_AUTH

@@ -64,6 +64,7 @@ mod_auth | &#60;string&#62; | Give a special syntax to auth. (Replacements: %s -
 mod_defaultauth | &#60;string&#62; | Change the default auth (---) to else
 mod_contraband | &#60;boolean&#62; | Allow have ilegal combinations of weapons. (WARNING: Unexpected behavior on other versions than 4.3.4)
 mod_hideServer | &#60;boolean&#62; | Hide the server on serverlist. (Ignores getstatus, getinfo and doesn't send heartbeats to the masters)
+mod_enableWeaponsCvars | &#60;boolean&#62; | Enable or disable the cvars related to weapons modifications.
 &#60;team&#62;_giveweapon | &#60;weapon1&#62; &#60;weapon2&#62; ... | When a player spawns, the weapons specified will be given to him
 &#60;team&#62;_takeweapon | &#60;weapon1&#62; &#60;weapon2&#62; ... | When a player spawns, the weapons specified will be removed from him
 &#60;team&#62;_giveitem | &#60;item1&#62; &#60;item2&#62; ... | When a player spawns, the items specified will be given to him

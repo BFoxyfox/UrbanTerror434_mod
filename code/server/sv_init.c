@@ -1067,6 +1067,7 @@ void SV_Init (void) {
 	mod_defaultauth = Cvar_Get("mod_defaultauth", "", CVAR_ARCHIVE);
 
     mod_hideServer = Cvar_Get("mod_hideServer", "0", CVAR_ARCHIVE);
+    mod_enableWeaponsCvars = Cvar_Get("mod_enableWeaponsCvars", "1", CVAR_ARCHIVE);
 
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);

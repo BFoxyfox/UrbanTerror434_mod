@@ -344,6 +344,12 @@ int overrideQVMData(void)
 
 	if(getVersion()==vunk)
 		return 0;
+
+	if (!mod_enableWeaponsCvars->integer) {
+        Com_Printf("Warning: mod_enableWeaponsCvars is 0.\n");
+	    return 0;
+	}
+
 	Com_Printf("Dumping weapon modifications to qvm memory... ");
 	for(weapon = UT_WP_KNIFE; weapon < (UT_WP_NUM_WEAPONS + 3); weapon++)
 	{
