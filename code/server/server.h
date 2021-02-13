@@ -352,7 +352,7 @@ extern  cvar_t  *mod_nofallDamage;
 extern  cvar_t  *mod_colourNames;
 
 extern  cvar_t  *mod_playerCount;
-extern  cvar_t  *mod_countBots;
+extern  cvar_t  *mod_botsCount;
 extern  cvar_t  *mod_mapName;
 extern  cvar_t  *mod_mapColour;
 extern  cvar_t  *mod_hideCmds;

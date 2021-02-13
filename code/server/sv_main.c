@@ -70,7 +70,7 @@ cvar_t  *mod_nofallDamage;
 cvar_t  *mod_colourNames;
 
 cvar_t  *mod_playerCount;
-cvar_t  *mod_countBots;
+cvar_t  *mod_botsCount;
 cvar_t  *mod_mapName;
 cvar_t  *mod_mapColour;
 cvar_t  *mod_hideCmds;
@@ -841,7 +841,7 @@ void SVC_Info( netadr_t from ) {
 			count++;
 
 			if (svs.clients[i].netchan.remoteAddress.type == NA_BOT) {
-				if (mod_countBots->integer == 1) {
+				if (mod_botsCount->integer == 1) {
 					bots++;
 				} else {
 					count--;

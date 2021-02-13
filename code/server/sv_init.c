@@ -1016,7 +1016,7 @@ void SV_Init (void) {
 	mod_colourNames = Cvar_Get ("mod_colourNames", "1", CVAR_ARCHIVE);
         
 	mod_playerCount = Cvar_Get ("mod_playerCount", "0", CVAR_ARCHIVE);
-	mod_countBots = Cvar_Get ("mod_countBots", "1", CVAR_ARCHIVE);
+    mod_botsCount = Cvar_Get ("mod_botsCount", "1", CVAR_ARCHIVE);
 	mod_mapName = Cvar_Get("mod_mapName", "", CVAR_ARCHIVE);
 	mod_mapColour = Cvar_Get("mod_mapColour", "7", CVAR_ARCHIVE);
 	mod_hideCmds = Cvar_Get ("mod_hideCmds", "1", CVAR_ARCHIVE);

@@ -18,7 +18,7 @@ mod_infiniteWallJumps | &#60;boolean&#62; | Enable or disable infinite wall jump
 mod_nofallDamage | &#60;boolean&#62; | Disable damage when falling from a high distance
 mod_colourNames | &#60;boolean&#62; | Enable or disable colour names on the scoreboard and chat
 mod_playerCount | &#60;integer&#62; | If the integer is positive it will be added to the real count of players. If it is negative, a random number between that value and 1 will be added
-mod_countBots | &#60;boolean&#62; | Enable or disable bots counter on server info
+mod_botsCount | &#60;boolean&#62; | Enable or disable bots counter on server info
 mod_mapName | &#60;string&#62; | The specified string will be set to the mapname displayed on server list. If nothing is set, mapname will be the real one
 mod_mapColour | &#60;integer&#62; | The color set to mapname is no longer visible on the client's UrT server list, but it makes the server appears at the top (ordering by mapname). (Range: 0 -> 9)
 mod_cleanMapPrefixes | &#60;boolean&#62; | Remove the prefixes 'ut42&#95;' and 'ut43&#95;' from the mapname displayed on server list
