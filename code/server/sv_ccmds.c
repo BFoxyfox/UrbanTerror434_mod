@@ -71,12 +71,18 @@ client_t *SV_BetterGetPlayerByHandle(const char *handle) {
             continue;
         }
 
-        if (!Q_stricmp(cl->name, handle)) {
+        if (!Q_stricmp(cl->name, handle) || !Q_stricmp(cl->colourName, handle)) {
             return cl;
         }
 
         Q_strncpyz(cleanName, cl->name, sizeof(cleanName));
-        Q_CleanStr(cleanName );
+        Q_CleanStr(cleanName);
+        if (!Q_stricmp(cleanName, handle)) {
+            return cl;
+        }
+
+        Q_strncpyz(cleanName, cl->colourName, sizeof(cleanName));
+        Q_CleanStr(cleanName);
         if (!Q_stricmp(cleanName, handle)) {
             return cl;
         }
@@ -147,14 +153,21 @@ static client_t *SV_GetPlayerByHandle(void) {
                 continue;
             }
 
+            // check for exact match
+            if (!Q_stricmp(cl->name, s) || !Q_stricmp(cl->colourName, s)) {
+                return cl;
+            }
+
             strcpy(name, cl->name);
             Q_CleanStr(name);
+            if (!Q_stricmp(name, s)) {
+                return cl;
+            }
 
-            // check for exact match
-            if (!Q_stricmp(name,s)) {
-                matches[0] = &svs.clients[i];
-                count = 1;
-                break;
+            strcpy(name, cl->colourName);
+            Q_CleanStr(name);
+            if (!Q_stricmp(name, s)) {
+                return cl;
             }
 
             // check for substring match
@@ -166,7 +179,6 @@ static client_t *SV_GetPlayerByHandle(void) {
         }
 
         if (count == 0) {
-
             // no match found for the given input string
             Com_Printf("No client found matching: %s\n", s);
             return NULL;
@@ -187,7 +199,6 @@ static client_t *SV_GetPlayerByHandle(void) {
 
         // found just 1 match
         return matches[0];
-
     }
 
 }
@@ -1378,17 +1389,17 @@ static void SV_StartRecordOne(client_t *client, char *filename) {
     Com_DPrintf("SV_StartRecordOne\n");
 
     if (client->demo_recording) {
-        Com_Printf("startserverdemo: %s is already being recorded\n", client->name);
+        Com_Printf("startserverdemo: %s ^7is already being recorded\n", client->name);
         return;
     }
 
     if (client->state != CS_ACTIVE) {
-        Com_Printf("startserverdemo: %s is not active\n", client->name);
+        Com_Printf("startserverdemo: %s ^7is not active\n", client->name);
         return;
     }
 
     if (client->netchan.remoteAddress.type == NA_BOT) {
-        Com_Printf("startserverdemo: %s is a bot\n", client->name);
+        Com_Printf("startserverdemo: %s ^7is a bot\n", client->name);
         return;
     }
 
@@ -1399,7 +1410,7 @@ static void SV_StartRecordOne(client_t *client, char *filename) {
         SV_SendServerCommand(client, "print \"%s\"\n", sv_demonotice->string);
     }
 
-    Com_Printf("startserverdemo: recording %s to %s\n", client->name, path);
+    Com_Printf("startserverdemo: recording %s ^7to %s\n", client->name, path);
 }
 
 static void SV_StartRecordAll(void) {
@@ -1425,17 +1436,17 @@ static void SV_StopRecordOne(client_t *client) {
     Com_DPrintf("SV_StopRecordOne\n");
 
     if (!client->demo_recording) {
-        Com_Printf("stopserverdemo: %s is not being recorded\n", client->name);
+        Com_Printf("stopserverdemo: %s ^7is not being recorded\n", client->name);
         return;
     }
 
     if (client->state != CS_ACTIVE) { // disconnects are handled elsewhere
-        Com_Printf("stopserverdemo: %s is not active\n", client->name);
+        Com_Printf("stopserverdemo: %s ^7is not active\n", client->name);
         return;
     }
 
     if (client->netchan.remoteAddress.type == NA_BOT) {
-        Com_Printf("stopserverdemo: %s is a bot\n", client->name);
+        Com_Printf("stopserverdemo: %s ^7is a bot\n", client->name);
         return;
     }
 
@@ -2154,7 +2165,7 @@ static void SV_Teleport_f(void) {
         ps_src = SV_GameClientNum(cl_src - svs.clients);
         VectorCopy(ps_src->origin, ps->origin);
 
-        Com_Printf("Teleported %s to %s\n", cl->name, cl_src->name);
+        Com_Printf("Teleported %s ^7to %s\n", cl->name, cl_src->name);
         SV_SendServerCommand(cl, "cchat \"\" \"%s^7You have been ^2teleported ^7to: %s\"", sv_tellprefix->string, cl_src->colourName);
         SV_SendServerCommand(cl_src, "cchat \"\" \"%s^7Player %s ^7has been ^2teleported ^7to you!\"", sv_tellprefix->string, cl->colourName);
 
@@ -2164,7 +2175,7 @@ static void SV_Teleport_f(void) {
         for (i = 0; i < 3; ++i) {
             ps->origin[i] = atof(Cmd_Argv(i + 2));
         }
-        Com_Printf("Teleported %s to (x: %f, y: %f, z: %f)\n", cl->name, ps->origin[0], ps->origin[1], ps->origin[2]);
+        Com_Printf("Teleported %s ^7to (x: %f, y: %f, z: %f)\n", cl->name, ps->origin[0], ps->origin[1], ps->origin[2]);
         SV_SendServerCommand(cl, "print \"^7You have been ^2teleported ^7to: (x: %f, y: %f, z: %f)\n\"", ps->origin[0], ps->origin[1], ps->origin[2]);
     }
     VectorClear(ps->velocity);
@@ -2211,7 +2222,7 @@ static void SV_Switch_f(void) {
     VectorCopy(ps->origin, ps2->origin);
     VectorCopy(tmp, ps->origin);
 
-    Com_Printf("Positions of players %s and %s were switched.\n", cl->name, cl2->name);
+    Com_Printf("Positions of players %s ^7and %s ^7were switched.\n", cl->name, cl2->name);
     SV_SendServerCommand(cl, "cchat \"\" \"%s^7Your position has been ^2switched ^7with: %s\"", sv_tellprefix->string, cl2->colourName);
     SV_SendServerCommand(cl2, "cchat \"\" \"%s^7Your position has been ^2switched ^7with: %s\"", sv_tellprefix->string, cl->colourName);
 

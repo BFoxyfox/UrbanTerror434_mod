@@ -196,7 +196,7 @@ char *SV_CleanName(char *name) {
 
 	for (i = 0; i < strlen(name) && j < MAX_NAME_LENGTH-1; i++) {
 		if (name[i] >= 39 && name[i] <= 126)
-            if(name[i] != ' ' || name[i] != '\\')
+            if(name[i] != ' ' && name[i] != '\\')
                 cleaned[j++] = name[i];
 	}
 
@@ -632,7 +632,7 @@ gotnewcl:
 
     // save the userinfo
     Q_strncpyz(newcl->userinfo, userinfo, sizeof(newcl->userinfo));
-    Com_sprintf(cl->colourName, MAX_NAME_LENGTH, "%s^7", SV_CleanName(Info_ValueForKey(newcl->userinfo, "name")));
+    Com_sprintf(cl->colourName, MAX_NAME_LENGTH, "%s", SV_CleanName(Info_ValueForKey(newcl->userinfo, "name")));
 
     //Allways start this value to -1
 	newcl->cm.lastWeaponAfterScope = -1;
@@ -1113,7 +1113,7 @@ void SV_DoneDownload_f( client_t *cl ) {
 	if ( cl->state == CS_ACTIVE )
 		return;
 	
-	Com_DPrintf( "clientDownload: %s Done\n", cl->name);
+	Com_DPrintf( "clientDownload: %s ^7Done\n", cl->name);
 	// resend the game state to update any clients that entered during the download
 	SV_SendClientGameState(cl);
 }
@@ -1591,7 +1591,7 @@ void SV_UserinfoChanged( client_t *cl ) {
 
 	// name for C code
 	Q_strncpyz( cl->name, Info_ValueForKey (cl->userinfo, "name"), sizeof(cl->name) );
-	Com_sprintf(cl->colourName, MAX_NAME_LENGTH, "%s^7", SV_CleanName(cl->name));
+	Com_sprintf(cl->colourName, MAX_NAME_LENGTH, "%s", SV_CleanName(cl->name));
 
 	// rate command
 
@@ -1693,7 +1693,7 @@ void SV_UpdateUserinfo_f( client_t *cl ) {
 
     if (mod_colourNames->integer) {
         if(cl->colourName[0] != 0)
-            Q_strncpyz(gl->pers.netname, cl->colourName, MAX_NAME_LENGTH);
+            Q_strncpyz(gl->pers.netname, va("%s^7", cl->colourName), MAX_NETNAME);
     }
 
     // get the client's cg_ghost value if we are in jump mode
@@ -2132,7 +2132,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 				{
 					if(mod_hideCmds->integer == 1)
 						SV_SendServerCommand(cl, "chat \"%s^7%s^3: %s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
-					SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
+					SV_LogPrintf("say: %i %s^7: %s\n", ps->clientNum, cl->colourName, CopyString(Cmd_Args()));
 					return;
 				}
 
@@ -2140,7 +2140,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
                 if (Q_stricmp("!pm", p) == 0 || Q_stricmp("!tell", p) == 0)
                 {
                     SV_SendServerCommand(cl, "chat \"%s^7%s^3: %s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
-    				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
+    				SV_LogPrintf("say: %i %s^7: %s\n", ps->clientNum, cl->colourName, CopyString(Cmd_Args()));
     				return;
                 }
 			}
@@ -2150,7 +2150,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
             if (Q_stricmp("say", Cmd_Argv(0)) == 0 && sv_gametype->integer != GT_JUMP && SV_GetClientTeam(cid) == TEAM_SPECTATOR && mod_specChatGlobal->integer) {
                 argsFromOneMaxlen = MAX_SAY_STRLEN;
                 SV_SendServerCommand(NULL, "chat \"^7(SPEC) %s^3: %s\"", cl->colourName, Cmd_Args());
-                SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
+                SV_LogPrintf("say: %i %s^7: %s\n", ps->clientNum, cl->colourName, CopyString(Cmd_Args()));
                 return;
             }
 			else if (Q_stricmp("tell", Cmd_Argv(0)) == 0) {
@@ -2206,7 +2206,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
                         SV_SendServerCommand(cl, "print \"^1Team selection system is disabled on this server!\n\"");
                         return;
                     case 2:
-                        if(!(Q_stricmp("s", Cmd_Argv(1)) == 0) && !(Q_stricmp("free", Cmd_Argv(1)) == 0)) {
+                        if(Q_stricmp("s", Cmd_Argv(1)) != 0 && Q_stricmp("free", Cmd_Argv(1)) != 0) {
                             SV_SendServerCommand(cl, "print \"^1You can only spectate or auto join in this server!\n\"");
                             return;
                         }
@@ -2222,7 +2222,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
                                 return;
                             }
                         }
-                        if(!(Q_stricmp("s", Cmd_Argv(1)) == 0)) {
+                        if(Q_stricmp("s", Cmd_Argv(1)) != 0) {
                             SV_SendServerCommand(cl, "print \"^1You can only spectate or auto join in this server!\n\"");
                             return;
                         }
@@ -2277,7 +2277,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 		}
 	}
 	else if (!bProcessed) {
-		Com_DPrintf( "client text ignored for %s: %s\n", cl->name, Cmd_Argv(0) );
+		Com_DPrintf( "client text ignored for %s^7: %s\n", cl->name, Cmd_Argv(0) );
 	}
 }
 
@@ -2299,11 +2299,11 @@ static qboolean SV_ClientCommand( client_t *cl, msg_t *msg ) {
 		return qtrue;
 	}
 
-	Com_DPrintf( "clientCommand: %s : %i : %s\n", cl->name, seq, s );
+	Com_DPrintf( "clientCommand: %s ^7: %i : %s\n", cl->name, seq, s );
 
 	// drop the connection if we have somehow lost commands
 	if ( seq > cl->lastClientCommand + 1 ) {
-		Com_Printf( "Client %s lost %i clientCommands\n", cl->name, 
+		Com_Printf( "Client %s ^7lost %i clientCommands\n", cl->name,
 			seq - cl->lastClientCommand + 1 );
 		SV_DropClient( cl, "Lost reliable commands" );
 		return qfalse;
@@ -2579,7 +2579,7 @@ static void SV_UserMove( client_t *cl, msg_t *msg, qboolean delta ) {
 		if (cl->state == CS_ACTIVE)
 		{
 			// we didn't get a cp yet, don't assume anything and just send the gamestate all over again
-			Com_DPrintf( "%s: didn't get cp command, resending gamestate\n", cl->name);
+			Com_DPrintf( "%s^7: didn't get cp command, resending gamestate\n", cl->name);
 			SV_SendClientGameState( cl );
 		}
 		return;
@@ -2687,13 +2687,13 @@ void SV_ExecuteClientMessage( client_t *cl, msg_t *msg ) {
 	if ( serverId != sv.serverId && !*cl->downloadName && !strstr(cl->lastClientCommandString, "nextdl") ) {
 		if ( serverId >= sv.restartedServerId && serverId < sv.serverId ) { // TTimo - use a comparison here to catch multiple map_restart
 			// they just haven't caught the map_restart yet
-			Com_DPrintf("%s : ignoring pre map_restart / outdated client message\n", cl->name);
+			Com_DPrintf("%s ^7: ignoring pre map_restart / outdated client message\n", cl->name);
 			return;
 		}
 		// if we can tell that the client has dropped the last
 		// gamestate we sent them, resend it
 		if ( cl->messageAcknowledge > cl->gamestateMessageNum ) {
-			Com_DPrintf( "%s : dropped gamestate, resending\n", cl->name );
+			Com_DPrintf( "%s ^7: dropped gamestate, resending\n", cl->name );
 			SV_SendClientGameState( cl );
 		}
 		return;
@@ -2702,7 +2702,7 @@ void SV_ExecuteClientMessage( client_t *cl, msg_t *msg ) {
 	// this client has acknowledged the new gamestate so it's
 	// safe to start sending it the real time again
 	if( cl->oldServerTime && serverId == sv.serverId ){
-		Com_DPrintf( "%s acknowledged gamestate\n", cl->name );
+		Com_DPrintf( "%s ^7acknowledged gamestate\n", cl->name );
 		cl->oldServerTime = 0;
 	}
 

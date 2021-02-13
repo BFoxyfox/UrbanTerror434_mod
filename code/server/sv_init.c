@@ -236,7 +236,7 @@ void SV_SetUserinfo( int index, const char *val ) {
 
     if (mod_colourNames->integer) {
 	    if(svs.clients[index].colourName[0])
-		    Q_strncpyz(gl->pers.netname, svs.clients[index].colourName, MAX_NETNAME);
+		    Q_strncpyz(gl->pers.netname, va("%s^7", svs.clients[index].colourName), MAX_NETNAME);
     }
 }
 
