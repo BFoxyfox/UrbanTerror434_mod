@@ -104,6 +104,7 @@ cvar_t  *mod_persistentPositions;
 cvar_t  *mod_freeSaving;
 cvar_t  *mod_enableJumpCmds;
 cvar_t  *mod_enableHelpCmd;
+cvar_t  *mod_loadSpeedCmd;
 cvar_t  *mod_ghostRadius;
 
 cvar_t  *mod_slickSurfaces;

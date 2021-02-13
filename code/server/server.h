@@ -386,6 +386,7 @@ extern  cvar_t  *mod_persistentPositions;
 extern  cvar_t  *mod_freeSaving;
 extern  cvar_t  *mod_enableJumpCmds;
 extern  cvar_t  *mod_enableHelpCmd;
+extern  cvar_t  *mod_loadSpeedCmd;
 extern  cvar_t  *mod_ghostRadius;
 
 extern  cvar_t  *mod_slickSurfaces;

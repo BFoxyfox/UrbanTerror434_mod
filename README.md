@@ -50,6 +50,7 @@ mod_persistentPositions | &#60;boolean&#62; | Make positions being saved permane
 mod_freeSaving | &#60;boolean&#62; | Enable or disable savepos restrictions, which disallow saving in some cases
 mod_enableJumpCmds | &#60;boolean&#62; | Enable or disable special client jump cmds: /hidePlayers, /infiniteStamina, /infiniteWallJumps
 mod_enableHelpCmd | &#60;boolean&#62; | Enable or disable the /help client command
+mod_loadSpeedCmd | &#60;integer&#62; | Controls /loadSpeed client cmd. 0 = disable; 1 = enable only if not in a jump run; 2 = enable even in a jump run.
 mod_ghostPlayers | &#60;boolean&#62; | Enable or disable ghost players
 mod_ghostRadius | &#60;float&#62; | Radius of the client's cg&#95;ghost bounding box in Jump Mode (Default: 80.0)
 mod_unlockCvars | &#60;boolean&#62; | Unlock all server cvars that are read only, write protected or cheat protected
@@ -140,6 +141,7 @@ Command | Syntax | Description
 --- | --- | ---
 savepos / save | - | Save the current position
 loadpos / load | - | Load the last saved position
+loadSpeed | - | Load the last saved position with current speed and view angles
 freeSave | - | Turn (ON/OFF) the free position saving (if it's enabled)
 hidePlayers | - | Make all other players invisible (Jump Mode only)
 infiniteStamina / stamina | - | Turn (ON/OFF) infinite stamina (Jump Mode only)

@@ -1735,7 +1735,7 @@ static void SV_SavePosition_f(client_t *cl) {
     }
 
     // if in a jumprun
-    if (cl->cm.ready) {
+    if (cl->cm.ready && mod_loadSpeedCmd->integer != 2) {
         SV_SendServerCommand(cl, "print \"^1You can't save your position while being in a jump run!\n\"");
         return;
     }
@@ -1856,6 +1856,37 @@ static void SV_LoadPosition_f(client_t *cl) {
                                       cl->cm.savedPosition[2]);
     
     SV_SendServerCommand(cl, "print \"^7Your ^6position ^7has been ^5loaded\n\"");
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_LoadSpeed_f
+// Load a saved position with current speed and view angles
+/////////////////////////////////////////////////////////////////////
+static void SV_LoadSpeed_f(client_t *cl) {
+    int             cid;
+    playerState_t   *ps;
+
+    cid = cl - svs.clients;
+    ps = SV_GameClientNum(cid);
+
+    if (!mod_allowPosSaving->integer || !mod_loadSpeedCmd->integer || SV_GetClientTeam(cid) == TEAM_SPECTATOR) {
+        return;
+    }
+
+    if (cl->cm.ready && mod_loadSpeedCmd->integer != 2) {
+        return;
+    }
+
+    if (!cl->cm.savedPosition[0] || !cl->cm.savedPosition[1] || !cl->cm.savedPosition[2]) {
+        SV_SendServerCommand(cl, "print \"^1There is no position to load on this map!\n\"");
+        return;
+    }
+
+    // copy back saved position and regenerate stamina
+    VectorCopy(cl->cm.savedPosition, ps->origin);
+    ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_STAMINA]] = ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_HEALTH]] * 300;
+
+    SV_SendServerCommand(cl, "print \"^7Your ^6position ^7has been ^4loaded\n\"");
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -2052,6 +2083,7 @@ static ucmd_t ucmds[] = {
     {"savepos", SV_SavePosition_f},
     {"load", SV_LoadPosition_f},
     {"loadpos", SV_LoadPosition_f},
+    {"loadSpeed", SV_LoadSpeed_f},
     {NULL, NULL}
 };
 
