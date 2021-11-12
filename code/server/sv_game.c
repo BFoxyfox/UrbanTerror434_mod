@@ -393,6 +393,41 @@ void SV_GetUsercmd( int clientNum, usercmd_t *cmd ) {
 	}
 }
 
+/*
+====================
+Events that we created in files.c
+====================
+*/
+void SV_onKill(char* killer, char* killed, char* wpn)
+{
+	// Placeholder for future
+	int i = 1;
+}
+
+void SV_onMapEnd()
+{
+	// Placeholder for future
+	int i = 1;
+}
+
+void SV_onMapStart()
+{
+	// Placeholder for future
+	int i = 1;
+}
+
+void SV_onClientSpawn(char* playerid)
+{
+	// Placeholder for future
+	int i = 1;
+}
+
+void SV_onChat(char* playerid, char* playername, char* message)
+{
+	// Placeholder for future
+	int i = 1;
+}
+
 //==============================================
 
 static int	FloatAsInt( float f ) {
