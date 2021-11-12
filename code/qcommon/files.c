@@ -1318,9 +1318,10 @@ Properly handles partial writes
 int FS_Write( const void *buffer, int len, fileHandle_t h ) {
 	int		block, remaining;
 	int		written;
-	byte	*buf;
+	byte		*buf;
 	int		tries;
-	FILE	*f;
+	FILE		*f;
+	static char 	data[BIG_INFO_STRING];
 
 	if ( !fs_searchpaths ) {
 		Com_Error( ERR_FATAL, "Filesystem call made without initialization\n" );
@@ -1333,6 +1334,53 @@ int FS_Write( const void *buffer, int len, fileHandle_t h ) {
 	f = FS_FileForHandle(h);
 	buf = (byte *)buffer;
 
+	// For creating events
+	data[0] = '\0';
+	Q_strncpyz(data, (char*)buffer, sizeof(data));    // Trunc the data as needed.
+	Cmd_TokenizeString(data);
+	
+	// Create the events here
+	// Kill event
+ 	// Kill: 2 3 19: donna30^7 killed Cheetah by UT_MOD_LR300
+	if (!Q_stricmp(Cmd_Argv(1), "Kill:"))
+	{
+		extern void SV_onKill(char* killer, char* killed, char* wpn);
+		SV_onKill(Cmd_Argv(2), Cmd_Argv(3), Cmd_Argv(4));
+	}
+	
+	// Chat event
+	// say: 0 testslave: a
+	if (!Q_stricmp(Cmd_Argv(1), "say:")) 
+	{
+		extern void SV_onChat(char* playerid, char* playername, char* message);
+		SV_onChat(Cmd_Argv(2), Cmd_Argv(3), Cmd_ArgsFrom(4));
+	}
+	
+	// Map end event
+	// Exit:
+	if (!Q_stricmp(Cmd_Argv(1), "Exit:"))
+	{
+		extern void SV_onMapEnd();
+		SV_onMapEnd();
+	}
+	
+	// Map start event
+	// InitGame:
+	if (!Q_stricmp(Cmd_Argv(1), "InitGame:"))
+	{
+		extern void SV_onMapStart();
+		SV_onMapStart();
+	}
+	
+	// Client spawn event
+	// ClientSpawn: 0
+	if (!Q_stricmp(Cmd_Argv(1), "ClientSpawn:"))
+	{
+		extern void SV_onClientSpawn(char* playerid);
+		SV_onClientSpawn(Cmd_Argv(2));
+	}
+	
+	
 	remaining = len;
 	tries = 0;
 	while (remaining) {
