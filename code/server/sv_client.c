@@ -2380,7 +2380,7 @@ void addMedkitHealth(client_t *cl)
     	int cid;
     	cid = cl - svs.clients;
 
-	if ((cl->lastmedkittime == 0) || (time - cl->lastmedkittime) > 430)) {
+	if (cl->lastmedkittime == 0 || (time - cl->lastmedkittime) > 430)) {
 		Com_sprintf(cmd2, sizeof(cmd2), "addhealth %i 1", cid);
 		Cmd_ExecuteString(cmd2);
 		cl->lastmedkittime = time;
