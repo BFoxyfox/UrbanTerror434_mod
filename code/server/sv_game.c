@@ -759,8 +759,504 @@ void SV_onClientSpawn(char* playerid)
 
 void SV_onChat(char* playerid, char* playername, char* message)
 {
-	// Placeholder for future
-	int i = 1;
+	client_t* cl;
+	cl = &svs.clients[atoi(playerid)];
+	if (mod_customspawns->integer) {
+		if ((cl->isadmin || cl->isowner) && strstr(message, "addspawn") != 0) {
+			Cmd_ExecuteString(va("say \"addspawn! [%s]\"", message));
+		}
+	}
+
+	if (mod_gunsmod->integer){
+		if (strcmp(message, "!buylist") == 0) {
+			SV_SendServerCommand(cl, "print  \"^7 Buylist v2.1 (13/11/2021)\n\"");
+			SV_SendServerCommand(cl, "print  \"^7////////////////////////////////////////////////////////////////////////////\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//           Sniper Rifles           ^7/         Assault Rifles             ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//-----------------------------------^7/------------------------------------^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3sr8     ^2Price:^6 8000 coins         ^7/  ^3lr300    ^2Price:^6 5500 coins        ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3psg1    ^2Price:^6 8000 coins         ^7/  ^3g36      ^2Price:^6 6000 coins        ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3frf1    ^2Price:^6 8000 coins         ^7/  ^3ak103    ^2Price:^6 7000 coins        ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//                                   ^7/  ^3M4       ^2Price:^6 2550 coins        ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//........................................................................^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//             SMG's                 ^7/              Shotguns              ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//-----------------------------------^7/------------------------------------^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3ump45   ^2Price:^6 3250 coins         ^7/  ^3spas12   ^2Price:^6 12000 coins       ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3mp5k    ^2Price:^6 3250 coins         ^7/  ^3benelli  ^2Price:^6 10000 coins       ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3p90     ^2Price:^6 3250 coins         ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3mac11   ^2Price:^6 3250 coins         ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//........................................................................^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//           Machine Guns            ^7/             Specials               ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//-----------------------------------^7/------------------------------------^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3negev      ^2Price:^6 4000 coins      ^7/  ^3fstod    ^2Price:^6  30000 coins      ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//                                   ^7/  ^3hk69     ^2Price:^6  10000 coins      ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//........................................................................^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//             Abilites              ^7/             Equipment              ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//-----------------------------------^7/------------------------------------^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!disarm    ^2Price:^6 500000  coins   ^7/  ^3Vest     ^2Price:^6 1000 coins        ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!invisible ^2Price:^6 750000  coins   ^7/  ^3Helmet   ^2Price:^6  800 coins        ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!ammo      ^2Price:^6  65000  coins   ^7/  ^3Silencer ^2Price:^6  500 coins        ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!clips     ^2Price:^6  45000  coins   ^7/  ^3Laser    ^2Price:^6  500 coins        ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!maptp     ^2Price:^6  50000  coins   ^7/  ^3NVG      ^2Price:^6 1500 coins        ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!lowgrav   ^2Price:^6 1000000 coins   ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!slapall   ^2Price:^6 1000000 coins   ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!b health  ^2Price:^6   2000  coins   ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!laugh     ^2Price:^6  25000  coins   ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!teleport  ^2Price:^6 250000  coins   ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!freeze    ^2Price:^6 550000  coins   ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!nades     ^2Price:^6 500000  coins   ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!slick     ^2Price:^6 500000  coins   ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!crazy     ^2Price:^6 1000000 coins   ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!overclock ^2Price:^6 500000  coins   ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!airjumps  ^2Price:^6 1000000 coins   ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!superbots ^2Price:^6 1000000 coins   ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!vampire <amount> 1 minute = 10000 coins                               ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//........................................................................^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  ^5Specials:                                                             ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  !gamble <amount> (Gamble for a 50/50 chance to tripple your input!)   ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  !particles (Will activate particles around you)^2Price:^610000000 coins^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  !buycolour <colour number> ^2Price: ^610000000 coins                      ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  colours: ^11^7=^1red ^22^7=^2green ^33^7=^3yellow ^44^7=^4blue ^55^7=^5cyan ^66^7=^6purple ^88^7=^8orange ^99^7=^9grey^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  ^5Usage:                                                                ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  !buy <WEAPON NAME>     for example: !buy sr8                          ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  !buy <ITEM NAME>       for example: !buy vest                         ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  ^5Autobuy:                                                              ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  !buy <WEAPON NAME> ON  for example: !buy sr8 on                       ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  !buy <ITEM NAME> ON    for example: !buy vest on                      ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  ^5Abilites:                                                             ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  !maptp (no !b required, simply use !<ability name>)                   ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7//  !heal                                                                 ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7////////////////////////////////////////////////////////////////////////////\n\"");
+			SV_SendServerCommand(cl, "chat  \"^2Buylist ^3sent to your console -> switch to the ^5'Chat' tab!");
+		}
+		if (cl->muted) {
+			// prevent spammers from spamming sounds
+			return;
+		}
+		unsigned int time = Com_Milliseconds();
+		if ((strcmp(message, "hi") == 0) || (strcmp(message, "hello") == 0) || (strcmp(message, "hallo") == 0) || (strcmp(message, "salut") == 0) || (strcmp(message, "hey") == 0) || (strcmp(message, "ciao") == 0))  {
+			if (((time - cl->lastsoundtime) > 10000) || (cl->lastsoundtime == 0)) {
+				Cmd_ExecuteString(va("exec sound_hello.txt"));
+				cl->lastsoundtime = time;
+			}
+		}
+		if ((strcmp(message, "n1") == 0) || (strcmp(message, "nice one") == 0) || (strcmp(message, "nice") == 0))  {
+			if (((time - cl->lastsoundtime) > 10000) || (cl->lastsoundtime == 0)) {
+				Cmd_ExecuteString(va("exec sound_nice.txt"));
+				cl->lastsoundtime = time;
+			}
+		}
+		if ((strcmp(message, "wtf") == 0) || (strcmp(message, "WTF") == 0) || (strcmp(message, "what the fuck") == 0))  {
+			if (((time - cl->lastsoundtime) > 10000) || (cl->lastsoundtime == 0)) {
+				Cmd_ExecuteString(va("exec sound_wtf.txt"));
+				cl->lastsoundtime = time;
+			}
+		}
+		if ((strcmp(message, "hru") == 0) || (strcmp(message, "how you doin") == 0) || (strcmp(message, "how are you") == 0))  {
+			if (((time - cl->lastsoundtime) > 10000) || (cl->lastsoundtime == 0)) {
+				Cmd_ExecuteString(va("exec sound_hru.txt"));
+				cl->lastsoundtime = time;
+			}
+		}
+		if (strcmp(message, "whatever") == 0) {
+			if (((time - cl->lastsoundtime) > 10000) || (cl->lastsoundtime == 0)) {
+				Cmd_ExecuteString(va("exec sound_whatever.txt"));
+				cl->lastsoundtime = time;
+			}
+		}
+		if ((strcmp(message, "thanks") == 0) || (strcmp(message, "ty") == 0) || (strcmp(message, "thx") == 0))  {
+			if (((time - cl->lastsoundtime) > 10000) || (cl->lastsoundtime == 0)) {
+				Cmd_ExecuteString(va("exec sound_thanks.txt"));
+				cl->lastsoundtime = time;
+			}
+		}
+		if ((strcmp(message, "idiot") == 0) || (strcmp(message, "dumbass") == 0) || (strcmp(message, "you idiot") == 0))  {
+			if (((time - cl->lastsoundtime) > 10000) || (cl->lastsoundtime == 0)) {
+				Cmd_ExecuteString(va("exec sound_idiot.txt"));
+				cl->lastsoundtime = time;
+			}
+		}
+		if ((strcmp(message, "sorry") == 0) || (strcmp(message, "sry") == 0) || (strcmp(message, "soz") == 0))  {
+			if (((time - cl->lastsoundtime) > 10000) || (cl->lastsoundtime == 0)) {
+				Cmd_ExecuteString(va("exec sound_sorry.txt"));
+				cl->lastsoundtime = time;
+			}
+		}
+	}
+}
+
+char *strremove2(char *str, const char *sub) {
+    char *p, *q, *r;
+    if ((q = r = strstr(str, sub)) != NULL) {
+        size_t len = strlen(sub);
+        while ((r = strstr(p = r + len, sub)) != NULL) {
+            while (p < r)
+                *q++ = *p++;
+        }
+        while ((*q++ = *p++) != '\0')
+            continue;
+    }
+    return str;
+}
+
+void forcelocupdate4(client_t *cl3)
+{
+	char* speclocmessage, *deflocmessage;
+	unsigned int time = Com_Milliseconds();
+	if (cl3->hasspecs == qtrue) {
+	    cl3->cllasttime = time;
+		char actualspecs[128];
+		Q_strncpyz(actualspecs, cl3->clspectators, 128);
+		speclocmessage = va("location %s \"^3%s ^7[^8%s^7] | ^9Spectators: ^8%s\" 0 1\n", cl3->name, cl3->name, cl3->clocation, actualspecs);
+		Cmd_ExecuteString(speclocmessage);
+		return;
+	}
+	else {
+	    cl3->cllasttime = time;
+		deflocmessage = va("location %s \"^3%s ^7[^8%s^7] | ^9Spectators: ^8Nobody is watching you.\" 0 1\n", cl3->name, cl3->name, cl3->clocation);
+		Cmd_ExecuteString(deflocmessage);
+		return;
+	}
+}
+
+void clearpreviousspecs5(client_t *cl){
+
+	client_t *cl3;
+	cl3 = &svs.clients[cl->lastspectated]; // person we previously spectated	
+
+
+	if(!cl3) {
+		Com_Printf( "No client3 found\n");
+		return;
+	}	
+
+	// remove us and update the list
+	char currspecs[128];
+	Q_strncpyz(currspecs, cl3->clspectators, 128);
+	char* toremove = va("%s, ", cl->name);
+	char* newspecs = strremove2(currspecs, toremove);
+	Q_strncpyz(cl3->clspectators, newspecs, 128);
+	// check if the string is empty
+	if ((newspecs != NULL) && (newspecs[0] == '\0')) { // checking if the array is empty
+	    cl3->hasspecs = qfalse;
+		forcelocupdate4(cl3);
+	}
+	else {
+		cl3->hasspecs = qtrue;
+		forcelocupdate4(cl3);
+	}
+}
+
+
+char *str_replace3(char *orig, char *rep, char *with) {
+    char *result; // the return string
+    char *ins;    // the next insert point
+    char *tmp;    // varies
+    int len_rep;  // length of rep (the string to remove)
+    int len_with; // length of with (the string to replace rep with)
+    int len_front; // distance between rep and end of last rep
+    int count;    // number of replacements
+
+    // sanity checks and initialization
+    if (!orig || !rep)
+        return NULL;
+    len_rep = strlen(rep);
+    if (len_rep == 0)
+        return NULL; // empty rep causes infinite loop during count
+    if (!with)
+        with = "";
+    len_with = strlen(with);
+
+    // count the number of replacements needed
+    ins = orig;
+    for (count = 0; tmp = strstr(ins, rep); ++count) {
+        ins = tmp + len_rep;
+    }
+
+    tmp = result = malloc(strlen(orig) + (len_with - len_rep) * count + 1);
+
+    if (!result)
+        return NULL;
+
+    // first time through the loop, all the variable are set correctly
+    // from here on,
+    //    tmp points to the end of the result string
+    //    ins points to the next occurrence of rep in orig
+    //    orig points to the remainder of orig after "end of rep"
+    while (count--) {
+        ins = strstr(orig, rep);
+        len_front = ins - orig;
+        tmp = strncpy(tmp, orig, len_front) + len_front;
+        tmp = strcpy(tmp, with) + len_with;
+        orig += len_front + len_rep; // move to next "end of rep"
+    }
+    strcpy(tmp, orig);
+    return result;
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// EV_PlayerSpawn
+/////////////////////////////////////////////////////////////////////
+void EV_PlayerSpawn(int cnum)
+{
+	if(cnum < 0 || cnum > sv_maxclients->integer)
+		return;
+
+	SV_WeaponMod(cnum);
+
+    if (sv_gametype->integer == GT_JUMP) {
+        client_t *cl;
+        cl = cnum + svs.clients;
+        cl->cm.ready = 0;
+    }
+}
+
+/////////////////////////////////////////////////////////////////////
+// EV_ClientUserInfoChanged
+/////////////////////////////////////////////////////////////////////
+void EV_ClientUserInfoChanged(int cnum)
+{
+	if(cnum < 0 || cnum > sv_maxclients->integer)
+		return;
+
+	SV_WeaponMod(cnum);
+	if (mod_levelsystem->integer) {
+
+		client_t* client;
+		client = cnum + svs.clients;
+
+		// clean playername
+    	char cleanName[64];
+        Q_strncpyz(cleanName, client->name, sizeof(cleanName));
+        Q_CleanStr(cleanName );
+
+		// Saving the configstring so we can easily edit it later on.
+		// clear the current saved configstring
+		memset(client->defaultconfigstr,0,sizeof(client->defaultconfigstr));
+
+		char* mystring = Q_CleanStr(sv.configstrings[cnum + 544]);
+		char* toreplace = va("%s", cleanName);
+		char* replacewith = "XXXXXXXXXXXXX";
+		char* somestring = str_replace3(mystring, toreplace, replacewith);
+		char mynewstring[256];
+		Q_strncpyz(mynewstring, somestring, sizeof(mynewstring));
+		Q_strncpyz(client->defaultconfigstr, mynewstring, sizeof(client->defaultconfigstr));
+
+		// clear the current customname
+		memset(client->lastcustomname,0,sizeof(client->lastcustomname));
+		
+		// Set our name:
+		char* mynewname = va("^7[^2%i^7]^3%s^1", client->level, cleanName);
+
+		// Set the new custom name
+		Q_strncpyz(client->lastcustomname, mynewname, sizeof(client->lastcustomname));
+
+		// Finally tell the server to use the new name
+		client->customname = qtrue;
+
+		// Shoot a location update for the new name
+		Cmd_ExecuteString(va("location %i \"%s ^3Level:^7[^2%i^7/^2100^7] ^4- ^3XP:^7[^2%i^7/^25000^7] ^4- ^3Spree: ^2%i\" 0 1", client->clientgamenum, client->name, client->level, client->experience, client->kills));
+	}
+}
+
+/////////////////////////////////////////////////////////////////////
+// EV_ClientConnect
+/////////////////////////////////////////////////////////////////////
+void EV_ClientConnect(int cnum)
+{
+    if (mod_levelsystem->integer) {
+        fileHandle_t   file;
+        char           buffer[MAX_STRING_CHARS];
+        client_t* client;
+        client = cnum + svs.clients;
+        client->clientgamenum = cnum;
+
+        char *qpath;
+        char* guid = Info_ValueForKey(client->userinfo, "cl_guid");
+        int            len;
+
+        if (!guid){ // return if theres no guid to use.
+            return;
+        }
+        // open the level file
+        qpath = va("levelsystem/%s.txt", guid);
+        FS_FOpenFileByMode(qpath, &file, FS_READ);
+
+        // if not valid
+        if (!file) {
+            return;
+        }
+
+        // read the file in the buffer
+		memset(buffer, 0, sizeof(buffer));
+        len = FS_Read(buffer, sizeof(buffer), file);
+        if (len > 0) {
+            // copy back saved level and xp
+            sscanf(buffer, "%i,%i", &client->level, &client->experience);
+        }
+
+        // close the file handle
+        FS_FCloseFile(file);
+        Cmd_ExecuteString(va("say \"^5[auth] ^7Levelsystem initialized for %s \"",client->name));
+    }
+
+	if (mod_jumplocations->integer) {
+		client_t* client;
+		client = cnum + svs.clients;
+		client->clientgamenum = cnum;
+	}
+}
+
+/////////////////////////////////////////////////////////////////////
+// EV_ClientDisconnect
+/////////////////////////////////////////////////////////////////////
+void EV_ClientDisconnect(int cnum)
+{
+    // Make sure the client is valid
+    if(cnum < 0 || cnum > sv_maxclients->integer)
+        return;
+
+    if (mod_levelsystem->integer) {
+        fileHandle_t   file;
+        char           buffer[MAX_STRING_CHARS];
+        client_t* client;
+        client = cnum + svs.clients;
+        char *qpath;
+        char* guid = Info_ValueForKey(client->userinfo, "cl_guid");
+
+        if (!guid){ // return if theres no guid to use.
+            return;
+        }
+
+        // open the level file
+        qpath = va("levelsystem/%s.txt", guid);
+        FS_FOpenFileByMode(qpath, &file, FS_WRITE);
+
+        // if not valid
+        if (!file) {
+            return;
+        }
+        // compute the text to be stored in the .txt file
+		memset(buffer, 0, sizeof(buffer));
+        Com_sprintf(buffer, sizeof(buffer), "%i,%i", client->level, client->experience);
+    
+        // write the client level and xp and close
+        FS_Write(buffer, strlen(buffer), file);
+        FS_FCloseFile(file);
+    }
+	
+	if (mod_jumplocations->integer) {
+		client_t* client;
+		client = cnum + svs.clients;
+		clearpreviousspecs5(client);
+	}
+}
+
+/////////////////////////////////////////////////////////////////////
+// EV_ClientBegin
+/////////////////////////////////////////////////////////////////////
+void EV_ClientBegin(int cnum)
+{
+	if (mod_levelsystem->integer) {
+
+		client_t* client;
+		client = cnum + svs.clients;
+
+		// clear the current customname
+		memset(client->lastcustomname,0,sizeof(client->lastcustomname));
+
+		// clean playername
+    	char cleanName[64];
+        Q_strncpyz(cleanName, client->name, sizeof(cleanName));
+        Q_CleanStr(cleanName);
+		
+		// Set our name:
+		char* mynewname = va("^7[^2%i^7]^3%s^1", client->level, cleanName);
+
+		// Set the new custom name
+		Q_strncpyz(client->lastcustomname, mynewname, sizeof(client->lastcustomname));
+
+		// Shoot a location update for the new name
+		Cmd_ExecuteString(va("location %i \"%s ^3Level:^7[^2%i^7/^2100^7] ^4- ^3XP:^7[^2%i^7/^25000^7] ^4- ^3Spree: ^2%i\" 0 1", client->clientgamenum, client->name, client->level, client->experience, client->kills));
+	}
+}
+
+/////////////////////////////////////////////////////////////////////
+// EV_ClientKill
+/////////////////////////////////////////////////////////////////////
+void EV_ClientKill(int cnum, int target)
+{
+	// Make sure the client is valid
+	if(cnum < 0 || cnum > sv_maxclients->integer)
+		return;
+
+	// Make sure the target is valid
+	if(target < 0 || target > sv_maxclients->integer)
+		return;
+
+	if (mod_levelsystem->integer){
+		client_t* klr = cnum + svs.clients;
+		client_t* kld = target + svs.clients;
+
+		// set the killing spree for the person that died to 0
+		kld->kills = 0;
+
+		// update the kills of the killer
+		int currkills = klr->kills;
+		klr->kills = klr->kills + 1;
+
+		// handle killing sprees now
+		if ((currkills + 1) == 4) {
+			Cmd_ExecuteString(va("say \"%s ^3is on a ^2Rampage! ^6-> ^54 ^3Kills in a row!\"", klr->name));
+			Cmd_ExecuteString(va("exec killing_spree_4.txt"));
+		}
+		if ((currkills + 1) == 7) {
+			Cmd_ExecuteString(va("say \"%s ^3is on a ^2Unstoppable! ^6-> ^57 ^3Kills in a row!\"", klr->name));
+			Cmd_ExecuteString(va("exec killing_spree_7.txt"));
+		}
+		if ((currkills + 1) == 12) {
+			Cmd_ExecuteString(va("say \"%s ^3is ^2Dominating! ^6-> ^512 ^3Kills in a row!\"", klr->name));
+			Cmd_ExecuteString(va("exec killing_spree_12.txt"));
+		}
+		if ((currkills + 1) == 15) {
+			Cmd_ExecuteString(va("say \"%s ^3is ^2Godlike! ^6-> ^515 ^3Kills in a row!\"", klr->name));
+			Cmd_ExecuteString(va("exec killing_spree_15.txt"));
+		}
+		if ((currkills + 1) == 20) {
+			Cmd_ExecuteString(va("say \"%s ^3is ^1WICKEDSICK!!! ^6-> ^520 ^3Kills in a row!\"", klr->name));
+			Cmd_ExecuteString(va("exec killing_spree_20.txt"));
+		}
+		// die if the client is maxlevel already
+		if (klr->level == 100){
+			return;
+		}
+
+		Cmd_ExecuteString(va("location %i \"%s ^3Level:^7[^2%i^7/^2100^7] ^4- ^3XP:^7[^2%i^7/^25000^7] ^4- ^3Spree: ^2%i\" 0 1", cnum, kld->name, kld->level, kld->experience, kld->kills));
+
+		if ((klr->experience + 200) >= 5000) {
+			klr->experience = 0;
+			klr->level = (klr->level + 1);
+			Cmd_ExecuteString(va("bigtext \"%s ^3has just ^2Leveled UP! ^3Level:^7[^2%i^3/^5100^7]\"", klr->name, klr->level));
+			Cmd_ExecuteString(va("exec levelup.txt"));
+			// clear the current customname
+			memset(klr->lastcustomname,0,sizeof(klr->lastcustomname));
+			// clean playername
+    		char cleanName[64];
+        	Q_strncpyz(cleanName, klr->name, sizeof(cleanName));
+        	Q_CleanStr(cleanName );
+			// Set our name:
+			char* mynewname = va("^7[^2%i^7]^3%s^1", klr->level, cleanName);
+			// Set the new custom name
+			Q_strncpyz(klr->lastcustomname, mynewname, sizeof(klr->lastcustomname));
+			// Shoot a location update for the new name
+			Cmd_ExecuteString(va("location %i \"%s ^3Level:^7[^2%i^7/^2100^7] ^4- ^3XP:^7[^2%i^7/^25000^7] ^4- ^3Spree: ^2%i\" 0 1", cnum, klr->name, klr->level, klr->experience, klr->kills));
+		}
+		else {
+			klr->experience = klr->experience + 200;
+			SV_SendServerCommand(klr, "cp \"^2+^7200^2xp\"");
+			Cmd_ExecuteString(va("location %i \"%s ^3Level:^7[^2%i^7/^2100^7] ^4- ^3XP:^7[^2%i^7/^25000^7] ^4- ^3Spree: ^2%i\" 0 1", cnum, klr->name, klr->level, klr->experience, klr->kills));
+		}
+	}
 }
 
 //==============================================
