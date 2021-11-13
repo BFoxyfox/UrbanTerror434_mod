@@ -242,8 +242,6 @@ typedef struct client_s {
 	qboolean 	customname;
 	char 		lastcustomname[128];
 	char 		defaultconfigstr[256];
-	qboolean 	hasmedkit;
-	int 		lastmedkittime;
 	qboolean 	particlefx;
 	
     	// Variables of TitanMod
