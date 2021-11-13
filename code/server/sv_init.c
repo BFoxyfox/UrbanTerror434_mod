@@ -1016,7 +1016,7 @@ void SV_Init (void) {
 	mod_colourNames = Cvar_Get ("mod_colourNames", "1", CVAR_ARCHIVE);
         
 	mod_playerCount = Cvar_Get ("mod_playerCount", "0", CVAR_ARCHIVE);
-    mod_botsCount = Cvar_Get ("mod_botsCount", "1", CVAR_ARCHIVE);
+    	mod_botsCount = Cvar_Get ("mod_botsCount", "1", CVAR_ARCHIVE);
 	mod_mapName = Cvar_Get("mod_mapName", "", CVAR_ARCHIVE);
 	mod_mapColour = Cvar_Get("mod_mapColour", "7", CVAR_ARCHIVE);
 	mod_hideCmds = Cvar_Get ("mod_hideCmds", "1", CVAR_ARCHIVE);
@@ -1050,7 +1050,7 @@ void SV_Init (void) {
 	mod_freeSaving = Cvar_Get("mod_freeSaving", "0", CVAR_ARCHIVE);
 	mod_enableJumpCmds = Cvar_Get("mod_enableJumpCmds", "0", CVAR_ARCHIVE);
 	mod_enableHelpCmd = Cvar_Get("mod_enableHelpCmd", "1", CVAR_ARCHIVE);
-    mod_loadSpeedCmd = Cvar_Get("mod_loadSpeedCmd", "0", CVAR_ARCHIVE);
+    	mod_loadSpeedCmd = Cvar_Get("mod_loadSpeedCmd", "0", CVAR_ARCHIVE);
 	mod_ghostRadius = Cvar_Get("mod_ghostRadius", "80.0", CVAR_ARCHIVE);
 
 	mod_slickSurfaces = Cvar_Get("mod_slickSurfaces", "0", CVAR_ARCHIVE);
@@ -1067,8 +1067,10 @@ void SV_Init (void) {
 	mod_auth = Cvar_Get("mod_auth", "%s", CVAR_ARCHIVE);
 	mod_defaultauth = Cvar_Get("mod_defaultauth", "", CVAR_ARCHIVE);
 
-    mod_hideServer = Cvar_Get("mod_hideServer", "0", CVAR_ARCHIVE);
-    mod_enableWeaponsCvars = Cvar_Get("mod_enableWeaponsCvars", "1", CVAR_ARCHIVE);
+    	mod_hideServer = Cvar_Get("mod_hideServer", "0", CVAR_ARCHIVE);
+    	mod_enableWeaponsCvars = Cvar_Get("mod_enableWeaponsCvars", "1", CVAR_ARCHIVE);
+	
+	mod_gunsmod = Cvar_Get ("mod_gunsmod", "0", CVAR_ARCHIVE);
 
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);

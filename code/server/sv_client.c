@@ -2373,6 +2373,19 @@ static qboolean SV_ClientCommand( client_t *cl, msg_t *msg ) {
 	return qtrue;		// continue procesing
 }
 
+void addMedkitHealth(client_t *cl)
+{
+	char cmd2[64];
+	unsigned int time = Com_Milliseconds();
+    	int cid;
+    	cid = cl - svs.clients;
+
+	if (cl->lastmedkittime == 0 || (time - cl->lastmedkittime) > 430) {
+		Com_sprintf(cmd2, sizeof(cmd2), "addhealth %i 1", cid);
+		Cmd_ExecuteString(cmd2);
+		cl->lastmedkittime = time;
+	}
+}
 
 //==================================================================================
 
@@ -2493,7 +2506,12 @@ void SV_ClientThink (client_t *cl, usercmd_t *cmd) {
 	}
 
 	ps = SV_GameClientNum(cl - svs.clients);
-
+	
+	// Gunmoney related passive healing
+	if (cl->hasmedkit){
+		addMedkitHealth(cl);
+	}
+	
 	if(mod_disableScope->integer)
 	{
 		if(cl->cm.lastWeaponAfterScope != -1 )

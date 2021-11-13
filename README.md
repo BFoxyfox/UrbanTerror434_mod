@@ -13,6 +13,7 @@ All features of this Mod will be described below:
 ### Cvars
 Cvar |  Value type  | Description
 --- | --- | ---
+mod_gunsmod | &#60;boolean&#62; | Enable or disable gunsmod (used in gunmoney -> money system not included)
 mod_infiniteStamina | &#60;boolean&#62; | Enable or disable infinite stamina on the server
 mod_infiniteWallJumps | &#60;boolean&#62; | Enable or disable infinite wall jumps on the server
 mod_nofallDamage | &#60;boolean&#62; | Disable damage when falling from a high distance

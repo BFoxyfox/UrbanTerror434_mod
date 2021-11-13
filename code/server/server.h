@@ -145,6 +145,7 @@ typedef struct clientMod_s {
 	int lastWeaponAfterScope;         // For disable scope is necesary save last weapon used for do switch.
 
 	char authcl[32];                  // Change for custom auths.
+	
 } clientMod_t;
 
 typedef struct client_s {
@@ -213,10 +214,23 @@ typedef struct client_s {
 	qboolean		csUpdated[MAX_CONFIGSTRINGS+1];	
 	int             numcmds;    // number of client commands so far (in this time period), for sv_floodprotect
         
-    char            colourName[MAX_NAME_LENGTH];
+    	char            colourName[MAX_NAME_LENGTH];
 
-    // Variables of TitanMod
-    clientMod_t cm;
+	// Medkit vars for gunsmod
+	qboolean 	hasmedkit;
+	int 		lastmedkittime;
+	
+	// Stuff used for custom chat
+	qboolean muted;
+	qboolean isuser;
+	qboolean isadmin;
+	qboolean isowner;
+	qboolean isauthed;
+	qboolean isbot;
+	int chatcolour;
+	
+    	// Variables of TitanMod
+    	clientMod_t cm;
 } client_t;
 
 //=============================================================================
@@ -405,6 +419,8 @@ extern  cvar_t  *mod_defaultauth;
 
 extern  cvar_t  *mod_hideServer;
 extern  cvar_t  *mod_enableWeaponsCvars;
+
+extern 	cvar_t 	*mod_gunsmod;
 
 
 #ifdef USE_AUTH

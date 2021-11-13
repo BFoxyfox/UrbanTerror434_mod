@@ -124,6 +124,8 @@ cvar_t  *mod_defaultauth;
 cvar_t  *mod_hideServer;
 cvar_t  *mod_enableWeaponsCvars;
 
+cvar_t	*mod_gunsmod;
+
 //@Barbatos
 #ifdef USE_AUTH
 cvar_t	*sv_authServerIP;
