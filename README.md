@@ -104,6 +104,7 @@ mod_enableWeaponsCvars | &#60;boolean&#62; | Enable or disable the cvars related
 ### Commands (Rcon)
 Command | Syntax | Description
 --- | --- | ---
+bigtext | &#60;value&#62; | Better bigtext, allows multi lines -> Declare them with "/n" such as "line1/nline2/nline3"
 setuser | &#60;player&#62; | Sets the user flag for the custom chat (requires custom chat to be enabled)
 setadmin | &#60;player&#62; | Sets the admin flag  for the custom chat (requires custom chat to be enabled)
 setowner | &#60;player&#62 ;| Sets the owner flag for the custom chat (requires custom chat to be enabled)
