@@ -2791,6 +2791,157 @@ void SV_IsJumpTimerEnabled(void)
     Com_Printf("%d\n", cl->cm.ready);
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_Setuser_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Setuser_f (void)
+{
+	client_t *cl;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() != 2)
+	{
+		Com_Printf("Usage: setuser <player> \n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+		return;
+    cl->isuser = qtrue;
+    Com_Printf("^7Player ^5%s ^7set as user.\n", cl->name);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_Setadmin_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Setadmin_f (void)
+{
+	client_t *cl;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() != 2)
+	{
+		Com_Printf("Usage: setadmin <player> \n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+		return;
+    cl->isadmin = qtrue;
+    Com_Printf("^7Player ^5%s ^7set as admin.\n", cl->name);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_Setbot_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Setbot_f (void)
+{
+	client_t *cl;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() != 2)
+	{
+		Com_Printf("Usage: setbot <bot> \n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+		return;
+    cl->isbot = qtrue;
+    Com_Printf("^7Player ^5%s ^7set as bot.\n", cl->name);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_Setowner_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Setowner_f (void)
+{
+	client_t *cl;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() != 2)
+	{
+		Com_Printf("Usage: setowner <player> \n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+		return;
+    cl->isowner = qtrue;
+    Com_Printf("^7Player ^5%s ^7set as owner.\n", cl->name);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_Setauthed_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Setauthed_f (void)
+{
+	client_t *cl;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() != 2)
+	{
+		Com_Printf("Usage: setauthed <player> \n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+		return;
+    cl->isauthed = qtrue;
+    Com_Printf("^7Player ^5%s ^7set as authed.\n", cl->name);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_Setcolour_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Setcolour_f (void)
+{
+	client_t *cl;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() != 3)
+	{
+		Com_Printf("Usage: setcolour <player> <colour>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+	if(!cl)
+		return;
+    cl->chatcolour = atoi(Cmd_Argv(2));
+    Com_Printf("^7Players colour set to ^5%s.\n", Cmd_Argv(2));
+}
+
+
 /*
 ==================
 SV_AddOperatorCommands
@@ -2865,6 +3016,14 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("infinitewalljumps", SV_InfiniteWallJumps_fc);
     Cmd_AddCommand ("isJumpTimerOn", SV_IsJumpTimerEnabled);
 
+    Cmd_AddCommand ("setuser", SV_Setuser_f);
+    Cmd_AddCommand ("setadmin", SV_Setadmin_f);
+    Cmd_AddCommand ("setowner", SV_Setowner_f);
+    Cmd_AddCommand ("setbot", SV_Setbot_f);
+    Cmd_AddCommand ("setauthed", SV_Setauthed_f);
+    Cmd_AddCommand ("setcolour", SV_Setcolour_f);
+
+	
     if( com_dedicated->integer ) {
         Cmd_AddCommand ("say", SV_ConSay_f);
         Cmd_AddCommand ("tell", SV_ConTell_f);
