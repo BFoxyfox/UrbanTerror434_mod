@@ -243,6 +243,12 @@ typedef struct client_s {
 	char 		lastcustomname[128];
 	char 		defaultconfigstr[256];
 	qboolean 	particlefx;
+
+	// for the levelsystem
+	int experience;
+	int level;
+	int kills;
+	int clientgamenum;
 	
     	// Variables of TitanMod
     	clientMod_t cm;
