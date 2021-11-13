@@ -539,8 +539,13 @@ void MOD_ChangeLocation (client_t *cl, int changeto, int lock);
 void MOD_SendCustomLocation(client_t *cl, char *csstring, int index);
 void MOD_ResquestPk3DownloadByClientGameState( client_t *client , char *todownload);
 
+// events
 void EV_PlayerSpawn (int cnum);
 void EV_ClientUserInfoChanged(int cnum);
+void EV_ClientConnect(int cnum);
+void EV_ClientDisconnect(int cnum);
+void EV_ClientBegin(int cnum);
+void EV_ClientKill(int cnum, int target);
 
 int  SV_ClientIsMoving(client_t *cl);
 
