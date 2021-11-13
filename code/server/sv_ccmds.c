@@ -2941,6 +2941,456 @@ static void SV_Setcolour_f (void)
     Com_Printf("^7Players colour set to ^5%s.\n", Cmd_Argv(2));
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_Checkspec_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Checkspec_f (void)
+{
+	client_t *cl, *cl2;
+	playerState_t *ps;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() != 2)
+	{
+		Com_Printf("Usage: checkspec <player>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+    
+	if(!cl)
+		return;
+
+    ps = SV_GameClientNum(cl - svs.clients);
+
+    if (ps->pm_flags & 1024) {
+        cl2 = &svs.clients[ps->clientNum];
+        Com_Printf("%s\n", cl2->name);
+    }
+    else {
+        Com_Printf("None\n");
+    }
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_Checkspecid_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Checkspecid_f (void)
+{
+	client_t *cl, *cl2;
+	playerState_t *ps;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() != 2)
+	{
+		Com_Printf("Usage: checkspec <player>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+    
+	if(!cl)
+		return;
+
+    ps = SV_GameClientNum(cl - svs.clients);
+
+
+    if (ps->pm_flags & 1024) {
+        cl2 = &svs.clients[ps->clientNum];
+        int cid = cl2 - svs.clients;
+        Com_Printf("%i\n", cid);
+    }
+    else {
+        Com_Printf("None\n");
+    }
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_Checkspecteam_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Checkspecteam_f (void)
+{
+	client_t *cl;
+	playerState_t *ps;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() != 2)
+	{
+		Com_Printf("Usage: checkteam <player>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+    
+	if(!cl)
+		return;
+
+    ps = SV_GameClientNum(cl - svs.clients);
+
+    if (ps->persistant[3] == 0 && (ps->pm_flags & 1024)) {Com_Printf("FREE SPEC\n");} // Free spec
+    if (ps->persistant[3] == 1 && (ps->pm_flags & 1024)) {Com_Printf("RED SPEC\n");} // Red spec
+    if (ps->persistant[3] == 2 && (ps->pm_flags & 1024)) {Com_Printf("BLUE SPEC\n");} // Blue spec
+    if (ps->persistant[3] == 3 && (ps->pm_flags & 1024)) {Com_Printf("SPEC SPEC\n");} // Spec following someone
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// SV_Messupanimations_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Messupanimations_f (void)
+{
+	client_t *cl;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+	if(Cmd_Argc() != 2)
+	{
+		Com_Printf("Usage: messupanimations <player>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+
+	if(!cl) {
+        Com_Printf("Client not valid\n");
+		return;
+    }
+
+    cl->messedup = !cl->messedup;
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// SV_Forcelocupdate_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Forcelocupdate_f (void)
+{
+	client_t *cl;
+	char* speclocmessage, *deflocmessage;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+    if (!mod_jumplocations->integer){
+		Com_Printf("mod_jumplocations needs to be enabled\n");
+		return;
+    }
+	if(Cmd_Argc() != 2)
+	{
+		Com_Printf("Usage: forcelocupdate <player>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+    unsigned int time = Com_Milliseconds();
+
+	if(!cl)
+		return;
+
+	if (cl->hasspecs == qtrue) {
+        cl->cllasttime = time;
+		char actualspecs[128];
+		Q_strncpyz(actualspecs, cl->clspectators, 128);
+		speclocmessage = va("location %s \"^3%s ^7[^8%s^7] | ^9Spectators: ^8%s\" 0 1\n", cl->name, cl->name, cl->clocation, actualspecs);
+		Cmd_ExecuteString(speclocmessage);
+		return;
+	}
+
+	else {
+        cl->cllasttime = time;
+		deflocmessage = va("location %s \"^3%s ^7[^8%s^7] | ^9Spectators: ^8Nobody is watching you.\" 0 1\n", cl->name, cl->name, cl->clocation);
+		Cmd_ExecuteString(deflocmessage);
+		return;
+	}
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_Getlevelstats_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Getlevelstats_f (void)
+{
+	client_t *cl;
+
+	cl = SV_GetPlayerByHandle();
+    
+	if(!cl)
+		return;
+
+    Com_Printf("Levelstats for %s\n->Level: %i\n->Experience: %i\n", cl->name, cl->level, cl->experience);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_Setspectators_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Setspectators_f (void)
+{
+	client_t *cl;
+
+	if(!com_sv_running->integer)
+	{
+		Com_Printf("Server is not running\n");
+		return;
+	}
+    if (!mod_jumplocations->integer){
+		Com_Printf("mod_jumplocations needs to be enabled\n");
+		return;
+    }
+	if(Cmd_Argc() != 3)
+	{
+		Com_Printf("Usage: setspectators <player> <spectators / NONE>\n");
+		return;
+	}
+
+	cl = SV_GetPlayerByHandle();
+    
+	if(!cl)
+		return;
+
+    if (!Q_stricmp(Cmd_Argv(2), "NONE")) {
+        cl->hasspecs = qfalse;
+        Com_Printf("Client spectators set to qfalse\n");
+        return;
+    }
+    cl->hasspecs = qtrue;
+    Q_strncpyz(cl->clspectators, Cmd_Argv(2), 128);
+    //cl->clspectators = Cmd_Argv(2);
+    Com_Printf("Client spectators set to %s\n", Cmd_Argv(2));
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_Silentname_f
+/////////////////////////////////////////////////////////////////////
+static void SV_Silentname_f (void)
+{
+    client_t *cl;
+
+    if (!com_sv_running->integer) {
+        Com_Printf("Server is not running\n");
+        SV_LogPrintf("Silentname: Server is not running\n");
+        return;
+    }
+
+    if (Cmd_Argc() < 3) {
+        Com_Printf("Usage: silentname <player> <newname>\n");
+        return;
+    }
+
+    cl = SV_GetPlayerByHandle();
+    if (!cl) {
+        Com_Printf("Unable to get client\n");
+        SV_LogPrintf("Silentname: Unable to get client\n");
+        return;
+    }
+
+    // clear the current customname
+    memset(cl->lastcustomname,0,sizeof(cl->lastcustomname));    
+    Q_strncpyz(cl->lastcustomname, Cmd_Argv(2), 128);
+    cl->customname = qtrue;
+}
+
+// You must free the result if result is non-NULL.
+char *str_replace66(char *orig, char *rep, char *with) {
+    char *result; // the return string
+    char *ins;    // the next insert point
+    char *tmp;    // varies
+    int len_rep;  // length of rep (the string to remove)
+    int len_with; // length of with (the string to replace rep with)
+    int len_front; // distance between rep and end of last rep
+    int count;    // number of replacements
+
+    // sanity checks and initialization
+    if (!orig || !rep)
+        return NULL;
+    len_rep = strlen(rep);
+    if (len_rep == 0)
+        return NULL; // empty rep causes infinite loop during count
+    if (!with)
+        with = "";
+    len_with = strlen(with);
+
+    // count the number of replacements needed
+    ins = orig;
+    for (count = 0; tmp = strstr(ins, rep); ++count) {
+        ins = tmp + len_rep;
+    }
+
+    tmp = result = malloc(strlen(orig) + (len_with - len_rep) * count + 1);
+
+    if (!result)
+        return NULL;
+
+    // first time through the loop, all the variable are set correctly
+    // from here on,
+    //    tmp points to the end of the result string
+    //    ins points to the next occurrence of rep in orig
+    //    orig points to the remainder of orig after "end of rep"
+    while (count--) {
+        ins = strstr(orig, rep);
+        len_front = ins - orig;
+        tmp = strncpy(tmp, orig, len_front) + len_front;
+        tmp = strcpy(tmp, with) + len_with;
+        orig += len_front + len_rep; // move to next "end of rep"
+    }
+    strcpy(tmp, orig);
+    return result;
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// SV_BigText_f
+//
+// This will override the default bigtext function
+// multilines should be declared with /n instead of \n
+/////////////////////////////////////////////////////////////////////
+static void SV_BigText_f(void) {
+
+	if (!com_sv_running->integer) {
+		Com_Printf("Server is not running\n");
+		return;
+	}
+
+	if (Cmd_Argc() < 2) {
+		Com_Printf("Usage: bigtext <text>\n");
+        Com_Printf("Note: '/n' will count as a newline for multiline bigtext.\n");
+		return;
+	}
+
+    char* newLine = "\n";
+    char* toReplace = "/n";
+    char* bigText = str_replace66(Cmd_Argv(1), toReplace, newLine);
+
+    SV_SendServerCommand(NULL, "cp \"%s\"", bigText);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_modTimerStart_f
+/////////////////////////////////////////////////////////////////////
+
+static void SV_modTimerStart_f (void)
+{
+    client_t *cl;
+
+    cl = SV_GetPlayerByHandle();
+    if (!cl) {
+        Com_Printf("Unable to get client\n");
+        return;
+    }
+    int a, b;
+    a = 45;
+    b = 1;
+    MOD_SetExternalEvent(cl, a, b);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_modTimerStop_f
+/////////////////////////////////////////////////////////////////////
+
+static void SV_modTimerStop_f (void)
+{
+    client_t *cl;
+
+    if (!com_sv_running->integer) {
+        Com_Printf("Server is not running\n");
+        return;
+    }
+
+    if (Cmd_Argc() < 2) {
+        Com_Printf("Usage: StopCustomTimer <player>\n");
+        return;
+    }
+
+    cl = SV_GetPlayerByHandle();
+    if (!cl) {
+        Com_Printf("Unable to get client\n");
+        return;
+    }
+    int a, b;
+    a = 46;
+    b = 1;
+    MOD_SetExternalEvent(cl, a, b);
+}
+
+/////////////////////////////////////////////////////////////////////
+// SV_ToggleParticles_f
+/////////////////////////////////////////////////////////////////////
+
+static void SV_ToggleParticles_f (void)
+{
+    client_t *cl;
+
+    if (!com_sv_running->integer) {
+        Com_Printf("Server is not running\n");
+        return;
+    }
+
+    if (Cmd_Argc() < 2) {
+        Com_Printf("Usage: particlefx <player>\n");
+        return;
+    }
+
+    cl = SV_GetPlayerByHandle();
+    if (!cl) {
+        Com_Printf("Unable to get client\n");
+        return;
+    }
+
+    if (cl->particlefx) {
+        cl->particlefx = qfalse;
+        SV_SendServerCommand(cl, "cchat \"\" \"^5Particles ^3have been ^7[^1DISABLED^7]\"");
+    } else {
+        cl->particlefx = qtrue;
+        SV_SendServerCommand(cl, "cchat \"\" \"^5Particles ^3have been ^7[^2ENABLED^7]\"");
+    }
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// SV_BlindPlayer_f
+/////////////////////////////////////////////////////////////////////
+
+static void SV_BlindPlayer_f (void)
+{
+    client_t *cl;
+
+    if (!com_sv_running->integer) {
+        Com_Printf("Server is not running\n");
+        return;
+    }
+
+    if (Cmd_Argc() < 2) {
+        Com_Printf("Usage: BlindPlayer <player>\n");
+        return;
+    }
+
+    cl = SV_GetPlayerByHandle();
+    if (!cl) {
+        Com_Printf("Unable to get client\n");
+        return;
+    }
+    
+    int a, b;
+    a = 111;
+    b = 1;
+    MOD_SetExternalEvent(cl, a, b);
+    SV_SendServerCommand(NULL, "cchat \"\" \"^7It's gotten dark. To light things up commit suicide.\"");
+}
 
 /*
 ==================
@@ -3015,13 +3465,35 @@ void SV_AddOperatorCommands( void ) {
     Cmd_AddCommand ("infinitestamina", SV_InfiniteStamina_fc);
     Cmd_AddCommand ("infinitewalljumps", SV_InfiniteWallJumps_fc);
     Cmd_AddCommand ("isJumpTimerOn", SV_IsJumpTimerEnabled);
-
+	
+	// B3 specific commands (used with the custom chat)
     Cmd_AddCommand ("setuser", SV_Setuser_f);
     Cmd_AddCommand ("setadmin", SV_Setadmin_f);
     Cmd_AddCommand ("setowner", SV_Setowner_f);
     Cmd_AddCommand ("setbot", SV_Setbot_f);
     Cmd_AddCommand ("setauthed", SV_Setauthed_f);
     Cmd_AddCommand ("setcolour", SV_Setcolour_f);
+
+	// For the spectator display in jump mode
+	Cmd_AddCommand ("checkspec", SV_Checkspec_f);
+    Cmd_AddCommand ("checkspecid", SV_Checkspecid_f);
+    Cmd_AddCommand ("forcelocupdate", SV_Forcelocupdate_f);
+    Cmd_AddCommand ("setspectators", SV_Setspectators_f);
+    Cmd_AddCommand ("checkspecteam", SV_Checkspecteam_f);
+    Cmd_AddCommand ("silentname", SV_Silentname_f);
+	
+	// Level system related
+	Cmd_AddCommand ("level", SV_Getlevelstats_f);
+	
+	// Random shit
+    Cmd_AddCommand ("randomanimations", SV_Messupanimations_f);
+    Cmd_AddCommand ("startcustomtimer", SV_modTimerStart_f);
+    Cmd_AddCommand ("stopcustomtimer", SV_modTimerStop_f);
+    Cmd_AddCommand ("blindplayer", SV_BlindPlayer_f);
+    Cmd_AddCommand ("particlefx", SV_ToggleParticles_f);
+	
+	// Better bigtext that allows multi lines with "line1/nline2" etc
+    Cmd_AddCommand ("bigtext", SV_BigText_f);
 
 	
     if( com_dedicated->integer ) {
