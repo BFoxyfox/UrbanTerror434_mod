@@ -108,7 +108,10 @@ void CIN_CloseAllVideos( void );
 
 void EV_PlayerSpawn (int cnum);
 void EV_ClientUserInfoChanged(int cnum);
-
+void EV_ClientConnect(int cnum);
+void EV_ClientDisconnect(int cnum);
+void EV_ClientBegin(int cnum);
+void EV_ClientKill(int cnum, int target);
 //============================================================================
 
 static char	*rd_buffer;
