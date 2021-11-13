@@ -166,6 +166,22 @@ void QDECL Com_Printf( const char *fmt, ... ) {
 	{
 		EV_ClientUserInfoChanged(cnum);
 	}
+	if(sscanf(msg, "ClientConnect: %d", &cnum))
+	{
+		EV_ClientConnect(cnum);
+	}
+	if(sscanf(msg, "ClientDisconnect: %d", &cnum))
+	{
+		EV_ClientDisconnect(cnum);
+	}
+	if(sscanf(msg, "ClientBegin: %d", &cnum))
+	{
+		EV_ClientBegin(cnum);
+	}
+	if(sscanf(msg, "Kill: %d %d", &cnum, &target))
+	{
+		EV_ClientKill(cnum, target);
+	}
 
 	if ( rd_buffer ) {
 		if ((strlen (msg) + strlen(rd_buffer)) > (rd_buffersize - 1)) {
