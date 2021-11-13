@@ -421,7 +421,14 @@ extern  cvar_t  *mod_hideServer;
 extern  cvar_t  *mod_enableWeaponsCvars;
 
 extern 	cvar_t 	*mod_gunsmod;
-
+extern cvar_t 	*mod_customspawns;
+extern cvar_t 	*mod_levelsystem;
+extern cvar_t 	*mod_customchat;
+extern cvar_t 	*mod_jumplocations;
+extern cvar_t 	*matchmode;
+extern cvar_t 	*sv_MedicStation;
+extern cvar_t 	*sv_TurnpikeBlocker;
+extern cvar_t 	*mod_infiniteAirjumps;
 
 #ifdef USE_AUTH
 extern  cvar_t  *sv_authServerIP;
