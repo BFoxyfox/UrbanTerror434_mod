@@ -221,13 +221,34 @@ typedef struct client_s {
 	int 		lastmedkittime;
 	
 	// Stuff used for custom chat
-	qboolean muted;
-	qboolean isuser;
-	qboolean isadmin;
-	qboolean isowner;
-	qboolean isauthed;
-	qboolean isbot;
-	int chatcolour;
+	qboolean 	muted;
+	qboolean 	isuser;
+	qboolean 	isadmin;
+	qboolean 	isowner;
+	qboolean 	isauthed;
+	qboolean 	isbot;
+	int 		chatcolour;
+	
+	// I'll clean this up eventually lol
+	char* 		clocation;
+	int 		cllasttime;
+	char 		clspectators[128];
+	int 		lastspectated;
+	qboolean 	hasspecs;
+	int 		clientcid;
+	qboolean 	messedup;
+	int 		lastmedtime;
+	int 		lastsoundtime;
+	qboolean 	customname;
+	char 		lastcustomname[128];
+	char 		defaultconfigstr[256];
+	qboolean 	particlefx;
+
+	// for the levelsystem
+	int experience;
+	int level;
+	int kills;
+	int clientgamenum;
 	
     	// Variables of TitanMod
     	clientMod_t cm;
@@ -421,7 +442,14 @@ extern  cvar_t  *mod_hideServer;
 extern  cvar_t  *mod_enableWeaponsCvars;
 
 extern 	cvar_t 	*mod_gunsmod;
-
+extern cvar_t 	*mod_customspawns;
+extern cvar_t 	*mod_levelsystem;
+extern cvar_t 	*mod_customchat;
+extern cvar_t 	*mod_jumplocations;
+extern cvar_t 	*matchmode;
+extern cvar_t 	*sv_MedicStation;
+extern cvar_t 	*sv_TurnpikeBlocker;
+extern cvar_t 	*mod_infiniteAirjumps;
 
 #ifdef USE_AUTH
 extern  cvar_t  *sv_authServerIP;
@@ -515,8 +543,13 @@ void MOD_ChangeLocation (client_t *cl, int changeto, int lock);
 void MOD_SendCustomLocation(client_t *cl, char *csstring, int index);
 void MOD_ResquestPk3DownloadByClientGameState( client_t *client , char *todownload);
 
+// events
 void EV_PlayerSpawn (int cnum);
 void EV_ClientUserInfoChanged(int cnum);
+void EV_ClientConnect(int cnum);
+void EV_ClientDisconnect(int cnum);
+void EV_ClientBegin(int cnum);
+void EV_ClientKill(int cnum, int target);
 
 int  SV_ClientIsMoving(client_t *cl);
 

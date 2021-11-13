@@ -125,6 +125,14 @@ cvar_t  *mod_hideServer;
 cvar_t  *mod_enableWeaponsCvars;
 
 cvar_t	*mod_gunsmod;
+cvar_t	*mod_customspawns;
+cvar_t	*mod_levelsystem;
+cvar_t	*mod_infiniteAirjumps;
+cvar_t	*mod_customchat;
+cvar_t	*mod_jumplocations;
+cvar_t	*matchmode;
+cvar_t	*sv_MedicStation;
+cvar_t	*sv_TurnpikeBlocker;
 
 //@Barbatos
 #ifdef USE_AUTH

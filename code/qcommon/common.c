@@ -108,7 +108,10 @@ void CIN_CloseAllVideos( void );
 
 void EV_PlayerSpawn (int cnum);
 void EV_ClientUserInfoChanged(int cnum);
-
+void EV_ClientConnect(int cnum);
+void EV_ClientDisconnect(int cnum);
+void EV_ClientBegin(int cnum);
+void EV_ClientKill(int cnum, int target);
 //============================================================================
 
 static char	*rd_buffer;
@@ -152,6 +155,7 @@ void QDECL Com_Printf( const char *fmt, ... ) {
 	char		msg[MAXPRINTMSG];
     static qboolean opening_qconsole = qfalse;
     int cnum;
+	int target;
 
 
 	va_start (argptr,fmt);
@@ -165,6 +169,22 @@ void QDECL Com_Printf( const char *fmt, ... ) {
 	if(sscanf(msg, "ClientUserinfoChanged: %d", &cnum))
 	{
 		EV_ClientUserInfoChanged(cnum);
+	}
+	if(sscanf(msg, "ClientConnect: %d", &cnum))
+	{
+		EV_ClientConnect(cnum);
+	}
+	if(sscanf(msg, "ClientDisconnect: %d", &cnum))
+	{
+		EV_ClientDisconnect(cnum);
+	}
+	if(sscanf(msg, "ClientBegin: %d", &cnum))
+	{
+		EV_ClientBegin(cnum);
+	}
+	if(sscanf(msg, "Kill: %d %d", &cnum, &target))
+	{
+		EV_ClientKill(cnum, target);
 	}
 
 	if ( rd_buffer ) {

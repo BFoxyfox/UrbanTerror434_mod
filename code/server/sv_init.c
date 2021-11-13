@@ -1071,7 +1071,15 @@ void SV_Init (void) {
     	mod_enableWeaponsCvars = Cvar_Get("mod_enableWeaponsCvars", "1", CVAR_ARCHIVE);
 	
 	mod_gunsmod = Cvar_Get ("mod_gunsmod", "0", CVAR_ARCHIVE);
-
+	mod_customspawns = Cvar_Get ("mod_customspawns", "0", CVAR_ARCHIVE);
+	mod_levelsystem = Cvar_Get("mod_levelsystem", "0", CVAR_ARCHIVE);
+	mod_infiniteAirjumps = Cvar_Get ("mod_infiniteAirjumps", "0", CVAR_ARCHIVE);
+	mod_customchat = Cvar_Get ("mod_customchat", "0", CVAR_ARCHIVE);
+	mod_jumplocations = Cvar_Get ("mod_jumplocations", "0", CVAR_ARCHIVE);
+	matchmode = Cvar_Get ("g_matchmode", "0", CVAR_ARCHIVE);
+	sv_MedicStation = Cvar_Get ("sv_MedicStation", "0", CVAR_ARCHIVE );
+	sv_TurnpikeBlocker = Cvar_Get ("sv_TurnpikeBlocker", "0", CVAR_ARCHIVE);
+	
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);
 	sv_auth_engine = Cvar_Get("sv_auth_engine", "1", CVAR_ROM);
