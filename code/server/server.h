@@ -221,13 +221,30 @@ typedef struct client_s {
 	int 		lastmedkittime;
 	
 	// Stuff used for custom chat
-	qboolean muted;
-	qboolean isuser;
-	qboolean isadmin;
-	qboolean isowner;
-	qboolean isauthed;
-	qboolean isbot;
-	int chatcolour;
+	qboolean 	muted;
+	qboolean 	isuser;
+	qboolean 	isadmin;
+	qboolean 	isowner;
+	qboolean 	isauthed;
+	qboolean 	isbot;
+	int 		chatcolour;
+	
+	// I'll clean this up eventually lol
+	char* 		clocation;
+	int 		cllasttime;
+	char 		clspectators[128];
+	int 		lastspectated;
+	qboolean 	hasspecs;
+	int 		clientcid;
+	qboolean 	messedup;
+	int 		lastmedtime;
+	int 		lastsoundtime;
+	qboolean 	customname;
+	char 		lastcustomname[128];
+	char 		defaultconfigstr[256];
+	qboolean 	hasmedkit;
+	int 		lastmedkittime;
+	qboolean 	particlefx;
 	
     	// Variables of TitanMod
     	clientMod_t cm;
