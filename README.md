@@ -104,6 +104,17 @@ mod_enableWeaponsCvars | &#60;boolean&#62; | Enable or disable the cvars related
 ### Commands (Rcon)
 Command | Syntax | Description
 --- | --- | ---
+setuser | &#60;player&#62; | Sets the user flag for the custom chat (requires custom chat to be enabled)
+setadmin | &#60;player&#62; | Sets the admin flag  for the custom chat (requires custom chat to be enabled)
+setowner | &#60;player&#62 ;| Sets the owner flag for the custom chat (requires custom chat to be enabled)
+setbot | &#60;player&#62; | Sets the bot flag for the custom chat (requires custom chat to be enabled)
+setauthed | &#60;player&#62; | Sets the authed flag for the custom chat (requires custom chat to be enabled)
+setcolour | &#60;player&#62; &#60;value&#62; | Sets the chat colour of someone (requires custom chat to be enabled)
+level |  &#60;player&#62; | Returns the level of a player from the custom level system
+randomanimations |  &#60;player&#62; | Will enable random animations for a player
+startcustomtimer |  &#60;player&#62; | Starts a custom timer (bugged)
+stopcustomtimer |  &#60;player&#62; | Stops the custom timer (bugged)
+blindplayer |  &#60;player&#62; | Makes a player screen go dark (cannot reverse this -> die to turn it off)
 setscore | &#60;player&#62; &#60;value&#62; | Set a certain score to a player on the scoreboard of the game
 setdeaths | &#60;player&#62; &#60;value&#62; | Set a certain deaths to a player on the scoreboard of the game
 invisible | &#60;player&#62; | Turn (ON/OFF) the invisible mode of a player
