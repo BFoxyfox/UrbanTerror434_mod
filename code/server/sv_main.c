@@ -125,7 +125,7 @@ cvar_t  *mod_hideServer;
 cvar_t  *mod_enableWeaponsCvars;
 
 cvar_t	*mod_gunsmod;
-cvar_t	*customspawns;
+cvar_t	*mod_customspawns;
 cvar_t	*levelsystem;
 cvar_t	*mod_infiniteAirjumps;
 cvar_t	*customchat;
