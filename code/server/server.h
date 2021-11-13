@@ -420,6 +420,8 @@ extern  cvar_t  *mod_defaultauth;
 extern  cvar_t  *mod_hideServer;
 extern  cvar_t  *mod_enableWeaponsCvars;
 
+extern 	cvar_t 	*mod_gunsmod;
+
 
 #ifdef USE_AUTH
 extern  cvar_t  *sv_authServerIP;
