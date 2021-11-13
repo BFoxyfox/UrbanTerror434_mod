@@ -2372,6 +2372,289 @@ static qboolean SV_ClientCommand( client_t *cl, msg_t *msg ) {
 
 	return qtrue;		// continue procesing
 }
+//==================================================================================
+// You must free the result if result is non-NULL.
+char *str_replace2(char *orig, char *rep, char *with) {
+    char *result; // the return string
+    char *ins;    // the next insert point
+    char *tmp;    // varies
+    int len_rep;  // length of rep (the string to remove)
+    int len_with; // length of with (the string to replace rep with)
+    int len_front; // distance between rep and end of last rep
+    int count;    // number of replacements
+
+    // sanity checks and initialization
+    if (!orig || !rep)
+        return NULL;
+    len_rep = strlen(rep);
+    if (len_rep == 0)
+        return NULL; // empty rep causes infinite loop during count
+    if (!with)
+        with = "";
+    len_with = strlen(with);
+
+    // count the number of replacements needed
+    ins = orig;
+    for (count = 0; tmp = strstr(ins, rep); ++count) {
+        ins = tmp + len_rep;
+    }
+
+    tmp = result = malloc(strlen(orig) + (len_with - len_rep) * count + 1);
+
+    if (!result)
+        return NULL;
+
+    // first time through the loop, all the variable are set correctly
+    // from here on,
+    //    tmp points to the end of the result string
+    //    ins points to the next occurrence of rep in orig
+    //    orig points to the remainder of orig after "end of rep"
+    while (count--) {
+        ins = strstr(orig, rep);
+        len_front = ins - orig;
+        tmp = strncpy(tmp, orig, len_front) + len_front;
+        tmp = strcpy(tmp, with) + len_with;
+        orig += len_front + len_rep; // move to next "end of rep"
+    }
+    strcpy(tmp, orig);
+    return result;
+}
+
+void Clean_scoreboard_Name(client_t *cl, client_t *cl2) {
+	int clcid = cl->clientcid;
+	char* mystring = sv.configstrings[clcid + 544];
+	char* target = va("%s^7", cl->name);
+	char* toreplace = va("%s ^3spectating ^6%s", cl->name, cl2->name);
+	char* mynewstring = str_replace2(mystring, toreplace, target);
+	SV_SetConfigstring((544 + clcid), mynewstring);
+}
+
+void Update_existing_scoreboard_Name(client_t *cl, client_t *cl2, client_t *cl3) {
+	int clcid = cl->clientcid;
+	char* mystring = sv.configstrings[clcid + 544];
+	char* toreplace = va("%s ^3spectating ^6%s", cl->name, cl3->name);
+	char* target = va("%s ^3spectating ^6%s", cl->name, cl2->name);
+	char* mynewstring = str_replace2(mystring, toreplace, target);
+	SV_SetConfigstring((544 + clcid), mynewstring);
+}
+
+void Update_scoreboard_Name(client_t *cl, client_t *cl2) {
+	int clcid = cl->clientcid;
+	char* mystring = sv.configstrings[clcid + 544];
+	char* toreplace = va("%s^7", cl->name);
+	char* target = va("%s ^3spectating ^6%s", cl->name, cl2->name);
+	char* mynewstring = str_replace2(mystring, toreplace, target);
+	SV_SetConfigstring((544 + clcid), mynewstring);
+}
+
+char* concat(const char *s1, const char *s2)
+{
+    const size_t len1 = strlen(s1);
+    const size_t len2 = strlen(s2);
+    char *result = malloc(len1 + len2 + 1);
+    memcpy(result, s1, len1);
+    memcpy(result + len1, s2, len2 + 1);
+    return result;
+}
+
+char *strremove(char *str, const char *sub) {
+    char *p, *q, *r;
+    if ((q = r = strstr(str, sub)) != NULL) {
+        size_t len = strlen(sub);
+        while ((r = strstr(p = r + len, sub)) != NULL) {
+            while (p < r)
+                *q++ = *p++;
+        }
+        while ((*q++ = *p++) != '\0')
+            continue;
+    }
+    return str;
+}
+
+void forcelocupdate(client_t *cl3)
+{
+	char* speclocmessage, *deflocmessage;
+	unsigned int time = Com_Milliseconds();
+	if (cl3->hasspecs == qtrue) {
+	    cl3->cllasttime = time;
+		char actualspecs[128];
+		Q_strncpyz(actualspecs, cl3->clspectators, 128);
+		speclocmessage = va("location %s \"^3%s ^7[^8%s^7] | ^9Spectators: ^8%s\" 0 1\n", cl3->name, cl3->name, cl3->clocation, actualspecs);
+		Cmd_ExecuteString(speclocmessage);
+		return;
+	}
+	else {
+	    cl3->cllasttime = time;
+		deflocmessage = va("location %s \"^3%s ^7[^8%s^7] | ^9Spectators: ^8Nobody is watching you.\" 0 1\n", cl3->name, cl3->name, cl3->clocation);
+		Cmd_ExecuteString(deflocmessage);
+		return;
+	}
+}
+
+void forcelocupdate2(client_t *cl2)
+{
+	char* speclocmessage, *deflocmessage;
+	unsigned int time = Com_Milliseconds();
+	if (cl2->hasspecs == qtrue) {
+	    cl2->cllasttime = time;
+		char actualspecs[128];
+		Q_strncpyz(actualspecs, cl2->clspectators, 128);
+		speclocmessage = va("location %s \"^3%s ^7[^8%s^7] | ^9Spectators: ^8%s\" 0 1\n", cl2->name, cl2->name, cl2->clocation, actualspecs);
+		Cmd_ExecuteString(speclocmessage);
+		return;
+	}
+	else {
+	    cl2->cllasttime = time;
+		deflocmessage = va("location %s \"^3%s ^7[^8%s^7] | ^9Spectators: ^8Nobody is watching you.\" 0 1\n", cl2->name, cl2->name, cl2->clocation);
+		Cmd_ExecuteString(deflocmessage);
+		return;
+	}
+}
+
+void removespectator(client_t *cl) {
+
+	client_t *cl4;
+	cl4 = &svs.clients[cl->lastspectated];
+
+	if(!cl4) {
+		return;
+	}
+
+	Clean_scoreboard_Name(cl, cl4);
+
+	if(strlen(cl4->clspectators) < 1) {
+		cl->lastspectated = -1;
+		cl4->hasspecs = qfalse;
+		forcelocupdate(cl4);
+	}
+
+	else{
+		char currspecs[128];
+		Q_strncpyz(currspecs, cl4->clspectators, 128);
+		char* toremove = va("^7|^8%s", cl->name);
+		char* newspecs = strremove(currspecs, toremove);
+		Q_strncpyz(cl4->clspectators, newspecs, 128);
+		cl->lastspectated = -1;
+		// check if the string is empty
+		if ((newspecs != NULL) && (newspecs[0] == '\0')) {
+		    cl4->hasspecs = qfalse;
+			forcelocupdate(cl4);
+		}
+		else {
+			cl4->hasspecs = qtrue;
+			forcelocupdate(cl4);
+		}
+	}
+}
+
+
+
+void clearpreviousspecs(client_t *cl, client_t *cl2){
+
+	client_t *cl3;
+
+	if (!cl->lastspectated){
+		// make sure theres a previous spectated person
+		return;
+	}
+
+	cl3 = &svs.clients[cl->lastspectated]; // person we previously spectated	
+
+
+	if(!cl3) {
+		Com_Printf( "No client3 found\n");
+		// disconnected or such, just fuck off
+		return;
+	}	
+	if (!Q_stricmp(cl2->name, cl3->name)) {
+		// specating the same person
+		// do nothing here
+		return;
+	}
+	else {
+		// remove us and update the list
+		char currspecs[128];
+		Q_strncpyz(currspecs, cl3->clspectators, 128);
+		char* toremove = va("^7|^8%s", cl->name);
+		char* newspecs = strremove(currspecs, toremove);
+		Q_strncpyz(cl3->clspectators, newspecs, 128);
+		int cid = cl2 - svs.clients;
+		cl->lastspectated = cid;
+		// check if the string is empty
+		if ((newspecs != NULL) && (newspecs[0] == '\0')) { // checking if the array is empty
+		    cl3->hasspecs = qfalse;
+			forcelocupdate(cl3);
+		}
+		else {
+			cl3->hasspecs = qtrue;
+			forcelocupdate(cl3);
+		}
+	}
+}
+
+void Check_spectators(client_t *cl)
+{
+	client_t *cl2;
+	playerState_t *ps;
+	ps = SV_GameClientNum(cl - svs.clients);
+
+    if (ps->persistant[3] == 0 && (ps->pm_flags & 1024)) {
+
+		cl2 = &svs.clients[ps->clientNum]; // person we are spectating
+		int currspec = ps->clientNum;
+		if (currspec != cl->lastspectated) {
+			// spectating a new person, so clear the previous person being spectated
+			client_t * cl3;
+			cl3 = &svs.clients[cl->lastspectated];
+			clearpreviousspecs(cl, cl2);
+			Update_existing_scoreboard_Name(cl, cl2, cl3);
+		}
+
+		if(strstr(cl2->clspectators, cl->name) == NULL) { // we are not in the clients spectator list
+			char currspecs[128];
+			Q_strncpyz(currspecs, cl2->clspectators, 128);
+			char* toadd = va("^7|^8%s", cl->name);
+			char* newspecs = concat(currspecs, toadd);
+			Q_strncpyz(cl2->clspectators, newspecs, 128);
+			free(newspecs);
+			int cid = cl2 - svs.clients;
+			cl->lastspectated = cid;
+			cl2->hasspecs = qtrue;
+			forcelocupdate2(cl2);
+			clearpreviousspecs(cl, cl2);
+			Update_scoreboard_Name(cl, cl2);
+		}
+
+	}
+	else {
+		if (cl->lastspectated == -1) {
+			// we already removed asnd cleared the last spectated person
+			return;
+		}
+		removespectator(cl);	
+	}
+}
+
+
+void updateClientName(client_t *cl)
+{
+	char* toreplace = "XXXXXXXXXXXXX";
+
+	// The client name we will use
+	char customname[128];
+	Q_strncpyz(customname, cl->lastcustomname, sizeof(customname));
+
+	// The Configstring we will use
+	char mycfgstring[256];
+	Q_strncpyz(mycfgstring, cl->defaultconfigstr, sizeof(mycfgstring));
+
+	// Now replace toreplace with the customname
+	char* mynewstring = str_replace2(mycfgstring, toreplace, customname);
+
+	// Finally: Set the string
+	SV_SetConfigstring((544 + cl->clientgamenum), mynewstring);
+}
+
 
 void addMedkitHealth(client_t *cl)
 {
@@ -2387,7 +2670,7 @@ void addMedkitHealth(client_t *cl)
 	}
 }
 
-//==================================================================================
+
 
 void MOD_AutoHealth(client_t *cl)
 {
