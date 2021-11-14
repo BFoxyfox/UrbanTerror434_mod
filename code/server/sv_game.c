@@ -1105,6 +1105,13 @@ void EV_ClientConnect(int cnum)
 		client = cnum + svs.clients;
 		client->clientgamenum = cnum;
 	}
+
+	if (mod_customchat->integer) {
+		client_t* client;
+		client = cnum + svs.clients;
+		client->chatcolour = 7;
+	}
+	
 }
 
 /////////////////////////////////////////////////////////////////////
