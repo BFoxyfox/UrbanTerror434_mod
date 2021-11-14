@@ -602,22 +602,82 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) {
 	byte		message[MAX_MSGLEN];
 	client_t	*client;
 	int			j;
+	char workingString[256];
+	char actualClientLocation[256];
+	int jumplength1;
+	char* speclocmessage;
+	char* deflocmessage;
 
 	va_start (argptr,fmt);
 	Q_vsnprintf ((char *)message, sizeof(message), fmt,argptr);
 	va_end (argptr);
 
-	// Location is locked
+	// donna30: debugging all ssc messages
+	//Com_Printf( "->%s<-\n", (char *)message);
+
+	// location string (only for jump mode) This is super ugly lol
+	if((Q_strncmp((char *)message, "location", 8) == 0) && (sv_gametype->integer == GT_JUMP) && (mod_jumplocations->integer)) {
+		unsigned int time = Com_Milliseconds();
+		if ( (unsigned)( time - cl->cllasttime ) < 150 ){
+			return;
+		}
+		// not restricted
+		sprintf(workingString, "%s: %s", cl->name, (char *)message);
+		jumplength1 = strlen(cl->name) + 11;
+		strcpy(actualClientLocation, workingString + jumplength1);
+		cl->clocation = sv.configstrings[atoi(actualClientLocation) + 640];
+		if (cl->hasspecs == qtrue) {
+			cl->cllasttime = time;
+			char actualspecs[128];
+			Q_strncpyz(actualspecs, cl->clspectators, 128);
+			speclocmessage = va("location %s \"^3%s ^7[^8%s^7] | ^9Spectators: ^8%s\" 0 1\n", cl->name, cl->name, cl->clocation, actualspecs);
+			Cmd_ExecuteString(speclocmessage);
+			return;
+		}
+		else {
+			cl->cllasttime = time;
+			deflocmessage = va("location %s \"^3%s ^7[^8%s^7] | ^9Spectators: ^8Nobody is watching you.\" 0 1\n", cl->name, cl->name, cl->clocation);
+			Cmd_ExecuteString(deflocmessage);
+			return;
+		}
+	}
+
 	if((Q_strncmp((char *)message, "location", 8) == 0) && cl->cm.locationLocked)
 		return;
 
-	// Modify scoreboard for auth change
-    if (Q_strncmp((char *)message, "scores ", 7) == 0) {
-        MOD_parseScore((char *)message);
-    }
-    if (Q_strncmp((char *)message, "scoress ", 8) == 0 || Q_strncmp((char *)message, "scoresd ", 8) == 0) {
-        MOD_parseScoresAndDouble((char *)message);
-    }
+	if (!strcmp((char *) message, "print \"No vote in progress.\n\"")) {
+		playerState_t *ps;
+		ps = SV_GameClientNum(cl - svs.clients);
+		
+		Com_Printf("->commandTime: %i\n", ps->commandTime);
+		Com_Printf("->pm_type: %i\n", ps->pm_type);
+		Com_Printf("->bobCycle: %i\n", ps->bobCycle);
+		Com_Printf("->pm_flags: %i\n", ps->pm_flags);
+		Com_Printf("->pm_time: %i\n", ps->pm_time);
+	}
+
+	// Grabbing server mutes
+    if (cl != NULL) {
+        if (!strcmp((char *) message, "print \"The admin muted you: you cannot talk\"\n")) {
+            cl->muted = qtrue;
+        }
+        else if (!strcmp((char *) message, "print \"The admin unmuted you\"\n")) {
+            cl->muted = qfalse;
+        }
+        else if (!strcmp((char *) message, "print \"You have been unmuted\"\n")) {
+            cl->muted = qfalse;
+        }
+	}
+
+	//Modify scoreboard for auth change
+	{
+		if(Q_strncmp((char *)message, "scores ", 7) == 0) {
+			MOD_parseScore((char *)message);
+		}
+		if(Q_strncmp((char *)message, "scoress ", 8) == 0 || Q_strncmp((char *)message, "scoresd ", 8) == 0) {
+			MOD_parseScoresAndDouble((char *)message);
+		}
+	}
 
 	// Fix to http://aluigi.altervista.org/adv/q3msgboom-adv.txt
 	// The actual cause of the bug is probably further downstream
@@ -636,6 +696,7 @@ void QDECL SV_SendServerCommand(client_t *cl, const char *fmt, ...) {
 	if ( com_dedicated->integer && !strncmp( (char *)message, "print", 5) ) {
 		Com_Printf ("broadcast: %s\n", SV_ExpandNewlines((char *)message) );
 	}
+
 
 	// send the data to all relevent clients
 	for (j = 0, client = svs.clients; j < sv_maxclients->integer ; j++, client++) {
@@ -991,11 +1052,7 @@ void SVC_RconRecoveryRemoteCommand( netadr_t from, msg_t *msg ) {
 		valid = qfalse;
 		Com_Printf ("Bad rcon recovery from %s:\n%s\n", NET_AdrToString (from), Cmd_Argv(2) );
 	} else {
-		// MaJ - If the rconpassword is good, allow it much sooner than a bad one.
-		if ( (unsigned)( time - lasttime ) < 180u )
-			return;
-
-		
+		// Same here.. don't limit good rcon commands
 		valid = qtrue;
 		Com_Printf ("Rcon recovery from %s:\n%s\n", NET_AdrToString (from), Cmd_Argv(2) );
 	}
@@ -1056,14 +1113,8 @@ void SVC_RemoteCommand( netadr_t from, msg_t *msg ) {
 		valid = qfalse;
 		Com_Printf ("Bad rcon from %s:\n%s\n", NET_AdrToString (from), Cmd_Argv(2) );
 	} else {
-	
-		// let's the sv_rconAllowedSpamIP do spam rcon
-		if ( ( !strlen( sv_rconAllowedSpamIP->string ) || !NET_CompareBaseAdr( from , allowedSpamIPAdress ) ) && !NET_IsLocalAddress(from) ){
-			// MaJ - If the rconpassword is good, allow it much sooner than a bad one.
-			if ( (unsigned)( time - lasttime ) < 180u )
-				return;
-		}
 		
+		// Why limit a good rcon command? Just let bots run at max speed.. ffs
 		valid = qtrue;
 		Com_Printf ("Rcon from %s:\n%s\n", NET_AdrToString (from), Cmd_Argv(2) );
 	}

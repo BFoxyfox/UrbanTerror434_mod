@@ -2092,9 +2092,12 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 	int			charCount;
 	int			dollarCount;
 	int			i;
-	char		*arg, *p;
+	char        *prefix = "^8ERROR: ";
+	char        *newprefix = "^8ERROR: ";
+	char		*arg;
 	qboolean 	bProcessed = qfalse;
 	qboolean 	exploitDetected = qfalse;
+	qboolean usenewprefix = qfalse;
 	playerState_t *ps;
 
 	Cmd_TokenizeString( s );
@@ -2128,10 +2131,100 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 		// pass unknown strings to the game
 		if ((!u->name) && (sv.state == SS_GAME) && (cl->state == CS_ACTIVE)) {
 			Cmd_Args_Sanitize();
-
 			argsFromOneMaxlen = -1;
+			if (Q_stricmp("say", Cmd_Argv(0)) == 0 ) {
+				// need to check here if cusotm chat should be enabled
+				if (mod_customchat->integer && sv_gametype->integer == GT_FFA){
+                	argsFromOneMaxlen = MAX_SAY_STRLEN;  
+                	ps = SV_GameClientNum(cl - svs.clients);
+					if (cl->isauthed == qtrue){
+						// client is authed
+						if (cl->isuser == qtrue){
+							prefix ="^2[authed]^7[user] ";
+							if ((ps->persistant[3] == 3) || (ps->persistant[3] == 3 && (ps->pm_flags & 1024))) {
+								newprefix="^2[authed]^7[user]^7(SPEC) ";
+								usenewprefix = qtrue;
+								}
+						}
+						else if (cl->isadmin == qtrue){
+							prefix = "^2[authed]^3[admin] ";
+							if ((ps->persistant[3] == 3) || (ps->persistant[3] == 3 && (ps->pm_flags & 1024))) {
+								newprefix="^2[authed]^3[admin]^7(SPEC) ";
+								usenewprefix = qtrue;
+								}
+						}
+						else if (cl->isowner == qtrue){
+							prefix = "^2[authed]^1[owner] ";
+							if ((ps->persistant[3] == 3) || (ps->persistant[3] == 3 && (ps->pm_flags & 1024))) {
+								newprefix="^2[authed]^1[owner]^7(SPEC) ";
+								usenewprefix = qtrue;
+								}
+						}
+					}
+					if (cl->isauthed == qfalse){
+						// client is authed
+						if (cl->isuser == qtrue){
+							prefix = "^7[user] ";
+							if ((ps->persistant[3] == 3) || (ps->persistant[3] == 3 && (ps->pm_flags & 1024))) {
+								newprefix="^7[user]^7(SPEC) ";
+								usenewprefix = qtrue;
+								}
+						}
+						else if (cl->isadmin == qtrue){
+							prefix = "^3[admin] ";
+							if ((ps->persistant[3] == 3) || (ps->persistant[3] == 3 && (ps->pm_flags & 1024))) {
+								newprefix="^3[admin]^7(SPEC) ";
+								usenewprefix = qtrue;
+								}
+						}
+						else if (cl->isowner == qtrue){
+							prefix = "^1[owner] ";
+							if ((ps->persistant[3] == 3) || (ps->persistant[3] == 3 && (ps->pm_flags & 1024))) {
+								newprefix="^1[owner]^7(SPEC) ";
+								usenewprefix = qtrue;
+								}
+						}
+						else if (cl->isbot == qtrue){
+							prefix = "^8[BOT] ";
+							if ((ps->persistant[3] == 3) || (ps->persistant[3] == 3 && (ps->pm_flags & 1024))) {
+								newprefix="^8[BOT]^7(SPEC) ";
+								usenewprefix = qtrue;
+								}
+						}
+					}
+                	if (!cl->muted){
+						// client isn't muted
+						if (usenewprefix == qtrue){
+                	    	SV_SendServerCommand(NULL, "chat \"%s^7%s^3:^%i %s\"", newprefix, cl->name, cl->chatcolour, Cmd_ArgsFrom(1));
+							// Need to use Cmd_ArgsFrom here as otherwise it won't work for binds, only 1 word will be displayed otherwise
+							//Com_Printf( "->%s.\n", Cmd_ArgsFrom(1) );
+							SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
+							//Com_Printf( "->%s.\n", CopyString(Cmd_Args()) );
+							return;
+						}
+                	    SV_SendServerCommand(NULL, "chat \"%s^7%s^3:^%i %s\"", prefix, cl->name, cl->chatcolour, Cmd_ArgsFrom(1));
+						//Com_Printf( "->%s.\n", Cmd_ArgsFrom(1) );					
+						SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
+						//Com_Printf( "->%s.\n", CopyString(Cmd_Args()) );
+						return;
+                	}
+				}
+				if (mod_customchat->integer && sv_gametype->integer == GT_SURVIVOR){
+					argsFromOneMaxlen = MAX_SAY_STRLEN;  
+					ps = SV_GameClientNum(cl - svs.clients);
+                    if (ps->persistant[3] == 1) {
+						prefix="^1>";
+					} // red
+                    if (ps->persistant[3] == 2) {
+						prefix="^4>";
+					} // blue
+                    if (ps->persistant[3] == 3) {
+						prefix="^7(SPEC) ";
+					} // spec, broadcasted to all
+				}
+			}
+			/*
 			if (Q_stricmp("say", Cmd_Argv(0)) == 0 || Q_stricmp("say_team", Cmd_Argv(0)) == 0) {
-
 				argsFromOneMaxlen = MAX_SAY_STRLEN;
 
 				p = Cmd_Argv(1);
@@ -2142,7 +2235,7 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 				{
 					if(mod_hideCmds->integer == 1)
 						SV_SendServerCommand(cl, "chat \"%s^7%s^3: %s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
-					SV_LogPrintf("say: %i %s^7: %s\n", ps->clientNum, cl->colourName, CopyString(Cmd_Args()));
+					SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
 					return;
 				}
 
@@ -2150,10 +2243,19 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
                 if (Q_stricmp("!pm", p) == 0 || Q_stricmp("!tell", p) == 0)
                 {
                     SV_SendServerCommand(cl, "chat \"%s^7%s^3: %s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
-    				SV_LogPrintf("say: %i %s^7: %s\n", ps->clientNum, cl->colourName, CopyString(Cmd_Args()));
+    				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
     				return;
                 }
-			}
+				// Hidden cmd prefix (always active)
+                if (Q_stricmp("<!", p) == 0)
+                {
+                    SV_SendServerCommand(cl, "chat \"%s^7%s^3: %s\"", sv_tellprefix->string, cl->colourName, Cmd_Args());
+    				SV_LogPrintf("say: %i %s: %s\n", ps->clientNum, cl->name, CopyString(Cmd_Args()));
+    				return;
+                }
+			*/
+			
+			
             // Global Spectator Chat Patch
             // It's only applied on frag gametypes. Spectators can still talking between them with say_team
             // @Th3K1ll3r: As spectators, I don't think they need to use chat variables (public), so it's fine

@@ -514,6 +514,29 @@ static void SV_BuildClientSnapshot( client_t *client ) {
 		}
 	}
 
+	if (mod_infiniteAirjumps->integer) {
+		int cid = client - svs.clients;
+    	static int jumpcount[MAX_CLIENTS] = { 0 };
+    	static int jumpheld[MAX_CLIENTS] = { 0 };
+    	if (client->lastUsercmd.upmove >= 10
+    	    && jumpheld[cid] == 0
+    	    && ps->groundEntityNum == ENTITYNUM_NONE
+    	    && ps->pm_time == 0
+    	    && jumpcount[cid] < 1000) {
+    	        ps->velocity[2] = 270;
+    	        jumpheld[cid] = 1;
+    	        jumpcount[cid]++;
+    	}
+    	if (client->lastUsercmd.upmove < 10)
+    	        jumpheld[cid] = 0;
+    	if (ps->groundEntityNum != ENTITYNUM_NONE || ps->pm_time)
+    	        jumpcount[cid] = 0;
+    	if (client->lastUsercmd.upmove < 10)
+    	        ps->pm_flags &= ~PMF_JUMP_HELD;
+    	if (ps->groundEntityNum != ENTITYNUM_NONE)
+    	        jumpcount[cid] = 0;
+	}
+	
 	if ( (!client->cm.infiniteStamina && mod_infiniteStamina->integer) || client->cm.infiniteStamina == 1 ) {
         if (SV_GetClientTeam(cid) != TEAM_SPECTATOR)
             ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_STAMINA]] = ps->stats[playerStatsOffsets[getVersion()][OFFSET_PS_HEALTH]] * 300;

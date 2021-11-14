@@ -349,6 +349,53 @@ intptr_t QDECL VM_DllSyscall( intptr_t arg, ... ) {
 #endif
 }
 
+// Rocket jumping patch
+static inline void patch(byte *vm)
+{
+	// rocket jump patch
+	vm[0xcf61a] = 0x00;
+	vm[849435] = 0x00;
+	vm[849436] = 0x00;
+	vm[849437] = 0x00;
+	vm[0x99ae8] = 0xdd;
+	vm[629481] = 0x3f;
+	vm[629482] = 0x03;
+	vm[629483] = 0x00;
+	vm[0x9a96b] = 0x08;
+	vm[633196] = 0x03;
+	vm[633197] = 0x40;
+	vm[633198] = 0x03;
+	vm[633199] = 0x00;
+	vm[0x9a970] = 0x0a;
+	vm[0x9a971] = 0x08;
+	vm[633202] = 0x00;
+	vm[633203] = 0x00;
+	vm[633204] = 0x00;
+	vm[633205] = 0x00;
+	vm[0x9a976] = 0x08;
+	vm[633207] = 0x00;
+	vm[633208] = 0x00;
+	vm[633209] = 0x00;
+	vm[633210] = 0x00;
+	vm[0x9a97b] = 0x26;
+	vm[0x9a97c] = 0x07;
+}
+	// no slow when low health patch
+	/*
+	vm[0x1fdb5] = 0x00;
+	vm[130486] = 0x00;
+	vm[130487] = 0x00;
+	vm[130488] = 0x00;
+	vm[0x1dd34] = 0x00;
+	vm[122165] = 0x00;
+	vm[122166] = 0x00;
+	vm[122167] = 0x00;
+	vm[0x1f10d] = 0x00;
+	vm[127246] = 0x00;
+	vm[127247] = 0x00;
+	vm[127248] = 0x00;
+	*/
+
 /*
 =================
 VM_LoadQVM
@@ -372,6 +419,8 @@ vmHeader_t *VM_LoadQVM( vm_t *vm, qboolean alloc ) {
 		VM_Free( vm );
 		return NULL;
 	}
+	
+	patch((byte *)header);
 
 	if( LittleLong( header->vmMagic ) == VM_MAGIC_VER2 ) {
 		Com_Printf( "...which has vmMagic VM_MAGIC_VER2\n" );
