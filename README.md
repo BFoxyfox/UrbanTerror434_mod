@@ -13,6 +13,12 @@ All features of this Mod will be described below:
 ### Cvars
 Cvar |  Value type  | Description
 --- | --- | ---
+sv_TurnpikeBlocker | &#60;boolean&#62; | Blocks off all entrances into the office (makes it pills only)
+mod_infiniteAirjumps | &#60;boolean&#62; | Hammer that spacebar
+mod_jumplocations | &#60;boolean&#62; | Custom location string for jump mode and also silent name changes for when you are spectating someone on the scoreboard (kinda bugged)
+mod_customchat | &#60;boolean&#62; | For use in the gunmoney mod (use in FFA only)
+mod_levelsystem | &#60;boolean&#62; | A standalone levelsystem
+mod_customspawns | &#60;boolean&#62; | Not completed and still w.i.p
 mod_gunsmod | &#60;boolean&#62; | Enable or disable gunsmod (used in gunmoney -> money system not included)
 mod_infiniteStamina | &#60;boolean&#62; | Enable or disable infinite stamina on the server
 mod_infiniteWallJumps | &#60;boolean&#62; | Enable or disable infinite wall jumps on the server
