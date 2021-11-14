@@ -2092,9 +2092,12 @@ void SV_ExecuteClientCommand( client_t *cl, const char *s, qboolean clientOK ) {
 	int			charCount;
 	int			dollarCount;
 	int			i;
-	char		*arg, *p;
+	char        *prefix = "^8ERROR: ";
+	char        *newprefix = "^8ERROR: ";
+	char		*arg;
 	qboolean 	bProcessed = qfalse;
 	qboolean 	exploitDetected = qfalse;
+	qboolean usenewprefix = qfalse;
 	playerState_t *ps;
 
 	Cmd_TokenizeString( s );
