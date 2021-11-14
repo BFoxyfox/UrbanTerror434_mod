@@ -2854,6 +2854,57 @@ void SV_GhostThink(client_t *cl) {
 
 /*
 ==================
+SV_CheckLocation
+Returns 1 or -1
+1 = yes player i is in area of xy with the r
+-1 = no player i isnt in area of xy with the r
+==================
+*/
+
+int SV_CheckLocation( float x, float y, float z, float r, int i ) {
+	playerState_t *ps;
+    ps = SV_GameClientNum(i);
+    if (ps->origin[0] > x-r &&
+        ps->origin[0] < x+r &&
+        ps->origin[1] > y-r &&
+        ps->origin[1] < y+r &&
+        ps->origin[2] > z-r &&
+        ps->origin[2] < z+r
+        ) {
+        return 1;
+    }
+	return -1;
+}
+
+/*
+================
+SV_TurnpikeBlocker
+=================
+*/
+
+void SV_TurnpikeBlocker( char* map, float x, float y, float z, float r, float x2, float y2, float z2) {
+	client_t *cl;
+	int i;
+	char cmd[100];
+	char cmd2[100];
+    
+	if (Q_stricmp(sv_mapname->string, map)) { 
+		return;
+	}
+
+	for (i=0 ; i < sv_maxclients->integer ; i++) {
+		cl = &svs.clients[i];
+        if (SV_CheckLocation(x, y, z, r, i) == 1) { // 
+			Com_sprintf(cmd2, sizeof(cmd2), "tp %i %f %f %f",i, x2, y2, z2);
+            Com_sprintf(cmd, sizeof(cmd), "sendclientcommand %i cp \"%s\"\n",i ,"^1RESTRICTED PLAY AREA ^3- ^1NOT ENOUGH PLAYERS ONLINE" ); // needs qvm mod
+            Cmd_ExecuteString(cmd);
+			Cmd_ExecuteString(cmd2);
+		}
+    }
+}
+
+/*
+==================
 SV_ClientThink
 
 Also called by bot code
@@ -2906,7 +2957,36 @@ void SV_ClientThink (client_t *cl, usercmd_t *cmd) {
     }
 
     MOD_AutoHealth(cl);
+	
+	if (mod_jumplocations->integer) {
+		Check_spectators(cl);
+	}
 
+	if (cl->customname == qtrue){
+		updateClientName(cl);
+	}
+
+	if (cl->hasmedkit == qtrue){
+		addMedkitHealth(cl);
+	}
+
+	if (cl->particlefx) {
+		MOD_SetExternalEvent(cl, 106, 1);
+	}
+
+	if (sv_TurnpikeBlocker->integer) {
+		SV_TurnpikeBlocker("ut4_turnpike", 128,-1645,28, 64, 128, -1782, 28); // Entrance into metro
+		SV_TurnpikeBlocker("ut4_turnpike",961, -1773, 28, 64, 961, -1901, 28); // Office entrance van
+		SV_TurnpikeBlocker("ut4_turnpike",1586, -894, 28, 64, 1580, -993, 30); // side entrance into Office
+		SV_TurnpikeBlocker("ut4_turnpike",766, -720, 28, 64, 769, -599, 28); // main office entrance
+		SV_TurnpikeBlocker("ut4_turnpike",194, -479, 28, 64, 83, -483, 28); // under window entrance
+		SV_TurnpikeBlocker("ut4_turnpike",176, -956, 28, 64, 178, -1055, 28); // office metro entrance
+		SV_TurnpikeBlocker("ut4_turnpike",0, -1298, 28, 64, 1.5, -1182, 28); // metro back1
+		SV_TurnpikeBlocker("ut4_turnpike",-415, -1297, 28, 64, -425, -1185, 28); // metro back2
+		SV_TurnpikeBlocker("ut4_turnpike",312, -497, 224, 64, 420, -496, 235); // window
+		SV_TurnpikeBlocker("ut4_turnpike",1400, -1915, 56, 64, 1391, -2012, 28); // garage1
+		SV_TurnpikeBlocker("ut4_turnpike",1239, -1918, 56, 64, 1230, -2023, 28); // garage 2
+	}
 	VM_Call( gvm, GAME_CLIENT_THINK, cl - svs.clients );
 
     if (mod_infiniteAmmo->integer) {
