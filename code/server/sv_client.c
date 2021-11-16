@@ -2883,7 +2883,6 @@ SV_TurnpikeBlocker
 */
 
 void SV_TurnpikeBlocker( char* map, float x, float y, float z, float r, float x2, float y2, float z2) {
-	client_t *cl;
 	int i;
 	char cmd[100];
 	char cmd2[100];
@@ -2893,10 +2892,9 @@ void SV_TurnpikeBlocker( char* map, float x, float y, float z, float r, float x2
 	}
 
 	for (i=0 ; i < sv_maxclients->integer ; i++) {
-		cl = &svs.clients[i];
         if (SV_CheckLocation(x, y, z, r, i) == 1) { // 
 			Com_sprintf(cmd2, sizeof(cmd2), "tp %i %f %f %f",i, x2, y2, z2);
-            Com_sprintf(cmd, sizeof(cmd), "sendclientcommand %i cp \"%s\"\n",i ,"^1RESTRICTED PLAY AREA ^3- ^1NOT ENOUGH PLAYERS ONLINE" ); // needs qvm mod
+            Com_sprintf(cmd, sizeof(cmd), "sendclientcommand %i cp \"%s\"\n",i ,"^1RESTRICTED PLAY AREA ^3- ^1NOT ENOUGH PLAYERS ONLINE" );
             Cmd_ExecuteString(cmd);
 			Cmd_ExecuteString(cmd2);
 		}
