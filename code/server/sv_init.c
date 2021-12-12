@@ -1079,6 +1079,8 @@ void SV_Init (void) {
 	matchmode = Cvar_Get ("g_matchmode", "0", CVAR_ARCHIVE);
 	sv_MedicStation = Cvar_Get ("sv_MedicStation", "0", CVAR_ARCHIVE );
 	sv_TurnpikeBlocker = Cvar_Get ("sv_TurnpikeBlocker", "0", CVAR_ARCHIVE);
+	mod_punishCampers = Cvar_Get("mod_punishCampers", "0", CVAR_ARCHIVE);
+
 	
 	#ifdef USE_AUTH
 	sv_authServerIP = Cvar_Get("sv_authServerIP", "", CVAR_TEMP | CVAR_ROM);
