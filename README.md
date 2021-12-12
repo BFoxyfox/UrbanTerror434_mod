@@ -13,6 +13,7 @@ All features of this Mod will be described below:
 ### Cvars
 Cvar |  Value type  | Description
 --- | --- | ---
+mod_punishCampers | &#60;boolean&#62; | Punishes campers if they have been at the same location for more than 30 seconds
 sv_TurnpikeBlocker | &#60;boolean&#62; | Blocks off all entrances into the office (makes it pills only)
 mod_infiniteAirjumps | &#60;boolean&#62; | Hammer that spacebar
 mod_jumplocations | &#60;boolean&#62; | Custom location string for jump mode and also silent name changes for when you are spectating someone on the scoreboard (kinda bugged)
