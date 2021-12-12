@@ -250,6 +250,12 @@ typedef struct client_s {
 	int kills;
 	int clientgamenum;
 	
+	// for anticamp
+	float		xlast;
+	float		ylast;
+	float		zlast;
+	int		timechecked;
+	int		campcounter;
     	// Variables of TitanMod
     	clientMod_t cm;
 } client_t;
@@ -450,6 +456,7 @@ extern cvar_t 	*matchmode;
 extern cvar_t 	*sv_MedicStation;
 extern cvar_t 	*sv_TurnpikeBlocker;
 extern cvar_t 	*mod_infiniteAirjumps;
+extern cvar_t   *mod_punishCampers;
 
 #ifdef USE_AUTH
 extern  cvar_t  *sv_authServerIP;
