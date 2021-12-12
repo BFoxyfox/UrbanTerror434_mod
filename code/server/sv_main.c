@@ -133,6 +133,7 @@ cvar_t	*mod_jumplocations;
 cvar_t	*matchmode;
 cvar_t	*sv_MedicStation;
 cvar_t	*sv_TurnpikeBlocker;
+cvar_t  *mod_punishCampers;
 
 //@Barbatos
 #ifdef USE_AUTH
