@@ -2804,9 +2804,9 @@ void acceleratedSlap (client_t *cl, playerState_t *ps) {
 	int vel0 = ps->velocity[0];
 	int vel1 = ps->velocity[1];
 	int vel2 = ps->velocity[2];
-    ps->velocity[0] = vel0 *= 5;
-	ps->velocity[1] = vel1 *= 5;
-	ps->velocity[2] = vel2 *= 5;
+    ps->velocity[0] = vel0 *= 2;
+	ps->velocity[1] = vel1 *= 2;
+	ps->velocity[2] = vel2 *= 2;
 }
 
 void setCampCoords (client_t *cl, playerState_t *ps) {
@@ -2838,19 +2838,27 @@ void checkCampers (client_t *cl) {
 		setCampCoords(cl, ps);
 		cl->timechecked = time;
 	} else {
-		// Now check if 10 seconds have passed since the 1st check, if so do a proximity check
-		// if the client is still close to his previous coordinates.
-		if ((time - cl->timechecked) > 10000) {
+		// Now check if 15 seconds have passed since the 1st check, if so do a proximity check
+		// 45 seconds in total is plenty of time for a player to move an and not camp in the same area for too long
+		if ((time - cl->timechecked) > 15000) {
 			cl->timechecked = time;
 			// 10 seconds have passed since the last check
-			if (checkCamperLocation(cl, ps, 200) == 1) {
+			if (checkCamperLocation(cl, ps, 180) == 1) {
 				// Client is still within his previous radius, 
 				if (cl->campcounter == 3) {
+					// If the client is dead
+					if (ps->pm_type != PM_NORMAL) {
+						cl->campcounter = 0;
+						return;
+					}
 					// punish now
 					acceleratedSlap(cl, ps);
 					acceleratedSlap(cl, ps);
+					acceleratedSlap(cl, ps);
+					acceleratedSlap(cl, ps);
+					
 					cl->campcounter = 0;
-					Cmd_ExecuteString(va("bigtext \"^5%s ^3was punished\n^3for ^1Camping!\"", cl->name));
+					Cmd_ExecuteString(va("bigtext \"^5%s ^3was caught\n^1Camping!\"", cl->name));
 				} else {
 					cl->campcounter++;
 				}
