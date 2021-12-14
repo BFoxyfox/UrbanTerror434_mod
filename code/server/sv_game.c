@@ -769,7 +769,7 @@ void SV_onChat(char* playerid, char* playername, char* message)
 
 	if (mod_gunsmod->integer){
 		if (strcmp(message, "!buylist") == 0) {
-			SV_SendServerCommand(cl, "print  \"^7 Buylist v2.1 (13/11/2021)\n\"");
+			SV_SendServerCommand(cl, "print  \"^7 Buylist v2.1 (14/12/2021)\n\"");
 			SV_SendServerCommand(cl, "print  \"^7////////////////////////////////////////////////////////////////////////////\n\"");
 			SV_SendServerCommand(cl, "print  \"^7//           Sniper Rifles           ^7/         Assault Rifles             ^7//\n\"");
 			SV_SendServerCommand(cl, "print  \"^7//-----------------------------------^7/------------------------------------^7//\n\"");
@@ -796,10 +796,10 @@ void SV_onChat(char* playerid, char* playername, char* message)
 			SV_SendServerCommand(cl, "print  \"^7// ^3!invisible ^2Price:^6 750000  coins   ^7/  ^3Helmet   ^2Price:^6  800 coins        ^7//\n\"");
 			SV_SendServerCommand(cl, "print  \"^7// ^3!ammo      ^2Price:^6  65000  coins   ^7/  ^3Silencer ^2Price:^6  500 coins        ^7//\n\"");
 			SV_SendServerCommand(cl, "print  \"^7// ^3!clips     ^2Price:^6  45000  coins   ^7/  ^3Laser    ^2Price:^6  500 coins        ^7//\n\"");
-			SV_SendServerCommand(cl, "print  \"^7// ^3!maptp     ^2Price:^6  50000  coins   ^7/  ^3NVG      ^2Price:^6 1500 coins        ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!maptp     ^2Price:^6  50000  coins   ^7/  ^3NVG      ^2Price:^6 3000 coins        ^7//\n\"");
 			SV_SendServerCommand(cl, "print  \"^7// ^3!lowgrav   ^2Price:^6 1000000 coins   ^7/                                    ^7//\n\"");
 			SV_SendServerCommand(cl, "print  \"^7// ^3!slapall   ^2Price:^6 1000000 coins   ^7/                                    ^7//\n\"");
-			SV_SendServerCommand(cl, "print  \"^7// ^3!b health  ^2Price:^6   2000  coins   ^7/                                    ^7//\n\"");
+			SV_SendServerCommand(cl, "print  \"^7// ^3!b health  ^2Price:^6  15000  coins   ^7/                                    ^7//\n\"");
 			SV_SendServerCommand(cl, "print  \"^7// ^3!laugh     ^2Price:^6  25000  coins   ^7/                                    ^7//\n\"");
 			SV_SendServerCommand(cl, "print  \"^7// ^3!teleport  ^2Price:^6 250000  coins   ^7/                                    ^7//\n\"");
 			SV_SendServerCommand(cl, "print  \"^7// ^3!freeze    ^2Price:^6 550000  coins   ^7/                                    ^7//\n\"");
