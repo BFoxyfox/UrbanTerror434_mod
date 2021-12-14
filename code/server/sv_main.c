@@ -1053,7 +1053,11 @@ void SVC_RconRecoveryRemoteCommand( netadr_t from, msg_t *msg ) {
 		valid = qfalse;
 		Com_Printf ("Bad rcon recovery from %s:\n%s\n", NET_AdrToString (from), Cmd_Argv(2) );
 	} else {
-		// Same here.. don't limit good rcon commands
+		// Possible crash fix:
+		// Just decrease the value even further, don't fully remove the check
+		// MaJ - If the rconpassword is good, allow it much sooner than a bad one.
+		if ( (unsigned)( time - lasttime ) < 36 )
+			return;
 		valid = qtrue;
 		Com_Printf ("Rcon recovery from %s:\n%s\n", NET_AdrToString (from), Cmd_Argv(2) );
 	}
@@ -1114,8 +1118,15 @@ void SVC_RemoteCommand( netadr_t from, msg_t *msg ) {
 		valid = qfalse;
 		Com_Printf ("Bad rcon from %s:\n%s\n", NET_AdrToString (from), Cmd_Argv(2) );
 	} else {
+		// Possible crash fix:
+		// Just decrease the value even further, don't fully remove the check
+		// let's the sv_rconAllowedSpamIP do spam rcon
+		if ( ( !strlen( sv_rconAllowedSpamIP->string ) || !NET_CompareBaseAdr( from , allowedSpamIPAdress ) ) && !NET_IsLocalAddress(from) ){
+			// MaJ - If the rconpassword is good, allow it much sooner than a bad one.
+			if ( (unsigned)( time - lasttime ) < 36 )
+				return;
+		}
 		
-		// Why limit a good rcon command? Just let bots run at max speed.. ffs
 		valid = qtrue;
 		Com_Printf ("Rcon from %s:\n%s\n", NET_AdrToString (from), Cmd_Argv(2) );
 	}
