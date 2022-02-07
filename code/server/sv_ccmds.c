@@ -3392,6 +3392,37 @@ static void SV_BlindPlayer_f (void)
     SV_SendServerCommand(NULL, "cchat \"\" \"^7It's gotten dark. To light things up commit suicide.\"");
 }
 
+/////////////////////////////////////////////////////////////////////
+// SV_GetTeam_f
+/////////////////////////////////////////////////////////////////////
+static void SV_GetTeam_f (void)
+{
+    client_t *cl;
+    playerState_t *ps;
+
+    if (!com_sv_running->integer) {
+        Com_Printf("Server is not running\n");
+        return;
+    }
+
+    if (Cmd_Argc() < 2) {
+        Com_Printf("Usage: getteam <player>\n");
+        return;
+    }
+
+    cl = SV_GetPlayerByHandle();
+    if (!cl) {
+        Com_Printf("Unable to get client\n");
+        return;
+    }
+
+    ps = SV_GameClientNum(cl - svs.clients);
+
+    int clientTeam = *(int*)((void*)ps+gclientOffsets[getVersion()][OFFSET_TEAM]);
+    Com_Printf("%i", clientTeam);
+}
+
+
 /*
 ==================
 SV_AddOperatorCommands
@@ -3494,6 +3525,9 @@ void SV_AddOperatorCommands( void ) {
 	
 	// Better bigtext that allows multi lines with "line1/nline2" etc
     Cmd_AddCommand ("bigtext", SV_BigText_f);
+
+	// Needed for the updated b3 parser
+	Cmd_AddCommand ("getteam", SV_GetTeam_f);
 
 	
     if( com_dedicated->integer ) {
