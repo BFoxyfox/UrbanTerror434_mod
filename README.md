@@ -1,4 +1,6 @@
 # Titan Mod for Urban Terror
+# I don't recommend using this binary as it is very unstable and will crash on multiple occasions for no obvious reason
+
 Pedrxd and Th3K1ll3r are proud to announce the new Titan Mod completely rewritted. This software aspires to be the best Urban Terror Server Mod never written before, adding a lot of new features in order to give better experiences to players and admins.
 
 The usage of this software is *UNDER YOUR OWN RISK*.
